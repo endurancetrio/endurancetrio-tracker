@@ -42,6 +42,11 @@ server:
       timeout: 30m
 
 spring:
+  flyway:
+    locations:
+      - classpath:db/migration/ddl/postgres
+      - classpath:db/migration/dml
+
   h2:
     console:
       enabled: false

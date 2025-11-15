@@ -59,8 +59,8 @@ X-API-Key: api-key-here
 {
   "device": "SDABC",
   "time": "2026-09-19T06:00:00Z",
-  "lat": 39.51006,
-  "lon": -9.13608
+  "lat": 39.510058,
+  "lon": -9.136079
 }
 ```
 
@@ -74,8 +74,8 @@ X-API-Key: api-key-here
   "data": {
     "device": "SDABC",
     "time": "2026-09-19T06:00:00Z",
-    "lat": 39.51006,
-    "lon": -9.13608
+    "lat": 39.510058,
+    "lon": -9.136079
   }
 }
 ```
@@ -98,26 +98,26 @@ Content-Type: application/json
     {
       "device": "SDABC",
       "time": "2026-09-19T06:00:00Z",
-      "lat": 39.51006,
-      "lon": -9.13608
+      "lat": 39.510058,
+      "lon": -9.136079
     },
     {
       "device": "SDDEF",
       "time": "2026-09-19T06:00:06Z",
-      "lat":  39.50900,
-      "lon": -9.13960
+      "lat":  39.509001,
+      "lon": -9.139602
     },
     {
       "device": "SDFGH",
       "time": "2026-09-19T06:00:12Z",
-      "lat": 39.50977,
-      "lon": -9.14000
+      "lat": 39.509773,
+      "lon": -9.140004
     },
     {
       "device": "SDJKL",
       "time": "2026-09-19T06:00:24Z",
-      "lat": 39.51107,
-      "lon":  -9.13651
+      "lat": 39.511075,
+      "lon":  -9.136516
     }
   ]
 }
@@ -142,26 +142,26 @@ X-API-Key: api-key-here
     {
       "device": "SDABC",
       "time": "2026-09-19T06:00:00Z",
-      "lat": 39.51006,
-      "lon": -9.13608
+      "lat": 39.510058,
+      "lon": -9.136079
     },
     {
       "device": "SDABC",
       "time": "2026-09-19T06:06:00Z",
-      "lat": 39.51007,
-      "lon": -9.13607
+      "lat": 39.510071,
+      "lon": -9.136071
     },
     {
       "device": "SDABC",
       "time": "2026-09-19T06:12:00Z",
-      "lat": 39.51008,
-      "lon": -9.13606
+      "lat": 39.510082,
+      "lon": -9.136062
     },
     {
       "device": "SDABC",
       "time": "2026-09-19T06:24:00Z",
-      "lat": 39.51009,
-      "lon": -9.13605
+      "lat": 39.510093,
+      "lon": -9.136053
     }
   ],
   "page": {
@@ -199,10 +199,8 @@ This interface allows you to:
 ### Database
 
 The application uses an **H2 in-memory database** for development and testing purposes,
-configured with PostgreSQL compatibility mode.
-
-The devices location entries are stored in a normalized table containing device ID, timestamp,
-latitude, and longitude.
+configured with PostgreSQL compatibility mode. For production environments, the database will be
+switched to [**PostgreSQL**](https://www.postgresql.org/).
 
 All database schema changes are managed with Flyway. Migration scripts are located in the
 `endurancetrio-data/src/main/resources/db/migration` folder and are automatically executed on
@@ -210,16 +208,14 @@ application startup. As the project evolves, migrations will support both H2 (de
 PostgreSQL (production). The file [`DATABASE.md`](./endurancetrio-data/src/main/resources/db/DATABASE.md)
 documents the process to create and manage the database schema migrations.
 
+The devices location entries are stored in a normalized table containing device ID, timestamp,
+latitude, and longitude.
+
 #### H2 Database Console
 
 During development, you can access the H2 database console at:
 
 **URL:** `http://localhost:8081/h2-tracker/`
-
-**Connection Details:**
-- **JDBC URL:** `jdbc:h2:mem:tracker;MODE=PostgreSQL`
-- **Username:** `EnduranceCode`
-- **Password:** `EnduranceTrio`
 
 #### Database Characteristics:
 - **Type:** In-memory H2 database
@@ -229,7 +225,6 @@ During development, you can access the H2 database console at:
 
 > **Note**
 >
-> The H2 database will be replaced with PostgreSQL in production environments.
 > All data in the development database is transient and will reset when the application restarts.
 
 ### Installation
