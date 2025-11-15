@@ -277,7 +277,7 @@ mvn clean install
 #### 5. Run the application
 
 The project includes a helper script, `spring-boot-run.sh`, which performs a full Maven build and
-then starts the application using `spring-boot:run` with the **development** profile enabled.
+then starts the application using `spring-boot:run` with the **local** profile enabled.
 You can start the application using:
 
 ```bash
@@ -286,13 +286,14 @@ You can start the application using:
 
 The application uses Spring Boot profiles for environment-specific configuration:
 
-- `application-dev.yaml` – Active during local development.
-- `application-prod.yaml` – To be used in production environments.
+- `application-local.yaml` – Active during local development.
+- `application-dev.yaml` – To be used in development environments.
+- `application-prod.yaml` – To be used in production environments (Not ready yet).
 
 You can manually activate a profile when running the application via:
 
 ```bash
--Dspring-boot.run.profiles=dev
+-Dspring-boot.run.profiles=local
 ```
 
 Or for standard JAR execution:

@@ -32,4 +32,4 @@ echo "--------------------------------------------------------------------------
 echo -e "[\e[34mINFO\e[0m] Starting EnduranceTrio Tracker Application..."
 echo "------------------------------------------------------------------------------------------------------------------------"
 echo
-./mvnw  -Dspring-boot.run.profiles=dev -pl endurancetrio-app spring-boot:run
+./mvnw  -Dspring-boot.run.profiles=local -pl endurancetrio-app spring-boot:run

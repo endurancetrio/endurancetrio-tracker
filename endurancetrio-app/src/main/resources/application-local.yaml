@@ -20,34 +20,15 @@
 
 logging:
   file:
-    name: "./logs/endurancetrio-tracker.log"
+    name: ""
   level:
-    com.endurancetrio: INFO
-    org.flywaydb: INFO
-    org.hibernate.orm.jdbc.bind: INFO
-    org.hibernate.SQL: WARN
-  logback:
-    rollingpolicy:
-      max-file-size: 5MB
-      max-history: 20
-
-management:
-  endpoint:
-    health:
-      show-details: when_authorized
-
-server:
-  servlet:
-    session:
-      timeout: 30m
+    com.endurancetrio: DEBUG
+    org.flywaydb: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.SQL: DEBUG
+    org.springframework.jdbc: DEBUG
 
 spring:
   h2:
     console:
-      enabled: false
-
-  jpa:
-    properties:
-      hibernate:
-        format_sql: false
-        use_sql_comments: false
+      enabled: true

@@ -21,15 +21,15 @@
 logging:
   file:
     name: "./logs/endurancetrio-tracker.log"
-  logback:
-    rollingpolicy:
-      max-file-size: 5MB
-      max-history: 20
   level:
     com.endurancetrio: INFO
     org.flywaydb: INFO
     org.hibernate.orm.jdbc.bind: INFO
     org.hibernate.SQL: WARN
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 20
 
 management:
   endpoint:
