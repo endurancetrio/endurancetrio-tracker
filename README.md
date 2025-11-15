@@ -205,11 +205,10 @@ switched to [**PostgreSQL**](https://www.postgresql.org/).
 All database schema changes are managed with Flyway. Migration scripts are located in the
 `endurancetrio-data/src/main/resources/db/migration` folder and are automatically executed on
 application startup. As the project evolves, migrations will support both H2 (development) and
-PostgreSQL (production). The file [`DATABASE.md`](./endurancetrio-data/src/main/resources/db/DATABASE.md)
-documents the process to create and manage the database schema migrations.
+PostgreSQL (production).
 
-The devices location entries are stored in a normalized table containing device ID, timestamp,
-latitude, and longitude.
+The file [`DATABASE.md`](./endurancetrio-data/src/main/resources/db/DATABASE.md) documents
+the development and management of application's database.
 
 #### H2 Database Console
 
@@ -289,12 +288,12 @@ Or. for standard JAR execution:
 -Dspring.profiles.active=dev
 ```
 
-A helper script, `spring-boot-run.sh`, is provided to streamline local development. It performs
-a full Maven build and then starts the application using `spring-boot:run` with the **local**
+A helper script, `launch-app.sh`, is provided to streamline local development. It performs
+a full Maven build and then starts the application using the packaged JAR with the **local**
 profile enabled:
 
 ```bash
-./spring-boot-run.sh
+./launch-app.sh
 ```
 
 This project also includes an IntelliJ run configuration stored in the `.run/` folder. After opening

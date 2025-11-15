@@ -2,7 +2,51 @@
 
 This file documents the process to manage the database used with **EnduranceTrio Tracker** REST API.
 
-## Database migration
+## Database Naming Conventions
+
+This project follows consistent naming conventions for database objects to ensure clarity,
+maintainability, and cross-database compatibility.
+
+### Table and Column Names
+
+| Element                 | Naming Convention                                               | Example                                                    |
+|-------------------------|-----------------------------------------------------------------|------------------------------------------------------------|
+| Table                   | Use snake_case and plural nouns                                 | tracking_data, owners                                      |
+| Column                  | Use snake_case with descriptive names                           | device, created_at                                         |
+
+### Constraints
+
+| Element                 | Naming Convention                                               | Example                                                    |
+|-------------------------|-----------------------------------------------------------------|------------------------------------------------------------|
+| Primary Key             | pk_{table}                                                      | pk\_tracking\_data                                         |
+| Foreign Key             | fk\_{table}\_{referenced\_table}\_{referenced_column}           | fk_tracking_data_owners_id                                 |
+| Unique Key              | uk\_{table}\_{column}                                           | uk\_owners\_alias                                          |
+| Check Constraint        | chk\_{table}\_{description}                                     | chk\_tracking\_data\_valid\_latitude                       |
+
+### Indexes
+
+| Element                 | Naming Convention                                                | Example                                                   |
+|-------------------------|------------------------------------------------------------------|-----------------------------------------------------------|
+| Standard Index          | idx\_{table}\_{column}                                           | idx\_tracking\_data\_device                               |
+| Composite Index         | idx\_{table}\_{column}[_{column}...] with columns in query order | idx\_tracking\_data\_device\_owner                        |
+| Unique Index            | uk\_{table}\_{column}[_{column}...]                              | uk\_tracking\_data\_device\_record\_time                  |
+
+### Sequences
+
+| Element                 | Naming Convention                                                | Example                                                   |
+|-------------------------|------------------------------------------------------------------|-----------------------------------------------------------|
+| Sequence                | seq\_{table}\_{column}                                           | seq\_tracking\_data_id                                    |
+
+### Naming Limitations
+
+- **Length Limit** - Keep names under 50 characters to ensure compatibility across H2 and PostgreSQL
+- **Readability** - Use clear and descriptive names and prioritize clarity over brevity
+- **Ordering** - For composite indexes, list columns in the order they are most frequently queried
+- **Case** - Use lowercase letters to avoid case-sensitivity issues
+- **Character Set** - Use only alphanumeric characters and underscores
+- **Avoid** - Database-specific keywords and special characters
+
+## Database Migration
 
 The [database migrations](https://en.wikipedia.org/wiki/Schema_migration) are made using
 [Flyway](https://www.red-gate.com/products/flyway/).
@@ -43,7 +87,7 @@ To make this structure work, the `spring.flyway.locations` property is set with 
 in the `application-{profile}.yaml` files, enabling Flyway to use the correct folders
 for each database.
 
-#### H2 database (local and dev profiles)
+#### H2 Database (local and dev profiles)
 
 ```yaml
 spring:
@@ -53,7 +97,7 @@ spring:
       - classpath:db/migration/dml
 ```
 
-#### PostgreSQL database (prod profile)
+#### PostgreSQL Database (prod profile)
 
 ```yaml
 spring:
@@ -63,13 +107,14 @@ spring:
       - classpath:db/migration/dml
 ```
 
-## Migration scripts
+## Migration Scripts
 
 The DDL scripts are duplicated for each supported database (H2 and PostgreSQL) to ensure full
-compatibility with the targeted databases.
+compatibility with the targeted databases. That is not necessary for the DML scripts, which are
+database-agnostic.
 
-### DDL Scripts
-
-1. Tables creation for the **EnduranceTrio Tracker** REST API:
+1. Creates the **EnduranceTrio Tracker** REST API database tables:
    - [V000.000.001.001__create-tables-h2.sql](migration/ddl/h2/V000.000.001.001__create-tables-h2.sql)
    - [V000.000.001.001__create-tables-postgres.sql](migration/ddl/postgres/V000.000.001.001__create-tables-postgres.sql)
+2. Inserts test data into **EnduranceTrio Tracker** REST API database tables:
+    - [V000.000.001.002__insert-test-data.sql](migration/dml/V000.000.001.002__insert-test-data.sql)

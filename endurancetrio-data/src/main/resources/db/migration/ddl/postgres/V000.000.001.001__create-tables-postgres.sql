@@ -17,8 +17,29 @@
 -- SOFTWARE, INCLUDING INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES,
 -- EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
 --
+
+-- Description: Creates the EnduranceTrio Tracker REST API database tables
 --
 
--- Description: Creates the tables for the EnduranceTrio Tracker REST API
-
 CREATE SCHEMA IF NOT EXISTS endurancetrio_tracker;
+
+-- Create sequence for tracking tracking data primary key
+CREATE SEQUENCE IF NOT EXISTS seq_tracking_data_id  START WITH 1 INCREMENT BY 5 CACHE 5;
+
+-- Create the tracking data table
+CREATE TABLE tracking_data (
+  id          BIGINT       NOT NULL DEFAULT nextval('seq_tracking_data_id'),
+  device      VARCHAR(50)  NOT NULL,
+  record_time TIMESTAMPTZ  NOT NULL,
+  latitude    NUMERIC(9,6) NOT NULL,
+  longitude   NUMERIC(9,6) NOT NULL,
+  owner       VARCHAR(50)  NOT NULL,
+  created_at  TIMESTAMPTZ  DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create primary key, constraints and indexes on the tracking_data table
+ALTER TABLE tracking_data ADD CONSTRAINT pk_tracking_data PRIMARY KEY (id);
+CREATE INDEX idx_tracking_data_device ON tracking_data(device);
+CREATE INDEX idx_tracking_data_device_time ON tracking_data(device, record_time);
+CREATE INDEX idx_tracking_data_owner ON tracking_data(owner);
+CREATE INDEX idx_tracking_data_owner_device ON tracking_data(owner, device);

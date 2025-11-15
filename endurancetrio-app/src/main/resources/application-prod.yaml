@@ -42,6 +42,10 @@ server:
       timeout: 30m
 
 spring:
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_SECRET}
+
   flyway:
     locations:
       - classpath:db/migration/ddl/postgres
@@ -55,4 +59,8 @@ spring:
     properties:
       hibernate:
         format_sql: false
+        jdbc:
+          batch_size: 5
+          order_inserts: true
+          order_updates: true
         use_sql_comments: false
