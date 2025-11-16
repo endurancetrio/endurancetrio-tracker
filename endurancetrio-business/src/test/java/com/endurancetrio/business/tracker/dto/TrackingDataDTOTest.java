@@ -18,7 +18,7 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.data.tracker.model.entity;
+package com.endurancetrio.business.tracker.dto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,28 +27,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for the {@link TrackingData} entity.
+ * Unit test for the {@link TrackingDataDTO} DTO.
  * <p>
  * This test may seem redundant since it only verify getters and setters, but its purpose is to
  * establish a testing culture from the very beginning of the project. It serves as a reminder that
  * every part of the application should be testable and that tests should always be present.
  */
-class TrackingDataTest {
+class TrackingDataDTOTest {
 
-  private static final Long ID = 1L;
   private static final String DEVICE = "SDABC";
   private static final Instant TIME = Instant.parse("2026-09-19T06:00:00Z");
   private static final Double LATITUDE = 39.510058;
   private static final Double LONGITUDE = -9.136079;
   private static final String OWNER = "system";
 
-  private TrackingData underTest;
+  private TrackingDataDTO underTest;
 
   @BeforeEach
   void setUp() {
 
-    underTest = new TrackingData();
-    underTest.setId(ID);
+    underTest = new TrackingDataDTO();
     underTest.setDevice(DEVICE);
     underTest.setTime(TIME);
     underTest.setLatitude(LATITUDE);
@@ -57,9 +55,8 @@ class TrackingDataTest {
   }
 
   @Test
-  void entityShouldRetainValues() {
+  void dtoShouldRetainValues() {
 
-    assertEquals(ID, underTest.getId());
     assertEquals(DEVICE, underTest.getDevice());
     assertEquals(TIME, underTest.getTime());
     assertEquals(LATITUDE, underTest.getLatitude());

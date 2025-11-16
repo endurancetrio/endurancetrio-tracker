@@ -9,33 +9,33 @@ maintainability, and cross-database compatibility.
 
 ### Table and Column Names
 
-| Element                 | Naming Convention                                               | Example                                                    |
-|-------------------------|-----------------------------------------------------------------|------------------------------------------------------------|
-| Table                   | Use snake_case and plural nouns                                 | tracking_data, owners                                      |
-| Column                  | Use snake_case with descriptive names                           | device, created_at                                         |
+| Element                 | Naming Convention                                                    | Example                                                    |
+|-------------------------|----------------------------------------------------------------------|------------------------------------------------------------|
+| Table                   | Use snake_case and plural nouns                                      | tracking_data, owners                                      |
+| Column                  | Use snake_case with descriptive names                                | device, created_at                                         |
 
 ### Constraints
 
-| Element                 | Naming Convention                                               | Example                                                    |
-|-------------------------|-----------------------------------------------------------------|------------------------------------------------------------|
-| Primary Key             | pk_{table}                                                      | pk\_tracking\_data                                         |
-| Foreign Key             | fk\_{table}\_{referenced\_table}\_{referenced_column}           | fk_tracking_data_owners_id                                 |
-| Unique Key              | uk\_{table}\_{column}                                           | uk\_owners\_alias                                          |
-| Check Constraint        | chk\_{table}\_{description}                                     | chk\_tracking\_data\_valid\_latitude                       |
+| Element                 | Naming Convention                                                    | Example                                                    |
+|-------------------------|----------------------------------------------------------------------|------------------------------------------------------------|
+| Primary Key             | pk_{table}                                                           | pk\_tracking\_data                                         |
+| Foreign Key             | fk\_{table}\_{referenced\_table}\_{referenced_column}                | fk\_tracking\_data\_owners\_id                             |
+| Unique Key              | uk\_{table}\_{column}                                                | uk\_owners\_alias                                          |
+| Check Constraint        | chk\_{table}\_{description}                                          | chk\_tracking\_data\_valid\_latitude                       |
 
 ### Indexes
 
-| Element                 | Naming Convention                                                | Example                                                   |
-|-------------------------|------------------------------------------------------------------|-----------------------------------------------------------|
-| Standard Index          | idx\_{table}\_{column}                                           | idx\_tracking\_data\_device                               |
-| Composite Index         | idx\_{table}\_{column}[_{column}...] with columns in query order | idx\_tracking\_data\_device\_owner                        |
-| Unique Index            | uk\_{table}\_{column}[_{column}...]                              | uk\_tracking\_data\_device\_record\_time                  |
+| Element                 | Naming Convention                                                    | Example                                                    |
+|-------------------------|----------------------------------------------------------------------|------------------------------------------------------------|
+| Standard Index          | idx\_{table}\_{column}                                               | idx\_tracking\_data\_device                                |
+| Composite Index         | idx\_{table}\_{column}[\_{column}...] with columns in query order    | idx\_tracking\_data\_device\_owner                         |
+| Unique Index            | uk\_{table}\_{column}[\_{column}...]                                 | uk\_tracking\_data\_device\_record\_time                   |
 
 ### Sequences
 
-| Element                 | Naming Convention                                                | Example                                                   |
-|-------------------------|------------------------------------------------------------------|-----------------------------------------------------------|
-| Sequence                | seq\_{table}\_{column}                                           | seq\_tracking\_data_id                                    |
+| Element                 | Naming Convention                                                    | Example                                                    |
+|-------------------------|----------------------------------------------------------------------|------------------------------------------------------------|
+| Sequence                | seq\_{table}\_{column}                                               | seq\_tracking\_data_id                                     |
 
 ### Naming Limitations
 
@@ -110,7 +110,7 @@ spring:
 ## Migration Scripts
 
 The DDL scripts are duplicated for each supported database (H2 and PostgreSQL) to ensure full
-compatibility with the targeted databases. That is not necessary for the DML scripts, which are
+compatibility with the targeted databases. This isn't necessary for the DML scripts, which are
 database-agnostic.
 
 1. Creates the **EnduranceTrio Tracker** REST API database tables:
