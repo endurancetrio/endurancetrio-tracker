@@ -54,7 +54,7 @@ This project was created by **Ricardo do Canto**, who is the lead developer and 
 ```bash
 POST /tracker/v1/devices
 Content-Type: application/json
-X-API-Key: api-key-here
+Authorization: Bearer api-key-here
 
 {
   "device": "SDABC",
@@ -128,7 +128,7 @@ Content-Type: application/json
 ```bash
 GET /tracker/v1/devices/{deviceId}/locations?page=0&size=20
 Content-Type: application/json
-X-API-Key: api-key-here
+Authorization: Bearer api-key-here
 ```
 
 **Response**: `200 OK`
