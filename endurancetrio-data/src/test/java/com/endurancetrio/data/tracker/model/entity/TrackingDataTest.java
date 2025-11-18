@@ -36,34 +36,37 @@ import org.junit.jupiter.api.Test;
 class TrackingDataTest {
 
   private static final Long ID = 1L;
+  private static final String OWNER = "system";
   private static final String DEVICE = "SDABC";
   private static final Instant TIME = Instant.parse("2026-09-19T06:00:00Z");
   private static final Double LATITUDE = 39.510058;
   private static final Double LONGITUDE = -9.136079;
-  private static final String OWNER = "system";
+  private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
 
   private TrackingData underTest;
 
   @BeforeEach
   void setUp() {
 
+    TrackerAccount account = new TrackerAccount(OWNER, KEY, true);
+
     underTest = new TrackingData();
     underTest.setId(ID);
+    underTest.setAccount(account);
     underTest.setDevice(DEVICE);
     underTest.setTime(TIME);
     underTest.setLatitude(LATITUDE);
     underTest.setLongitude(LONGITUDE);
-    underTest.setOwner(OWNER);
   }
 
   @Test
   void entityShouldRetainValues() {
 
     assertEquals(ID, underTest.getId());
+    assertEquals(OWNER, underTest.getAccount().getOwner());
     assertEquals(DEVICE, underTest.getDevice());
     assertEquals(TIME, underTest.getTime());
     assertEquals(LATITUDE, underTest.getLatitude());
     assertEquals(LONGITUDE, underTest.getLongitude());
-    assertEquals(OWNER, underTest.getOwner());
   }
 }

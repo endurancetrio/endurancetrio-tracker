@@ -22,13 +22,21 @@ package com.endurancetrio.business.tracker.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
+import com.endurancetrio.business.tracker.dto.TrackerAccountDTO;
 import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
+import com.endurancetrio.data.tracker.model.entity.TrackerAccount;
 import com.endurancetrio.data.tracker.model.entity.TrackingData;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class TrackingDataMapperTest {
 
   private static final String DEVICE = "SDABC";
@@ -36,10 +44,16 @@ class TrackingDataMapperTest {
   private static final Double LATITUDE = 39.510058;
   private static final Double LONGITUDE = -9.136079;
   private static final String OWNER = "system";
+  private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
 
   private TrackingData entityTest;
   private TrackingDataDTO dtoTest;
+  private TrackerAccount account;
 
+  @Mock
+  private TrackerAccountMapper accountMapper;
+
+  @InjectMocks
   private TrackingDataMapper underTest;
 
   @BeforeEach
@@ -47,60 +61,64 @@ class TrackingDataMapperTest {
 
     Long testId = 1L;
 
-    underTest = new TrackingDataMapper();
+    account = new TrackerAccount(OWNER, KEY, true);
 
     entityTest = new TrackingData();
     entityTest.setId(testId);
+    entityTest.setAccount(account);
     entityTest.setDevice(DEVICE);
     entityTest.setTime(TIME);
     entityTest.setLatitude(LATITUDE);
     entityTest.setLongitude(LONGITUDE);
-    entityTest.setOwner(OWNER);
 
     dtoTest = new TrackingDataDTO();
+    dtoTest.setAccount(OWNER);
     dtoTest.setDevice(DEVICE);
     dtoTest.setTime(TIME);
     dtoTest.setLatitude(LATITUDE);
     dtoTest.setLongitude(LONGITUDE);
-    dtoTest.setOwner(OWNER);
-  }
-
-  @Test
-  void mapEntity() {
-
-    TrackingData entity = underTest.map(dtoTest);
-
-    assertNull(entity.getId());
-    assertEquals(DEVICE, entity.getDevice());
-    assertEquals(TIME, entity.getTime());
-    assertEquals(LATITUDE, entity.getLatitude());
-    assertEquals(LONGITUDE, entity.getLongitude());
-    assertEquals(OWNER, entity.getOwner());
   }
 
   @Test
   void mapDTO() {
 
-    TrackingDataDTO dto = underTest.map(entityTest);
+    TrackerAccountDTO accountDto = new TrackerAccountDTO(OWNER, KEY, true);
 
-    assertEquals(DEVICE, dto.getDevice());
-    assertEquals(TIME, dto.getTime());
-    assertEquals(LATITUDE, dto.getLatitude());
-    assertEquals(LONGITUDE, dto.getLongitude());
-    assertEquals(OWNER, dto.getOwner());
+    when(accountMapper.map(accountDto)).thenReturn(this.account);
+
+    TrackingData result = underTest.map(dtoTest, accountDto);
+
+    assertNull(result.getId());
+    assertEquals(OWNER, result.getAccount().getOwner());
+    assertEquals(DEVICE, result.getDevice());
+    assertEquals(TIME, result.getTime());
+    assertEquals(LATITUDE, result.getLatitude());
+    assertEquals(LONGITUDE, result.getLongitude());
   }
 
   @Test
-  void mapEntityWithNullParameter() {
+  void mapEntity() {
 
-    TrackingData result = underTest.map((TrackingDataDTO) null);
+    TrackingDataDTO result = underTest.map(entityTest);
+
+    assertEquals(OWNER, result.getAccount());
+    assertEquals(DEVICE, result.getDevice());
+    assertEquals(TIME, result.getTime());
+    assertEquals(LATITUDE, result.getLatitude());
+    assertEquals(LONGITUDE, result.getLongitude());
+  }
+
+  @Test
+  void mapNullDTO() {
+
+    TrackingData result = underTest.map(null, null);
     assertNull(result);
   }
 
   @Test
-  void mapDtoWithNullParameter() {
+  void mapNullEntity() {
 
-    TrackingDataDTO result = underTest.map((TrackingData) null);
+    TrackingDataDTO result = underTest.map(null);
     assertNull(result);
   }
 }

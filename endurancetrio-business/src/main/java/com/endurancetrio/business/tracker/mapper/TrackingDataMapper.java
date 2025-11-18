@@ -20,16 +20,25 @@
 
 package com.endurancetrio.business.tracker.mapper;
 
+import com.endurancetrio.business.tracker.dto.TrackerAccountDTO;
 import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
 import com.endurancetrio.data.tracker.model.entity.TrackingData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link TrackingDataMapper} is a utility class for converting between {@link TrackingDataDTO}
- * and {@link TrackingData} objects.
+ * {@link TrackingDataMapper} is a utility class for converting between {@link TrackingDataDTO} and
+ * {@link TrackingData} objects.
  */
 @Component
 public class TrackingDataMapper {
+
+  private final TrackerAccountMapper accountMapper;
+
+  @Autowired
+  public TrackingDataMapper(TrackerAccountMapper accountMapper) {
+    this.accountMapper = accountMapper;
+  }
 
   /**
    * Converts a {@link TrackingDataDTO} to a {@link TrackingData} entity.
@@ -37,7 +46,7 @@ public class TrackingDataMapper {
    * @param dto the {@link TrackingDataDTO} to be mapped
    * @return the corresponding {@link TrackingData} entity
    */
-  public TrackingData map(TrackingDataDTO dto) {
+  public TrackingData map(TrackingDataDTO dto, TrackerAccountDTO account) {
 
     if (dto == null) {
       return null;
@@ -45,10 +54,10 @@ public class TrackingDataMapper {
 
     TrackingData entity = new TrackingData();
     entity.setDevice(dto.getDevice());
+    entity.setAccount(accountMapper.map(account));
     entity.setTime(dto.getTime());
     entity.setLatitude(dto.getLatitude());
     entity.setLongitude(dto.getLongitude());
-    entity.setOwner(dto.getOwner());
 
     return entity;
   }
@@ -66,11 +75,11 @@ public class TrackingDataMapper {
     }
 
     TrackingDataDTO dto = new TrackingDataDTO();
+    dto.setAccount(entity.getAccount().getOwner());
     dto.setDevice(entity.getDevice());
     dto.setTime(entity.getTime());
     dto.setLatitude(entity.getLatitude());
     dto.setLongitude(entity.getLongitude());
-    dto.setOwner(entity.getOwner());
 
     return dto;
   }

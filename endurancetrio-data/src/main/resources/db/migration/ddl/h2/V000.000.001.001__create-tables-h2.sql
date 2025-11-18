@@ -26,20 +26,34 @@ CREATE SCHEMA IF NOT EXISTS endurancetrio_tracker;
 -- Create sequence for tracking tracking data primary key
 CREATE SEQUENCE IF NOT EXISTS seq_tracking_data_id START WITH 1 INCREMENT BY 5;
 
+-- Create the tracker_account table
+CREATE TABLE tracker_account (
+    owner       VARCHAR(50)  NOT NULL,
+    account_key VARCHAR(100) NOT NULL,
+    enabled     BOOLEAN      NOT NULL
+);
+
+-- Create primary key and unique constraints on the tracker_account table
+ALTER TABLE tracker_account ADD CONSTRAINT pk_tracker_account PRIMARY KEY (owner);
+ALTER TABLE tracker_account ADD CONSTRAINT uk_tracker_account_key UNIQUE (account_key);
+
 -- Create the tracking data table
 CREATE TABLE tracking_data (
   id          BIGINT           NOT NULL DEFAULT NEXT VALUE FOR seq_tracking_data_id,
+  account     VARCHAR(50)      NOT NULL,
   device      VARCHAR(50)      NOT NULL,
   record_time TIMESTAMP        NOT NULL,
   latitude    DOUBLE PRECISION NOT NULL,
   longitude   DOUBLE PRECISION NOT NULL,
-  owner       VARCHAR(50)      NOT NULL,
   created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create primary key, constraints and indexes on the tracking_data table
-ALTER TABLE tracking_data ADD CONSTRAINT pk_tracking_data PRIMARY KEY (id);
+-- Create primary key, foreign key, constraints and indexes on the tracking_data table
+ALTER TABLE tracking_data ADD CONSTRAINT pk_tracking_data
+  PRIMARY KEY (id);
+ALTER TABLE tracking_data ADD CONSTRAINT fk_tracking_data_tracker_account_owner
+  FOREIGN KEY (account) REFERENCES tracker_account(owner);
 CREATE INDEX idx_tracking_data_device ON tracking_data(device);
 CREATE INDEX idx_tracking_data_device_time ON tracking_data(device, record_time);
-CREATE INDEX idx_tracking_data_owner ON tracking_data(owner);
-CREATE INDEX idx_tracking_data_owner_device ON tracking_data(owner, device);
+CREATE INDEX idx_tracking_data_account ON tracking_data(account);
+CREATE INDEX idx_tracking_data_account_device ON tracking_data(account, device);

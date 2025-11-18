@@ -21,46 +21,38 @@
 package com.endurancetrio.business.tracker.dto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for the {@link TrackingDataDTO} DTO.
+ * Unit test for the {@link TrackerAccountDTO} DTO.
  * <p>
  * This test may seem redundant since it only verify getters and setters, but its purpose is to
  * establish a testing culture from the very beginning of the project. It serves as a reminder that
  * every part of the application should be testable and that tests should always be present.
  */
-class TrackingDataDTOTest {
+class TrackerAccountDTOTest {
 
-  private static final String DEVICE = "SDABC";
-  private static final Instant TIME = Instant.parse("2026-09-19T06:00:00Z");
-  private static final Double LATITUDE = 39.510058;
-  private static final Double LONGITUDE = -9.136079;
   private static final String OWNER = "system";
+  private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
 
-  private TrackingDataDTO underTest;
+  private TrackerAccountDTO underTest;
 
   @BeforeEach
   void setUp() {
-
-    underTest = new TrackingDataDTO();
-    underTest.setAccount(OWNER);
-    underTest.setDevice(DEVICE);
-    underTest.setTime(TIME);
-    underTest.setLatitude(LATITUDE);
-    underTest.setLongitude(LONGITUDE);
+    underTest = new TrackerAccountDTO();
+    underTest.setOwner(OWNER);
+    underTest.setKey(KEY);
+    underTest.setEnabled(true);
   }
 
   @Test
-  void dtoShouldRetainValues() {
+  void entityShouldRetainValues() {
 
-    assertEquals(OWNER, underTest.getAccount());
-    assertEquals(DEVICE, underTest.getDevice());
-    assertEquals(TIME, underTest.getTime());
-    assertEquals(LATITUDE, underTest.getLatitude());
-    assertEquals(LONGITUDE, underTest.getLongitude());
+    assertEquals(OWNER, underTest.getOwner());
+    assertEquals(KEY, underTest.getKey());
+    assertTrue(underTest.isEnabled());
   }
 }

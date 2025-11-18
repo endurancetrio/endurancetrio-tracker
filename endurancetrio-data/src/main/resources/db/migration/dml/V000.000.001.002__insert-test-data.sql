@@ -21,8 +21,12 @@
 -- Description: Inserts test data into EnduranceTrio Tracker REST API database tables
 --
 
+-- Insert test data into tracker_account table
+INSERT INTO tracker_account (owner, account_key, enabled) VALUES
+    ('system', 'TEST_ACCOUNT_KEY_1234567890', TRUE);
+
 -- Insert test data into tracking_data table
-INSERT INTO tracking_data (device, record_time, latitude, longitude, owner) VALUES
+INSERT INTO tracking_data (device, record_time, latitude, longitude, account) VALUES
     ('SDABC', '2026-09-19T06:00:00Z', 39.510058, -9.136079, 'system'),
     ('SDDEF', '2026-09-19T06:00:06Z', 39.509001, -9.139602, 'system'),
     ('SDFGH', '2026-09-19T06:00:12Z', 39.509773, -9.140004, 'system'),

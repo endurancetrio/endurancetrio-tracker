@@ -57,6 +57,7 @@ Content-Type: application/json
 Authorization: Bearer api-key-here
 
 {
+  "account": "system",
   "device": "SDABC",
   "time": "2026-09-19T06:00:00Z",
   "lat": 39.510058,
@@ -72,6 +73,7 @@ Authorization: Bearer api-key-here
   "code": 201, 
   "message": "Request handled successfully",
   "data": {
+    "account": "system",
     "device": "SDABC",
     "time": "2026-09-19T06:00:00Z",
     "lat": 39.510058,
@@ -96,24 +98,28 @@ Content-Type: application/json
   "message": "Request handled successfully",
   "data": [
     {
+      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:00:00Z",
       "lat": 39.510058,
       "lon": -9.136079
     },
     {
+      "account": "system",
       "device": "SDDEF",
       "time": "2026-09-19T06:00:06Z",
       "lat":  39.509001,
       "lon": -9.139602
     },
     {
+      "account": "system",
       "device": "SDFGH",
       "time": "2026-09-19T06:00:12Z",
       "lat": 39.509773,
       "lon": -9.140004
     },
     {
+      "account": "system",
       "device": "SDJKL",
       "time": "2026-09-19T06:00:24Z",
       "lat": 39.511075,
@@ -140,24 +146,28 @@ Authorization: Bearer api-key-here
   "message": "Request handled successfully",
   "data": [
     {
+      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:00:00Z",
       "lat": 39.510058,
       "lon": -9.136079
     },
     {
+      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:06:00Z",
       "lat": 39.510071,
       "lon": -9.136071
     },
     {
+      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:12:00Z",
       "lat": 39.510082,
       "lon": -9.136062
     },
     {
+      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:24:00Z",
       "lat": 39.510093,

@@ -22,9 +22,12 @@ package com.endurancetrio.data.tracker.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -33,14 +36,17 @@ import java.util.StringJoiner;
 import org.hibernate.annotations.CreationTimestamp;
 
 /**
- * The {@link TrackingData} represents a geographic tracking point recorded by a device
- * at a specific time.
+ * The {@link TrackingData} represents a geographic tracking point recorded by a device at a
+ * specific time.
  * <p>
  * The {@link TrackingData} fields are defined as follows:
  * <ul>
  *   <li>
  *     {@link #getId()} id : The unique identifier of the {@link TrackingData} that is automatically
  *     generated and is the primary key.
+ *  </li>
+ *  <li>
+ *    {@link #getAccount()} account : The account that recorded this tracking point
  *  </li>
  *  <li>
  *    {@link #getDevice()} device : Identifier of the device that recorded this tracking point
@@ -53,9 +59,6 @@ import org.hibernate.annotations.CreationTimestamp;
  *  </li>
  *  <li>
  *    {@link #getLongitude()} longitude : The longitude coordinate of the tracking point
- *  </li>
- *  <li>
- *    {@link #getOwner()} owner : The owner of the account that recorded this tracking point
  *  </li>
  *  <li>
  *    {@link #getCreatedAt()} createdAt : The timestamp when this record was created in the system
@@ -73,6 +76,10 @@ public class TrackingData {
   )
   private Long id;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "account", nullable = false)
+  private TrackerAccount account;
+
   @Column(name = "device", nullable = false, length = 50)
   private String device;
 
@@ -85,9 +92,6 @@ public class TrackingData {
   @Column(name = "longitude", nullable = false)
   private Double longitude;
 
-  @Column(name = "owner", nullable = false, length = 50)
-  private String owner;
-
   @CreationTimestamp
   @Column(name = "created_at", updatable = false)
   private Instant createdAt;
@@ -96,7 +100,9 @@ public class TrackingData {
     super();
   }
 
-  public TrackingData(String device, Instant time, Double latitude, Double longitude) {
+  public TrackingData(
+      TrackerAccount account, String device, Instant time, Double latitude, Double longitude) {
+    this.account = account;
     this.device = device;
     this.time = time;
     this.latitude = latitude;
@@ -109,6 +115,14 @@ public class TrackingData {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public TrackerAccount getAccount() {
+    return account;
+  }
+
+  public void setAccount(TrackerAccount account) {
+    this.account = account;
   }
 
   public String getDevice() {
@@ -143,14 +157,6 @@ public class TrackingData {
     this.longitude = longitude;
   }
 
-  public String getOwner() {
-    return owner;
-  }
-
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
-
   public Instant getCreatedAt() {
     return createdAt;
   }
@@ -179,13 +185,12 @@ public class TrackingData {
 
   @Override
   public String toString() {
-    return new StringJoiner(", ", TrackingData.class.getSimpleName() + "[", "]")
-        .add("id=" + id)
+    return new StringJoiner(", ", TrackingData.class.getSimpleName() + "[", "]").add("id=" + id)
+        .add("account='" + account.getOwner() + "'")
         .add("device='" + device + "'")
         .add("time=" + time)
         .add("latitude=" + latitude)
         .add("longitude=" + longitude)
-        .add("owner='" + owner + "'")
         .add("createdAt=" + createdAt)
         .toString();
   }
