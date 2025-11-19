@@ -34,6 +34,7 @@ class TrackerAccountMapperTest {
 
   private static final String OWNER = "system";
   private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
+  private static final boolean IS_ENABLED = true;
 
   private TrackerAccount entityTest;
   private TrackerAccountDTO dtoTest;
@@ -50,10 +51,7 @@ class TrackerAccountMapperTest {
     entityTest.setKey(KEY);
     entityTest.setEnabled(true);
 
-    dtoTest = new TrackerAccountDTO();
-    dtoTest.setOwner(OWNER);
-    dtoTest.setKey(KEY);
-    dtoTest.setEnabled(true);
+    dtoTest = new TrackerAccountDTO(OWNER, KEY, IS_ENABLED);
   }
 
   @Test
@@ -62,9 +60,9 @@ class TrackerAccountMapperTest {
     TrackerAccountDTO result = underTest.map(entityTest);
 
     assertNotNull(result);
-    assertEquals(OWNER, result.getOwner());
-    assertEquals(KEY, result.getKey());
-    assertTrue(result.isEnabled());
+    assertEquals(OWNER, result.owner());
+    assertEquals(KEY, result.key());
+    assertTrue(result.enabled());
   }
 
   @Test

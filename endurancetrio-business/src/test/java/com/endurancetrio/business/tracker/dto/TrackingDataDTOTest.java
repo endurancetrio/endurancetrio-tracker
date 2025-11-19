@@ -48,23 +48,17 @@ class TrackingDataDTOTest {
   @BeforeEach
   void setUp() {
 
-    underTest = new TrackingDataDTO();
-    underTest.setAccount(OWNER);
-    underTest.setDevice(DEVICE);
-    underTest.setTime(TIME);
-    underTest.setLatitude(LATITUDE);
-    underTest.setLongitude(LONGITUDE);
-    underTest.setActive(IS_ACTIVE);
+    underTest = new TrackingDataDTO(OWNER, DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
   }
 
   @Test
   void dtoShouldRetainValues() {
 
-    assertEquals(OWNER, underTest.getAccount());
-    assertEquals(DEVICE, underTest.getDevice());
-    assertEquals(TIME, underTest.getTime());
-    assertEquals(LATITUDE, underTest.getLatitude());
-    assertEquals(LONGITUDE, underTest.getLongitude());
-    assertTrue(underTest.isActive());
+    assertEquals(OWNER, underTest.account());
+    assertEquals(DEVICE, underTest.device());
+    assertEquals(TIME, underTest.time());
+    assertEquals(LATITUDE, underTest.latitude());
+    assertEquals(LONGITUDE, underTest.longitude());
+    assertTrue(underTest.active());
   }
 }

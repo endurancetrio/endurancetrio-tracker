@@ -21,6 +21,7 @@
 package com.endurancetrio.business.common.dto;
 
 import com.endurancetrio.business.common.exception.base.EnduranceTrioError;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,9 @@ import java.io.Serializable;
  * message.
  */
 public record ErrorDTO(String error, String message) implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   public ErrorDTO(EnduranceTrioError error) {
     this(error.name(), error.getMessage());

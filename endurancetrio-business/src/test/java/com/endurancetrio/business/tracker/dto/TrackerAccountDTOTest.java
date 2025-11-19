@@ -37,22 +37,20 @@ class TrackerAccountDTOTest {
 
   private static final String OWNER = "system";
   private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
+  private static final boolean IS_ENABLED = true;
 
   private TrackerAccountDTO underTest;
 
   @BeforeEach
   void setUp() {
-    underTest = new TrackerAccountDTO();
-    underTest.setOwner(OWNER);
-    underTest.setKey(KEY);
-    underTest.setEnabled(true);
+    underTest = new TrackerAccountDTO(OWNER, KEY, IS_ENABLED);
   }
 
   @Test
   void entityShouldRetainValues() {
 
-    assertEquals(OWNER, underTest.getOwner());
-    assertEquals(KEY, underTest.getKey());
-    assertTrue(underTest.isEnabled());
+    assertEquals(OWNER, underTest.owner());
+    assertEquals(KEY, underTest.key());
+    assertTrue(underTest.enabled());
   }
 }

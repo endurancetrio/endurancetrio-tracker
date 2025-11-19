@@ -54,11 +54,11 @@ public class TrackingDataMapper {
 
     TrackingData entity = new TrackingData();
     entity.setAccount(accountMapper.map(account));
-    entity.setDevice(dto.getDevice());
-    entity.setTime(dto.getTime());
-    entity.setLatitude(dto.getLatitude());
-    entity.setLongitude(dto.getLongitude());
-    entity.setActive(dto.isActive());
+    entity.setDevice(dto.device());
+    entity.setTime(dto.time());
+    entity.setLatitude(dto.latitude());
+    entity.setLongitude(dto.longitude());
+    entity.setActive(dto.active());
 
     return entity;
   }
@@ -75,14 +75,8 @@ public class TrackingDataMapper {
       return null;
     }
 
-    TrackingDataDTO dto = new TrackingDataDTO();
-    dto.setAccount(entity.getAccount().getOwner());
-    dto.setDevice(entity.getDevice());
-    dto.setTime(entity.getTime());
-    dto.setLatitude(entity.getLatitude());
-    dto.setLongitude(entity.getLongitude());
-    dto.setActive(entity.isActive());
-
-    return dto;
+    return new TrackingDataDTO(entity.getAccount().getOwner(), entity.getDevice(), entity.getTime(),
+        entity.getLatitude(), entity.getLongitude(), entity.isActive()
+    );
   }
 }

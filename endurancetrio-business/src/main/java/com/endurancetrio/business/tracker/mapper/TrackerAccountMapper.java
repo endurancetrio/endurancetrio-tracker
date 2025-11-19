@@ -44,9 +44,9 @@ public class TrackerAccountMapper {
     }
 
     TrackerAccount entity = new TrackerAccount();
-    entity.setOwner(dto.getOwner());
-    entity.setKey(dto.getKey());
-    entity.setEnabled(dto.isEnabled());
+    entity.setOwner(dto.owner());
+    entity.setKey(dto.key());
+    entity.setEnabled(dto.enabled());
 
     return entity;
   }
@@ -63,11 +63,6 @@ public class TrackerAccountMapper {
       return null;
     }
 
-    TrackerAccountDTO dto = new TrackerAccountDTO();
-    dto.setOwner(entity.getOwner());
-    dto.setKey(entity.getKey());
-    dto.setEnabled(entity.isEnabled());
-
-    return dto;
+    return new TrackerAccountDTO(entity.getOwner(), entity.getKey(), entity.isEnabled());
   }
 }

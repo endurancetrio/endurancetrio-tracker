@@ -25,87 +25,26 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * The {@link TrackerAccountDTO} represents a tracker account with its owner, key, and enabled
  * status.
  */
-public class TrackerAccountDTO implements Serializable {
+public record TrackerAccountDTO(
+
+    @NotBlank(message = "Owner is required")
+    @Size(min = 1, max = 50, message = "Owner must be between 1 and 50 characters")
+    String owner,
+
+    @NotBlank(message = "Key is required")
+    @Size(min = 32, max = 64, message = "Key must be between 32 and 64 characters")
+    @Pattern(regexp = "^[A-Za-z0-9]+$", message = "Key must contain only alphanumeric characters")
+    String key,
+
+    boolean enabled
+
+) implements Serializable {
 
   @Serial
   private static final long serialVersionUID = 1L;
-
-  @NotBlank(message = "Owner is required")
-  @Size(min = 1, max = 50, message = "Owner must be between 1 and 50 characters")
-  private String owner;
-
-  @NotBlank(message = "Key is required")
-  @Size(min = 32, max = 64, message = "Key must be between 32 and 64 characters")
-  @Pattern(regexp = "^[A-Za-z0-9]+$", message = "Key must contain only alphanumeric characters")
-  private String key;
-
-  private boolean enabled;
-
-  public TrackerAccountDTO() {
-    super();
-  }
-
-  public TrackerAccountDTO(String owner, String key, boolean enabled) {
-    this.owner = owner;
-    this.key = key;
-    this.enabled = enabled;
-  }
-
-  public String getOwner() {
-    return owner;
-  }
-
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    TrackerAccountDTO that = (TrackerAccountDTO) o;
-    return Objects.equals(owner, that.owner) && Objects.equals(key, that.key) && Objects.equals(
-        enabled, that.enabled);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(owner, enabled);
-  }
-
-  @Override
-  public String toString() {
-    return new StringJoiner(", ", TrackingDataDTO.class.getSimpleName() + "[", "]")
-        .add("owner='" + owner + "'")
-        .add("key='" + key + "'")
-        .add("enabled=" + enabled)
-        .toString();
-  }
 }
