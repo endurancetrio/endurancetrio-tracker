@@ -29,17 +29,17 @@ import java.util.List;
  * in the EnduranceTrio Tracker project. It extends the standard Java {@link Exception} class and
  * includes additional fields for an error code and a list of detailed error information.
  */
-public abstract class EnduranceTrioException extends Exception {
+public abstract class EnduranceTrioException extends RuntimeException {
 
   private final int code;
   private final List<ErrorDTO> errors = new ArrayList<>();
 
-  protected EnduranceTrioException(final int code, final String message) {
+  protected EnduranceTrioException(int code, String message) {
     super(message);
     this.code = code;
   }
 
-  protected EnduranceTrioException(final int code, final String message, final List<ErrorDTO> errors) {
+  protected EnduranceTrioException(int code, String message, List<ErrorDTO> errors) {
     super(message);
     this.code = code;
     if (errors != null) {

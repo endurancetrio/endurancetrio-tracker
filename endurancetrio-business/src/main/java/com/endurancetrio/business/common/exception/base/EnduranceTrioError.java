@@ -18,18 +18,23 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.business.common.dto;
-
-import com.endurancetrio.business.common.exception.base.EnduranceTrioError;
-import java.io.Serializable;
+package com.endurancetrio.business.common.exception.base;
 
 /**
- * The {@link ErrorDTO} class represents an error response with an error code and a descriptive
- * message.
+ * The {@link EnduranceTrioError} enum defines a set of standardized error codes and their
+ * corresponding messages used throughout the EnduranceTrio Tracker project.
  */
-public record ErrorDTO(String error, String message) implements Serializable {
+public enum EnduranceTrioError {
 
-  public ErrorDTO(EnduranceTrioError error) {
-    this(error.name(), error.getMessage());
+  CONCURRENT_UPDATE("The data was concurrently modified by another transaction");
+
+  private final String message;
+
+  EnduranceTrioError(String message) {
+    this.message = message;
+  }
+
+  public String getMessage() {
+    return message;
   }
 }

@@ -45,7 +45,9 @@ public abstract class AuditableEntity implements Serializable {
    * When an entity is updated, the version number is incremented. If another transaction has
    * modified the entity in the meantime, a {@code OptimisticLockException} is thrown.
    * <p>
-   * See <a href="https://docs.jboss.org/hibernate/stable/orm/userguide/html_single/Hibernate_User_Guide.html#locking-optimistic" />
+   * See <a
+   * href="https://docs.jboss.org/hibernate/stable/orm/userguide/html_single/Hibernate_User_Guide.html#locking-optimistic"
+   * />
    */
   @Version
   @Column(name = "version", nullable = false)
@@ -69,9 +71,5 @@ public abstract class AuditableEntity implements Serializable {
 
   public Instant getUpdatedAt() {
     return updatedAt;
-  }
-
-  protected void setCreatedAt(Instant createdAt) {
-    this.createdAt = createdAt;
   }
 }

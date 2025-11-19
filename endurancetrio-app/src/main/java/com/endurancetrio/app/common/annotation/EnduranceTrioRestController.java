@@ -18,18 +18,19 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.business.common.dto;
+package com.endurancetrio.app.common.annotation;
 
-import com.endurancetrio.business.common.exception.base.EnduranceTrioError;
-import java.io.Serializable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.springframework.web.bind.annotation.RestController;
 
-/**
- * The {@link ErrorDTO} class represents an error response with an error code and a descriptive
- * message.
- */
-public record ErrorDTO(String error, String message) implements Serializable {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@RestController
+public @interface EnduranceTrioRestController {
 
-  public ErrorDTO(EnduranceTrioError error) {
-    this(error.name(), error.getMessage());
-  }
 }
