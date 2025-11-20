@@ -14,6 +14,7 @@
    1. [Technology Stack](#technology-stack)
    2. [Database](#database)
    3. [Installation](#installation)
+   4. [Code & Naming Conventions](#code--naming-conventions)
 4. [License](#license)
 
 ## Introduction
@@ -236,7 +237,8 @@ During development, you can access the H2 database console at:
 
 **URL:** `http://localhost:8081/h2-tracker/`
 
-#### Database Characteristics:
+#### Database Characteristics
+
 - **Type:** In-memory H2 database
 - **Mode:** PostgreSQL compatibility
 - **Persistence:** Data is cleared on application restart
@@ -269,6 +271,7 @@ command:
 ```bash
 cp endurancetrio-app/src/main/resources/template-secrets.yaml endurancetrio-app/src/main/resources/application-secrets.yaml
 ```
+
 Now, edit the `application-secrets.yaml` file:
 
 - **Set database credentials**: replace `{USER}` and `{PASSWORD}` with your desired values.
@@ -323,6 +326,90 @@ entry in the *run/debug* configuration dropdown. Select it and run the applicati
 
 The run configuration uses the `local` Spring profile (`application-local.yaml`), so you can start
 developing immediately without additional setup.
+
+### Code & Naming Conventions
+
+#### Controllers, Services and Repositories
+
+This section establishes naming guidelines for controllers, services and repositories, based on clarity,
+maintainability, and semantic meaning.
+
+##### General Principles
+
+- **Interfaces define contracts**; implementations should have meaningful names.
+- Use suffixes that reflect the role or nature of the implementation (e.g., `Main`, `Cached`, `Remote`).
+- Avoid generic suffixes like `Impl` unless absolutely necessary.
+- Keep naming consistent across layers.
+
+##### Controllers
+
+###### REST Controllers
+
+- **Interface**:
+  - Purpose: Hold OpenAPI annotations and define endpoint contracts.
+  - Naming: `DomainAPI` (e.g., `UserAPI`).
+- **Implementation**:
+  - Annotate with `@EnduranceTrioRestController`.
+  - Naming: `DomainRestController` (e.g., `UserRestController`).
+
+```java
+public interface UserAPI {
+  /* OpenAPI annotations */
+}
+
+@EnduranceTrioRestController
+public class UserRestController implements UserAPI {
+  /* endpoints */
+}
+```
+
+###### Web Controllers
+
+- **Interface**: Optional (usually not needed unless for documentation or testing).
+  - Naming: `DomainWeb` (e.g., `UserWeb`).
+- **Implementation**:
+  - Annotate with `@Controller`.
+  - Naming: `EntityWebController` (e.g., `UserWebController`).
+
+```java
+@Controller
+public class UserWebController {
+  /* Thymeleaf views */
+}
+```
+
+##### Service Layer
+
+- **Interface**:
+  - Naming: `DomainService` (e.g., `UserService`).
+- **Implementation**:
+  - Annotate with `@Service`.
+  - Naming:
+    - If single implementation: `DomainServiceMain` (e.g., `UserServiceMain`).
+    - If multiple implementations: Use descriptive suffixes (e.g., `UserServiceCached`, `UserServiceRemote`).
+
+```java
+public interface UserService {
+  /* business logic */
+}
+
+@Service
+public class UserServiceMain implements UserService {
+  /* implementation */
+}
+```
+
+> **Why not `Impl`?**
+> `Impl` is semantically weak. Descriptive suffixes improve readability and convey purpose.
+
+##### Repository Layer
+
+- Prefer Spring Data JPA interfaces:
+
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {}
+```
 
 ## License
 
