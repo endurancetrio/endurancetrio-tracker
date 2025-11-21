@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for the {@link TrackingData} entity.
  * <p>
- * This test may seem redundant since it only verify getters and setters, but its purpose is to
+ * This test may seem redundant since it only verify getters and constructor, but its purpose is to
  * establish a testing culture from the very beginning of the project. It serves as a reminder that
  * every part of the application should be testable and that tests should always be present.
  */

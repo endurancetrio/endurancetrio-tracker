@@ -18,20 +18,16 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.app.common.response;
+package com.endurancetrio.business.tracker.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+public interface TrackerAccountService {
 
-/**
- * The {@link EnduranceTrioResponse} class is a generic response wrapper used in the project to
- * standardize API responses.
- *
- * @param <T> the type of the data payload contained in the response
- */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public record EnduranceTrioResponse<T>(int status, String message, String details, T data) {
-
-  public EnduranceTrioResponse(int status, String message, String details) {
-    this(status, message, details, null);
-  }
+  /**
+   * Validates the provided key for the given owner.
+   *
+   * @param owner the owner of the key
+   * @param key   the key to validate
+   * @return true if the provided key is valid and the account is enabled, false otherwise
+   */
+  boolean validateKey(String owner, String key);
 }

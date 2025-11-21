@@ -18,41 +18,44 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.data.tracker.model.entity;
+package com.endurancetrio.app.common.response;
 
+import static com.endurancetrio.app.common.constants.ControllerConstants.DETAILS_SUCCESS;
+import static com.endurancetrio.app.common.constants.ControllerConstants.MSG_200;
+import static com.endurancetrio.app.common.constants.ControllerConstants.STATUS_200;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.endurancetrio.app.common.constants.ControllerConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for the {@link TrackerAccount} entity.
+ * Unit test for the {@link EnduranceTrioResponse} entity.
  * <p>
  * This test may seem redundant since it only verify getters and constructor, but its purpose is to
  * establish a testing culture from the very beginning of the project. It serves as a reminder that
  * every part of the application should be testable and that tests should always be present.
  */
-class TrackerAccountTest {
+class EnduranceTrioResponseTest {
 
-  private static final String OWNER = "system";
-  private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
+  private static final int TEST_STATUS = STATUS_200;
+  private static final String TEST_MESSAGE = MSG_200;
+  private static final String TEST_DETAILS = DETAILS_SUCCESS;
+  private static final String MSG_DATA = "Success Data";
 
-  private TrackerAccount underTest;
+  private EnduranceTrioResponse<String> underTest;
 
   @BeforeEach
   void setUp() {
-    underTest = new TrackerAccount();
-    underTest.setOwner(OWNER);
-    underTest.setKey(KEY);
-    underTest.setEnabled(true);
+    underTest = new EnduranceTrioResponse<>(TEST_STATUS, TEST_MESSAGE, TEST_DETAILS, MSG_DATA);
   }
 
   @Test
   void entityShouldRetainValues() {
 
-    assertEquals(OWNER, underTest.getOwner());
-    assertEquals(KEY, underTest.getKey());
-    assertTrue(underTest.isEnabled());
+    assertEquals(TEST_STATUS, underTest.status());
+    assertEquals(TEST_MESSAGE, underTest.message());
+    assertEquals(TEST_DETAILS, underTest.details());
+    assertEquals(MSG_DATA, underTest.data());
   }
 }

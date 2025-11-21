@@ -56,6 +56,7 @@ This project was created by **Ricardo do Canto**, who is the lead developer and 
 POST /tracker/v1/devices
 Content-Type: application/json
 Authorization: Bearer api-key-here
+ET-Owner: account-name-here
 
 {
   "account": "system",
@@ -71,9 +72,9 @@ Authorization: Bearer api-key-here
 
 ```json
 {
-  "status": "CREATED",
-  "code": 201, 
-  "message": "Request handled successfully",
+  "code": 201,
+  "status": "Created",
+  "details": "Request handled successfully",
   "data": {
     "account": "system",
     "device": "SDABC",
@@ -96,9 +97,9 @@ Content-Type: application/json
 
 ```json
 {
-  "status": "OK",
   "code": 200,
-  "message": "Request handled successfully",
+  "status": "OK",
+  "details": "Request handled successfully",
   "data": [
     {
       "account": "system",
@@ -142,15 +143,16 @@ Content-Type: application/json
 GET /tracker/v1/devices/{deviceId}/locations?page=0&size=20
 Content-Type: application/json
 Authorization: Bearer api-key-here
+ET-Owner: account-name-here
 ```
 
 **Response**: `200 OK`
 
 ```json
 {
-  "status": "OK",
   "code": 200,
-  "message": "Request handled successfully",
+  "status": "OK",
+  "details": "Request handled successfully",
   "data": [
     {
       "account": "system",

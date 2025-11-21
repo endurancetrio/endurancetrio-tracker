@@ -18,20 +18,15 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.app.common.response;
+package com.endurancetrio.data.tracker.repository;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.endurancetrio.data.tracker.model.entity.TrackerAccount;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-/**
- * The {@link EnduranceTrioResponse} class is a generic response wrapper used in the project to
- * standardize API responses.
- *
- * @param <T> the type of the data payload contained in the response
- */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public record EnduranceTrioResponse<T>(int status, String message, String details, T data) {
+@Repository
+public interface TrackerAccountRepository extends JpaRepository<TrackerAccount, String> {
 
-  public EnduranceTrioResponse(int status, String message, String details) {
-    this(status, message, details, null);
-  }
+  Optional<TrackerAccount> findByOwner(String owner);
 }

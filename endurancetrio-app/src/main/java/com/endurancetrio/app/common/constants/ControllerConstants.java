@@ -29,13 +29,20 @@ import org.springframework.http.HttpStatus;
 public class ControllerConstants {
 
   public static final String API_VERSION_1 = "/v1";
-  public static final String API_RESOURCE_TRACKER = "/tracker";
+  public static final String API_DOMAIN_TRACKER = "/tracker";
 
-  public static final String MSG_CODE_OK = String.valueOf(HttpStatus.OK.value());
-  public static final String MSG_CODE_SERVER_ERROR = HttpStatus.INTERNAL_SERVER_ERROR.toString();
-  public static final String MSG_STATUS_ERROR = "ERROR";
-  public static final String MSG_STATUS_OK = HttpStatus.OK.getReasonPhrase();
-  public static final String MSG_SUCCESS = "Request handled successfully";
+  public static final String API_RESOURCE_DEVICES = "/devices";
+
+  public static final int STATUS_200 = HttpStatus.OK.value();
+  public static final int STATUS_500 = HttpStatus.INTERNAL_SERVER_ERROR.value();
+
+  public static final String MSG_200 = HttpStatus.OK.getReasonPhrase();
+  public static final String MSG_500 = HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
+
+  public static final String DETAILS_AUTH_DENIED = "Access Denied: Missing required permissions";
+  public static final String DETAILS_AUTH_FAILURE = "Authentication failed";
+  public static final String DETAILS_SERVER_ERROR = "An internal server error occurred";
+  public static final String DETAILS_SUCCESS = "Request handled successfully";
 
   private ControllerConstants() {
     throw new IllegalStateException("Utility Class");

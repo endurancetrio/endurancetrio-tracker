@@ -20,14 +20,17 @@
 
 package com.endurancetrio.app.common.handler;
 
+import static com.endurancetrio.app.common.constants.ControllerConstants.DETAILS_SERVER_ERROR;
+import static com.endurancetrio.app.common.constants.ControllerConstants.MSG_500;
+import static com.endurancetrio.app.common.constants.ControllerConstants.STATUS_500;
+
 import com.endurancetrio.app.common.annotation.EnduranceTrioRestController;
-import com.endurancetrio.app.common.constants.ControllerConstants;
 import com.endurancetrio.app.common.response.EnduranceTrioResponse;
 import com.endurancetrio.business.common.dto.ErrorDTO;
 import com.endurancetrio.business.common.exception.base.EnduranceTrioException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,11 +45,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice(annotations = EnduranceTrioRestController.class)
 public class EnduranceTrioExceptionHandlerAPI extends ResponseEntityExceptionHandler {
 
-  private static final Logger LOG = Logger.getLogger(
-      EnduranceTrioExceptionHandlerAPI.class.getName());
-
-  private static final String MSG_STATUS_ERROR = ControllerConstants.MSG_STATUS_ERROR;
-  private static final String MSG_CODE_ERROR = ControllerConstants.MSG_CODE_SERVER_ERROR;
+  private static final Logger LOG = LoggerFactory.getLogger(EnduranceTrioExceptionHandlerAPI.class);
 
   @ExceptionHandler(EnduranceTrioException.class)
   public ResponseEntity<EnduranceTrioResponse<List<ErrorDTO>>> handledException(
@@ -58,12 +57,10 @@ public class EnduranceTrioExceptionHandlerAPI extends ResponseEntityExceptionHan
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
-    LOG.log(Level.WARNING, "Handled Exception ({0}): {1}",
-        new Object[]{status, exception.getMessage()}
-    );
+    LOG.warn("Handled Exception ({}): {}", status.value(), exception.getMessage());
 
-    EnduranceTrioResponse<List<ErrorDTO>> response = new EnduranceTrioResponse<>(MSG_STATUS_ERROR,
-        String.valueOf(status.value()), exception.getMessage(), exception.getErrors()
+    EnduranceTrioResponse<List<ErrorDTO>> response = new EnduranceTrioResponse<>(status.value(),
+        status.getReasonPhrase(), exception.getMessage(), exception.getErrors()
     );
 
     return new ResponseEntity<>(response, status);
@@ -72,10 +69,10 @@ public class EnduranceTrioExceptionHandlerAPI extends ResponseEntityExceptionHan
   @ExceptionHandler(Exception.class)
   public ResponseEntity<EnduranceTrioResponse<String>> unhandledException(Exception exception) {
 
-    LOG.log(Level.SEVERE, MSG_CODE_ERROR, exception);
+    LOG.error("Unhandled exception ({}); {}", STATUS_500, exception.getMessage());
 
-    EnduranceTrioResponse<String> response = new EnduranceTrioResponse<>(MSG_STATUS_ERROR,
-        String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), MSG_CODE_ERROR
+    EnduranceTrioResponse<String> response = new EnduranceTrioResponse<>(STATUS_500, MSG_500,
+        DETAILS_SERVER_ERROR
     );
 
     return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

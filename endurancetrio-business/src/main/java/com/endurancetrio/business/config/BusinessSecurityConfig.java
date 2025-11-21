@@ -18,20 +18,18 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.app.common.response;
+package com.endurancetrio.business.config;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-/**
- * The {@link EnduranceTrioResponse} class is a generic response wrapper used in the project to
- * standardize API responses.
- *
- * @param <T> the type of the data payload contained in the response
- */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public record EnduranceTrioResponse<T>(int status, String message, String details, T data) {
+@Configuration
+public class BusinessSecurityConfig {
 
-  public EnduranceTrioResponse(int status, String message, String details) {
-    this(status, message, details, null);
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
   }
 }
