@@ -18,36 +18,32 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.business.common.exception.base;
+package com.endurancetrio.business.common.exception;
+
+import com.endurancetrio.business.common.dto.ErrorDTO;
+import com.endurancetrio.business.common.exception.base.EnduranceTrioError;
+import com.endurancetrio.business.common.exception.base.EnduranceTrioException;
+import java.util.Collections;
 
 /**
- * The {@link EnduranceTrioError} enum defines a set of standardized error codes and their
- * corresponding messages used throughout the EnduranceTrio Tracker project.
+ * The {@link NotFoundException} class represents an exception that is thrown when a request is made
+ * with invalid or incomplete data.
  * <p>
- * The code associated with each error aligns the HTTP status code conventions.
+ * The code associated with this exception is 400 because we are following the HTTP status code
+ * conventions for the project exceptions codes.
  * <p>
  * See <a href="https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml" /> for
  * more details.
  */
-public enum EnduranceTrioError {
+public class BadRequestException extends EnduranceTrioException {
 
-  BAD_REQUEST(400, "The request was made with invalid or incomplete data"),
-  NOT_FOUND(404, "The requested resource was not found"),
-  CONCURRENT_UPDATE(409, "The data was concurrently modified by another transaction");
+  private static final int BAD_REQUEST = 400;
 
-  private final int code;
-  private final String message;
-
-  EnduranceTrioError(int code, String message) {
-    this.code = code;
-    this.message = message;
+  public BadRequestException(String message) {
+    super(BAD_REQUEST, message);
   }
 
-  public int getCode() {
-    return code;
-  }
-
-  public String getMessage() {
-    return message;
+  public BadRequestException(EnduranceTrioError error) {
+    super(error.getCode(), error.getMessage(), Collections.singletonList(new ErrorDTO(error)));
   }
 }

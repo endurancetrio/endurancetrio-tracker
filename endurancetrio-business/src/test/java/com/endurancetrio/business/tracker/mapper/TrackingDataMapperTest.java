@@ -76,7 +76,7 @@ class TrackingDataMapperTest {
     entityTest.setLongitude(LONGITUDE);
     entityTest.setActive(IS_ACTIVE);
 
-    dtoTest = new TrackingDataDTO(OWNER, DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
+    dtoTest = new TrackingDataDTO(DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
   }
 
   @Test
@@ -102,7 +102,6 @@ class TrackingDataMapperTest {
 
     TrackingDataDTO result = underTest.map(entityTest);
 
-    assertEquals(OWNER, result.account());
     assertEquals(DEVICE, result.device());
     assertEquals(TIME, result.time());
     assertEquals(LATITUDE, result.latitude());

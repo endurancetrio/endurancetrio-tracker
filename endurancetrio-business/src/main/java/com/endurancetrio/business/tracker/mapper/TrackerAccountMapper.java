@@ -37,7 +37,7 @@ public class TrackerAccountMapper {
    * @param dto the {@link TrackerAccountDTO} to be mapped
    * @return the corresponding {@link TrackerAccount} entity
    */
-  TrackerAccount map(TrackerAccountDTO dto) {
+  public TrackerAccount map(TrackerAccountDTO dto) {
 
     if (dto == null) {
       return null;
@@ -57,7 +57,7 @@ public class TrackerAccountMapper {
    * @param entity the {@link TrackerAccount} to be mapped
    * @return the corresponding {@link TrackerAccountDTO}
    */
-  TrackerAccountDTO map(TrackerAccount entity) {
+  public TrackerAccountDTO map(TrackerAccount entity) {
 
     if (entity == null) {
       return null;

@@ -9,7 +9,7 @@
 2. [Features](#features)
    1. [Core Functionality](#core-functionality)
    2. [API Endpoints](#api-endpoints)
-   3. [Swagger UI Documentation](#swagger-ui-documentation)
+   3. [Swagger UI & API Documentation](#swagger-ui--api-documentation)
 3. [Development](#development)
    1. [Technology Stack](#technology-stack)
    2. [Database](#database)
@@ -45,8 +45,8 @@ This project was created by **Ricardo do Canto**, who is the lead developer and 
 | Method | Endpoint                                         | Description                                                         | Authentication     |
 |--------|--------------------------------------------------|---------------------------------------------------------------------|--------------------|
 | `POST` | `/tracker/v1/devices`                            | Submit a new device location                                        | API Key Required   |
-| `GET`  | `/tracker/v1/devices`                            | Get last known location for all existing devices                    | None               |
-| `GET`  | `/tracker/v1/devices/{deviceId}/locations`       | Get historical locations for a device (supports pagination)         | API Key Required   |
+| `GET`  | `/tracker/v1/devices`                            | Get last known location for all existing devices                    | API Key Required   |
+| `GET`  | `/tracker/v1/devices/{device}/locations`         | Get historical locations for a device (supports pagination)         | API Key Required   |
 
 ### API Examples
 
@@ -59,7 +59,6 @@ Authorization: Bearer api-key-here
 ET-Owner: account-name-here
 
 {
-  "account": "system",
   "device": "SDABC",
   "time": "2026-09-19T06:00:00Z",
   "lat": 39.510058,
@@ -76,7 +75,6 @@ ET-Owner: account-name-here
   "status": "Created",
   "details": "Request handled successfully",
   "data": {
-    "account": "system",
     "device": "SDABC",
     "time": "2026-09-19T06:00:00Z",
     "lat": 39.510058,
@@ -86,11 +84,29 @@ ET-Owner: account-name-here
 }
 ```
 
-#### 2. Get last known location for all existing devices
+##### `cURL` request (assuming the application is running on localhost:8081):
+
+```bash
+curl -X POST 'http://localhost:8081/api/tracker/v1/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>' \
+  -d '{
+    "device": "SDABC",
+    "time": "2026-09-19T06:00:00Z",
+    "lat": 39.510058,
+    "lon": -9.136079,
+    "active": true
+  }'
+```
+
+#### 2. Get last known location for all existing devices (Authenticated)
 
 ```bash
 GET /tracker/v1/devices
 Content-Type: application/json
+Authorization: Bearer api-key-here
+ET-Owner: account-name-here
 ```
 
 **Response**: `200 OK`
@@ -102,7 +118,6 @@ Content-Type: application/json
   "details": "Request handled successfully",
   "data": [
     {
-      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:00:00Z",
       "lat": 39.510058,
@@ -110,7 +125,6 @@ Content-Type: application/json
       "active": true
     },
     {
-      "account": "system",
       "device": "SDDEF",
       "time": "2026-09-19T06:00:06Z",
       "lat":  39.509001,
@@ -118,7 +132,6 @@ Content-Type: application/json
       "active": true
     },
     {
-      "account": "system",
       "device": "SDFGH",
       "time": "2026-09-19T06:00:12Z",
       "lat": 39.509773,
@@ -126,7 +139,6 @@ Content-Type: application/json
       "active": true
     },
     {
-      "account": "system",
       "device": "SDJKL",
       "time": "2026-09-19T06:00:24Z",
       "lat": 39.511075,
@@ -155,7 +167,6 @@ ET-Owner: account-name-here
   "details": "Request handled successfully",
   "data": [
     {
-      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:00:00Z",
       "lat": 39.510058,
@@ -163,7 +174,6 @@ ET-Owner: account-name-here
       "active": true
     },
     {
-      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:06:00Z",
       "lat": 39.510071,
@@ -171,7 +181,6 @@ ET-Owner: account-name-here
       "active": true
     },
     {
-      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:12:00Z",
       "lat": 39.510082,
@@ -179,7 +188,6 @@ ET-Owner: account-name-here
       "active": true
     },
     {
-      "account": "system",
       "device": "SDABC",
       "time": "2026-09-19T06:24:00Z",
       "lat": 39.510093,
@@ -196,15 +204,32 @@ ET-Owner: account-name-here
 }
 ```
 
-### Swagger UI Documentation
+### Swagger UI & API Documentation
 
-Access the interactive API documentation at `/swagger-ui.html` when the application is running.
-This interface allows you to:
+Access the interactive API documentation at [`/swagger-ui.html`](http://localhost:8081/swagger-ui.html)
+when the application is running. This interface allows you to:
 
-- Explore all available endpoints
-- Test API calls directly from your browser
-- View request/response models and schemas
-- Understand authentication requirements
+- Explore all available endpoints within the **Tracker** domain.
+- View request/response models (e.g., `TrackingDataDTO`).
+- Test API calls directly from your browser.
+
+#### Authentication Guide
+
+The EnduranceTrio Tracker API requires **Dual-Header Authentication**. To test protected endpoints
+in Swagger UI, follow these steps:
+
+1. Click the **Authorize** button at the top right of the page.
+2. You will see a modal with two separate sections. You must configure **both** to successfully
+   make requests:
+
+| Field Label      | Corresponding Header | Value Format                             | Action                          |
+|------------------|----------------------|------------------------------------------|---------------------------------|
+| **Account Name** | `ET-Owner`           | Your account identifier (e.g., `system`) | Enter ID & click **Authorize**  |
+| **API Key**      | `Authorization`      | `Bearer <your_api_key>`                  | Enter Key & click **Authorize** |
+
+> **Important:**
+> You must click the **Authorize** button for *each* field independently. Ensure both padlocks
+> appear "locked" (closed) before closing the modal and testing endpoints.
 
 ## Development
 

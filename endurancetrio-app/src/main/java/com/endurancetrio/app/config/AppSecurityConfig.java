@@ -97,6 +97,13 @@ public class AppSecurityConfig {
                 .permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**")
                 .permitAll()
+                .requestMatchers(
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/swagger-resources/**",
+                    "/webjars/**"
+                ).permitAll()
                 .anyRequest()
                 .authenticated())
         .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-tracker/**"))

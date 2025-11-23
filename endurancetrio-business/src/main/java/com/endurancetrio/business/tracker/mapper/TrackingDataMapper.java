@@ -75,8 +75,8 @@ public class TrackingDataMapper {
       return null;
     }
 
-    return new TrackingDataDTO(entity.getAccount().getOwner(), entity.getDevice(), entity.getTime(),
-        entity.getLatitude(), entity.getLongitude(), entity.isActive()
+    return new TrackingDataDTO(entity.getDevice(), entity.getTime(), entity.getLatitude(),
+        entity.getLongitude(), entity.isActive()
     );
   }
 }

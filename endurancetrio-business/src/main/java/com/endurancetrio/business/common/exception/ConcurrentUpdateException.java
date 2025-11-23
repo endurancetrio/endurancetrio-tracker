@@ -44,6 +44,6 @@ public class ConcurrentUpdateException extends EnduranceTrioException {
   }
 
   public ConcurrentUpdateException(EnduranceTrioError error) {
-    super(CONFLICT, error.getMessage(), Collections.singletonList(new ErrorDTO(error)));
+    super(error.getCode(), error.getMessage(), Collections.singletonList(new ErrorDTO(error)));
   }
 }

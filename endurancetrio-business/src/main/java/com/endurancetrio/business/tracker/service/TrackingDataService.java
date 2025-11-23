@@ -20,24 +20,16 @@
 
 package com.endurancetrio.business.tracker.service;
 
-import com.endurancetrio.business.tracker.dto.TrackerAccountDTO;
+import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
 
-public interface TrackerAccountService {
-
-  /**
-   * Validates the provided key for the given owner.
-   *
-   * @param owner the owner of the key
-   * @param key   the key to validate
-   * @return true if the provided key is valid and the account is enabled, false otherwise
-   */
-  boolean validateKey(String owner, String key);
+public interface TrackingDataService {
 
   /**
-   * Retrieves the tracker account details for the specified owner.
+   * Saves the provided tracking data for the specified owner.
    *
-   * @param owner the owner of the tracker account
-   * @return the {@link TrackerAccountDTO} containing the account details
+   * @param owner           the owner of the tracking data
+   * @param trackingDataDTO the tracking data to be saved
+   * @return the saved {@link TrackingDataDTO}
    */
-  TrackerAccountDTO getByOwner(String owner);
+  TrackingDataDTO save(String owner, TrackingDataDTO trackingDataDTO);
 }

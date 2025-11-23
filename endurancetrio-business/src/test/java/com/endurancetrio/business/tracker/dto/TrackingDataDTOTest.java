@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
  */
 class TrackingDataDTOTest {
 
-  private static final String OWNER = "system";
   private static final String DEVICE = "SDABC";
   private static final Instant TIME = Instant.parse("2026-09-19T06:00:00Z");
   private static final Double LATITUDE = 39.510058;
@@ -48,13 +47,12 @@ class TrackingDataDTOTest {
   @BeforeEach
   void setUp() {
 
-    underTest = new TrackingDataDTO(OWNER, DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
+    underTest = new TrackingDataDTO(DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
   }
 
   @Test
   void dtoShouldRetainValues() {
 
-    assertEquals(OWNER, underTest.account());
     assertEquals(DEVICE, underTest.device());
     assertEquals(TIME, underTest.time());
     assertEquals(LATITUDE, underTest.latitude());

@@ -23,15 +23,12 @@ package com.endurancetrio.app.common.constants;
 import org.springframework.http.HttpStatus;
 
 /**
- * The {@link ControllerConstants} class contains constant values used across controller classes
- * in the application.
+ * The {@link ControllerConstants} class contains constant values used across controller classes in
+ * the application.
  */
 public class ControllerConstants {
 
-  public static final String API_VERSION_1 = "/v1";
-  public static final String API_DOMAIN_TRACKER = "/tracker";
-
-  public static final String API_RESOURCE_DEVICES = "/devices";
+  public static final String API_PATH = "/api";
 
   public static final int STATUS_200 = HttpStatus.OK.value();
   public static final int STATUS_500 = HttpStatus.INTERNAL_SERVER_ERROR.value();

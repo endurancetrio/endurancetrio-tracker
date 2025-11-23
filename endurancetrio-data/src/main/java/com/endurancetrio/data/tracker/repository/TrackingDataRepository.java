@@ -18,26 +18,11 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.business.tracker.service;
+package com.endurancetrio.data.tracker.repository;
 
-import com.endurancetrio.business.tracker.dto.TrackerAccountDTO;
+import com.endurancetrio.data.tracker.model.entity.TrackingData;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TrackerAccountService {
+public interface TrackingDataRepository extends JpaRepository<TrackingData, Long> {
 
-  /**
-   * Validates the provided key for the given owner.
-   *
-   * @param owner the owner of the key
-   * @param key   the key to validate
-   * @return true if the provided key is valid and the account is enabled, false otherwise
-   */
-  boolean validateKey(String owner, String key);
-
-  /**
-   * Retrieves the tracker account details for the specified owner.
-   *
-   * @param owner the owner of the tracker account
-   * @return the {@link TrackerAccountDTO} containing the account details
-   */
-  TrackerAccountDTO getByOwner(String owner);
 }

@@ -36,10 +36,6 @@ import java.time.Instant;
  */
 public record TrackingDataDTO(
 
-    @NotNull
-    @Size(min = 1, max = 50, message = "Account name must be between 1 and 50 characters")
-    String account,
-
     @NotBlank(message = "Device identifier is required")
     @Size(min = 1, max = 50, message = "Device identifier must be between 1 and 50 characters")
     String device,

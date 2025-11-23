@@ -20,6 +20,10 @@
 
 package com.endurancetrio.business.tracker.service;
 
+import com.endurancetrio.business.common.exception.NotFoundException;
+import com.endurancetrio.business.common.exception.base.EnduranceTrioError;
+import com.endurancetrio.business.tracker.dto.TrackerAccountDTO;
+import com.endurancetrio.business.tracker.mapper.TrackerAccountMapper;
 import com.endurancetrio.data.tracker.model.entity.TrackerAccount;
 import com.endurancetrio.data.tracker.repository.TrackerAccountRepository;
 import java.util.Optional;
@@ -36,12 +40,16 @@ public class TrackerAccountServiceMain implements TrackerAccountService {
   private static final Logger LOG = LoggerFactory.getLogger(TrackerAccountServiceMain.class);
 
   private final TrackerAccountRepository repository;
+  private final TrackerAccountMapper trackerAccountMapper;
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
   public TrackerAccountServiceMain(
-      TrackerAccountRepository repository, PasswordEncoder passwordEncoder) {
+      TrackerAccountRepository repository, TrackerAccountMapper trackerAccountMapper,
+      PasswordEncoder passwordEncoder
+  ) {
     this.repository = repository;
+    this.trackerAccountMapper = trackerAccountMapper;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -49,7 +57,7 @@ public class TrackerAccountServiceMain implements TrackerAccountService {
   @Transactional(readOnly = true)
   public boolean validateKey(String owner, String key) {
 
-    Optional<TrackerAccount> accountOptional = repository.findByOwner(owner);
+    Optional<TrackerAccount> accountOptional = findByOwner(owner);
 
     if (accountOptional.isEmpty()) {
       LOG.warn("Authentication failed: No account found for owner '{}'", owner);
@@ -70,5 +78,23 @@ public class TrackerAccountServiceMain implements TrackerAccountService {
     }
 
     return isValidKey;
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public TrackerAccountDTO getByOwner(String owner) {
+
+    Optional<TrackerAccount> accountOptional = findByOwner(owner);
+
+    if (accountOptional.isEmpty()) {
+      LOG.warn("No account found for owner '{}'", owner);
+      throw new NotFoundException(EnduranceTrioError.NOT_FOUND);
+    }
+
+    return trackerAccountMapper.map(accountOptional.get());
+  }
+
+  private Optional<TrackerAccount> findByOwner(String owner) {
+    return repository.findByOwner(owner);
   }
 }
