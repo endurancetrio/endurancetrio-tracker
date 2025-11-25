@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -177,4 +178,122 @@ public interface TrackerAPI {
           required = true
       ) TrackingDataDTO trackingDataDTO
   );
+
+  /**
+   * Gets the most recent tracking data record for each device present in the database.
+   *
+   * @return list of tracking data records containing the latest record for each device
+   */
+  @Operation(
+      summary = "Gets most recent data per device",
+      description = "Gets the most recent tracking data record for each device present in the database",
+      security = {
+          @SecurityRequirement(name = "Account Name"),
+          @SecurityRequirement(name = "API Key")
+      }
+  )
+  @ApiResponse(
+      responseCode = "200", description = "Tracking data successfully obtained",
+      content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = EnduranceTrioResponse.class),
+          examples = {
+              @ExampleObject(
+                  name = "Success Response",
+                  summary = "Tracking data successfully obtained",
+                  value = """
+                          {
+                            "code": 200,
+                            "status": "OK",
+                            "details": "Request handled successfully",
+                            "data": [
+                              {
+                                "device": "SDABC",
+                                "time": "2026-09-19T06:00:00Z",
+                                "lat": 39.510058,
+                                "lon": -9.136079,
+                                "active": true
+                              },
+                              {
+                                "device": "SDDEF",
+                                "time": "2026-09-19T06:00:06Z",
+                                "lat":  39.509001,
+                                "lon": -9.139602,
+                                "active": true
+                              },
+                              {
+                                "device": "SDFGH",
+                                "time": "2026-09-19T06:00:12Z",
+                                "lat": 39.509773,
+                                "lon": -9.140004,
+                                "active": true
+                              },
+                              {
+                                "device": "SDJKL",
+                                "time": "2026-09-19T06:00:24Z",
+                                "lat": 39.511075,
+                                "lon":  -9.136516,
+                                "active": true
+                              }
+                            ]
+                          }
+                          """
+              ),
+              @ExampleObject(
+                  name = "Success Response with empty list",
+                  summary = "Empty list",
+                  value = """
+                          {
+                            "code": 200,
+                            "status": "OK",
+                            "details": "Request handled successfully",
+                            "data": [
+                            ]
+                          }
+                          """
+              )
+          }
+      )
+  )
+  @ApiResponse(
+      responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+      content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = EnduranceTrioResponse.class),
+          examples = {
+              @ExampleObject(
+                  name = "Auth Error",
+                  summary = "Example of authentication failure",
+                  value = """
+                        {
+                          "code": 401,
+                          "status": "Unauthorized",
+                          "details": "Authentication failed"
+                        }
+                        """
+              )
+          }
+      )
+  )
+  @ApiResponse(
+      responseCode = "500", description = "Internal Server Error",
+      content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = EnduranceTrioResponse.class),
+          examples = {
+              @ExampleObject(
+                  name = "Internal Server Error",
+                  summary = "Example of an internal server failure",
+                  value = """
+                        {
+                          "code": 500,
+                          "status": "Internal Server Error",
+                          "details": "An internal server error occurred"
+                        }
+                        """
+              )
+          }
+      )
+  )
+  ResponseEntity<EnduranceTrioResponse<List<TrackingDataDTO>>> getMostRecentRecordForEachDevice();
 }

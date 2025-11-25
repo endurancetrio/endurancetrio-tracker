@@ -34,6 +34,7 @@ import com.endurancetrio.business.common.exception.base.EnduranceTrioError;
 import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
 import com.endurancetrio.business.tracker.service.TrackingDataService;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,11 +88,29 @@ public class TrackerRestController implements TrackerAPI {
       throw new NotFoundException(EnduranceTrioError.NOT_FOUND);
     }
 
+    HttpStatus status = HttpStatus.CREATED;
     TrackingDataDTO data = trackingDataService.save(owner, trackingDataDTO);
 
-    EnduranceTrioResponse<TrackingDataDTO> response = new EnduranceTrioResponse<>(
-        HttpStatus.CREATED.value(), HttpStatus.CREATED.getReasonPhrase(), DETAILS_SUCCESS, data);
+    EnduranceTrioResponse<TrackingDataDTO> response = new EnduranceTrioResponse<>(status.value(),
+        status.getReasonPhrase(), DETAILS_SUCCESS, data
+    );
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    return ResponseEntity.status(status).body(response);
+  }
+
+  @Override
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping(
+      value = TRACKER_RESOURCE_DEVICES, produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<EnduranceTrioResponse<List<TrackingDataDTO>>> getMostRecentRecordForEachDevice() {
+
+    HttpStatus status = HttpStatus.OK;
+    List<TrackingDataDTO> data = trackingDataService.findMostRecentRecordForEachDevice();
+
+    EnduranceTrioResponse<List<TrackingDataDTO>> response = new EnduranceTrioResponse<>(
+        status.value(), status.getReasonPhrase(), DETAILS_SUCCESS, data);
+
+    return ResponseEntity.status(status).body(response);
   }
 }

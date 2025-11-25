@@ -23,6 +23,7 @@ package com.endurancetrio.business.tracker.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -39,6 +40,8 @@ import com.endurancetrio.data.tracker.repository.TrackerAccountRepository;
 import com.endurancetrio.data.tracker.repository.TrackingDataRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,17 +56,25 @@ class TrackingDataServiceMainTest {
   private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
   private static final boolean IS_ENABLED = true;
 
-  private static final Long ID = 1L;
-  private static final String DEVICE = "SDABC";
-  private static final Instant TIME = Instant.parse("2026-09-19T06:00:00Z");
-  private static final Double LATITUDE = 39.510058;
-  private static final Double LONGITUDE = -9.136079;
+  private static final Long ID_1 = 1L;
+  private static final String DEVICE_1 = "SDABC";
+  private static final Instant TIME_1 = Instant.parse("2026-09-19T06:00:00Z");
+  private static final Double LATITUDE_1 = 39.510058;
+  private static final Double LONGITUDE_1 = -9.136079;
+  private static final Long ID_2 = 2L;
+  private static final String DEVICE_2 = "SDDEF";
+  private static final Instant TIME_2 = Instant.parse("2026-09-19T06:00:06Z");
+  private static final Double LATITUDE_2 = 39.509001;
+  private static final Double LONGITUDE_2 = -9.139602;
   private static final Boolean IS_ACTIVE = true;
 
   private TrackingDataDTO inputDTO;
+  private TrackingDataDTO firstExpectedDTO;
+  private TrackingDataDTO secondExpectedDTO;
   private TrackerAccount mockTrackerAccount;
   private TrackingData mockTrackingData;
-  private TrackingData persistedTrackingData;
+  private TrackingData firstPersistedTrackingData;
+  private TrackingData secondPersistedTrackingData;
 
   @Mock
   private TrackerAccountRepository trackerAccountRepository;
@@ -79,41 +90,44 @@ class TrackingDataServiceMainTest {
 
   @BeforeEach
   void setUp() {
-    inputDTO = new TrackingDataDTO(DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
+    inputDTO = new TrackingDataDTO(DEVICE_1, TIME_1, LATITUDE_1, LONGITUDE_1, IS_ACTIVE);
 
     mockTrackerAccount = new TrackerAccount(OWNER, KEY, IS_ENABLED);
     mockTrackingData = new TrackingData();
-    mockTrackingData.setDevice(DEVICE);
-    mockTrackingData.setLatitude(LATITUDE);
-    mockTrackingData.setLongitude(LONGITUDE);
+    mockTrackingData.setDevice(DEVICE_1);
+    mockTrackingData.setLatitude(LATITUDE_1);
+    mockTrackingData.setLongitude(LONGITUDE_1);
     mockTrackingData.setActive(IS_ACTIVE);
-    persistedTrackingData = new TrackingData(mockTrackerAccount, DEVICE, TIME, LATITUDE, LONGITUDE,
-        IS_ACTIVE
+    firstPersistedTrackingData = new TrackingData(mockTrackerAccount, DEVICE_1, TIME_1, LATITUDE_1,
+        LONGITUDE_1, IS_ACTIVE
     );
-    persistedTrackingData.setId(ID);
+    firstPersistedTrackingData.setId(ID_1);
+    secondPersistedTrackingData = new TrackingData(mockTrackerAccount, DEVICE_2, TIME_2, LATITUDE_2,
+        LONGITUDE_2, IS_ACTIVE
+    );
+    firstPersistedTrackingData.setId(ID_2);
 
-
+    firstExpectedDTO = new TrackingDataDTO(DEVICE_1, TIME_1, LATITUDE_1, LONGITUDE_1, IS_ACTIVE);
+    secondExpectedDTO = new TrackingDataDTO(DEVICE_2, TIME_2, LATITUDE_2, LONGITUDE_2, IS_ACTIVE);
   }
 
   @Test
   void save() {
 
-    TrackingDataDTO expectedDTO = new TrackingDataDTO(DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
-
     when(trackerAccountRepository.getReferenceById(OWNER)).thenReturn(mockTrackerAccount);
     when(trackingDataMapper.map(inputDTO, null)).thenReturn(mockTrackingData);
-    when(trackingDataRepository.save(mockTrackingData)).thenReturn(persistedTrackingData);
-    when(trackingDataMapper.map(persistedTrackingData)).thenReturn(expectedDTO);
+    when(trackingDataRepository.save(mockTrackingData)).thenReturn(firstPersistedTrackingData);
+    when(trackingDataMapper.map(firstPersistedTrackingData)).thenReturn(firstExpectedDTO);
 
     TrackingDataDTO result = underTest.save(OWNER, inputDTO);
 
     verify(trackerAccountRepository, times(1)).getReferenceById(OWNER);
     verify(trackingDataMapper, times(1)).map(inputDTO, null);
     verify(trackingDataRepository, times(1)).save(mockTrackingData);
-    verify(trackingDataMapper, times(1)).map(persistedTrackingData);
+    verify(trackingDataMapper, times(1)).map(firstPersistedTrackingData);
 
     assertNotNull(result);
-    assertEquals(expectedDTO, result);
+    assertEquals(firstExpectedDTO, result);
     assertEquals(mockTrackerAccount, mockTrackingData.getAccount());
   }
 
@@ -133,10 +147,46 @@ class TrackingDataServiceMainTest {
     verify(trackerAccountRepository, times(1)).getReferenceById(owner);
     verify(trackingDataMapper, times(1)).map(inputDTO, null);
     verify(trackingDataRepository, times(1)).save(mockTrackingData);
-    verify(trackingDataMapper, never()).map(persistedTrackingData);
+    verify(trackingDataMapper, never()).map(firstPersistedTrackingData);
 
     assertEquals(EnduranceTrioError.NOT_FOUND.getCode(), result.getCode());
     assertEquals(EnduranceTrioError.NOT_FOUND.getMessage(), result.getMessage());
   }
-}
 
+  @Test
+  void findMostRecentRecordForEachDevice() {
+
+    int expectedResultSize = 2;
+
+    when(trackingDataRepository.findMostRecentRecordForEachDevice()).thenReturn(
+        List.of(firstPersistedTrackingData, secondPersistedTrackingData));
+    when(trackingDataMapper.map(firstPersistedTrackingData)).thenReturn(firstExpectedDTO);
+    when(trackingDataMapper.map(secondPersistedTrackingData)).thenReturn(secondExpectedDTO);
+
+    List<TrackingDataDTO> result = underTest.findMostRecentRecordForEachDevice();
+
+    verify(trackingDataRepository, times(1)).findMostRecentRecordForEachDevice();
+    verify(trackingDataMapper, times(2)).map(any());
+    verify(trackingDataMapper, times(1)).map(firstPersistedTrackingData);
+    verify(trackingDataMapper, times(1)).map(secondPersistedTrackingData);
+
+    assertNotNull(result);
+    assertEquals(expectedResultSize, result.size());
+  }
+
+  @Test
+  void findMostRecentRecordForEachDeviceWithEmptyData() {
+
+    int expectedResultSize = 0;
+
+    when(trackingDataRepository.findMostRecentRecordForEachDevice()).thenReturn(new ArrayList<>());
+
+    List<TrackingDataDTO> result = underTest.findMostRecentRecordForEachDevice();
+
+    verify(trackingDataRepository, times(1)).findMostRecentRecordForEachDevice();
+    verify(trackingDataMapper, never()).map(any());
+
+    assertNotNull(result);
+    assertEquals(expectedResultSize, result.size());
+  }
+}

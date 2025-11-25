@@ -21,6 +21,7 @@
 package com.endurancetrio.business.tracker.service;
 
 import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
+import java.util.List;
 
 public interface TrackingDataService {
 
@@ -32,4 +33,11 @@ public interface TrackingDataService {
    * @return the saved {@link TrackingDataDTO}
    */
   TrackingDataDTO save(String owner, TrackingDataDTO trackingDataDTO);
+
+  /**
+   * Finds the most recent tracking data record for each device present in the database.
+   *
+   * @return list of tracking data records containing the latest record for each device
+   */
+  List<TrackingDataDTO> findMostRecentRecordForEachDevice();
 }

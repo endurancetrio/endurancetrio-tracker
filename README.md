@@ -149,6 +149,15 @@ ET-Owner: account-name-here
 }
 ```
 
+##### `cURL` request (assuming the application is running on localhost:8081):
+
+```bash
+curl -X GET 'http://localhost:8081/api/tracker/v1/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>'
+```
+
 #### 3. Get historical locations for a device (Authenticated, Supports pagination)
 
 ```bash

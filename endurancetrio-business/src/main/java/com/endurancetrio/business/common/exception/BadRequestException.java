@@ -26,8 +26,8 @@ import com.endurancetrio.business.common.exception.base.EnduranceTrioException;
 import java.util.Collections;
 
 /**
- * The {@link NotFoundException} class represents an exception that is thrown when a request is made
- * with invalid or incomplete data.
+ * The {@link BadRequestException} class represents an exception that is thrown when a request is
+ * made with invalid or incomplete data.
  * <p>
  * The code associated with this exception is 400 because we are following the HTTP status code
  * conventions for the project exceptions codes.

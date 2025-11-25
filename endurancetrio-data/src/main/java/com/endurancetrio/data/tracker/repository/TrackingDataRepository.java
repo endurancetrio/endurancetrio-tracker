@@ -21,8 +21,38 @@
 package com.endurancetrio.data.tracker.repository;
 
 import com.endurancetrio.data.tracker.model.entity.TrackingData;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface TrackingDataRepository extends JpaRepository<TrackingData, Long> {
 
+  /**
+   * Finds the most recent tracking data record for each device present in the database.
+   * <p>
+   * Uses a correlated subquery to identify records with the maximum timestamp per device. The main
+   * advantage of this approach is JPA provider compatibility, though performance may degrade with
+   * larger datasets. For databases supporting DISTINCT ON, consider migrating to a native query
+   * approach when performance becomes a concern.
+   * <p>
+   * PostgreSQL native query alternative:
+   *   {@code
+   *     @Query(value = """
+   *       SELECT DISTINCT ON (device) * FROM tracking_data WHERE active = true
+   *       ORDER BY device, time DESC", nativeQuery = true
+   *     )
+   *   }
+   *
+   * @return non-null list of tracking data records containing the latest record for each device.
+   *         Returns an empty list if no active records exist for any device.
+   */
+  @Query(
+      value = """
+          SELECT data FROM TrackingData data WHERE data.active = true AND data.time = (
+            SELECT MAX(maxTimeData.time)
+            FROM TrackingData maxTimeData WHERE maxTimeData.active = true AND maxTimeData.device = data.device
+          ) ORDER BY data.device
+          """
+  )
+  List<TrackingData> findMostRecentRecordForEachDevice();
 }

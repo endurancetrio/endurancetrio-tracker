@@ -29,6 +29,7 @@ import com.endurancetrio.data.tracker.model.entity.TrackingData;
 import com.endurancetrio.data.tracker.repository.TrackerAccountRepository;
 import com.endurancetrio.data.tracker.repository.TrackingDataRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +42,7 @@ public class TrackingDataServiceMain implements TrackingDataService {
 
   public TrackingDataServiceMain(
       TrackerAccountRepository trackerAccountRepository,
-      TrackingDataRepository trackingDataRepository,
-      TrackingDataMapper trackingDataMapper
+      TrackingDataRepository trackingDataRepository, TrackingDataMapper trackingDataMapper
   ) {
     this.trackerAccountRepository = trackerAccountRepository;
     this.trackingDataRepository = trackingDataRepository;
@@ -63,5 +63,14 @@ public class TrackingDataServiceMain implements TrackingDataService {
     } catch (EntityNotFoundException exception) {
       throw new NotFoundException(EnduranceTrioError.NOT_FOUND);
     }
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<TrackingDataDTO> findMostRecentRecordForEachDevice() {
+
+    List<TrackingData> latestLocations = trackingDataRepository.findMostRecentRecordForEachDevice();
+
+    return latestLocations.stream().map(trackingDataMapper::map).toList();
   }
 }
