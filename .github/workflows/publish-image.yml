@@ -1,0 +1,86 @@
+#
+# Copyright (c) 2025-2025 Ricardo do Canto
+#
+# This file is part of the EnduranceTrio Tracker project.
+#
+# Licensed under the Functional Software License (FSL), Version 1.1, ALv2 Future License
+# (the "License");
+#
+# You may not use this file except in compliance with the License. You may obtain a copy
+# of the License at https://fsl.software/
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING WITHOUT LIMITATION WARRANTIES OF FITNESS FOR A PARTICULAR
+# PURPOSE, MERCHANTABILITY, TITLE OR NON-INFRINGEMENT.
+#
+# IN NO EVENT WILL WE HAVE ANY LIABILITY TO YOU ARISING OUT OF OR RELATED TO THE
+# SOFTWARE, INCLUDING INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES,
+# EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
+#
+
+name: Build and Publish Docker Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_user_name:
+        description: 'Non-root user name for the container (e.g., appuser)'
+        required: false
+        # Matches the default in the Dockerfile
+        default: 'endurancetrio'
+      reason:
+        description: 'Reason for building (optional)'
+        required: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: ./mvnw package -DskipTests
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Pass the runtime input as a build argument
+          build-args: |
+            APP_USER=${{ github.event.inputs.app_user_name }}
