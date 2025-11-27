@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2025-2025 Ricardo do Canto
+ *
+ * This file is part of the EnduranceTrio Tracker project.
+ *
+ * Licensed under the Functional Software License (FSL), Version 1.1, ALv2 Future License
+ * (the "License");
+ *
+ * You may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at https://fsl.software/
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING WITHOUT LIMITATION WARRANTIES OF FITNESS FOR A PARTICULAR
+ * PURPOSE, MERCHANTABILITY, TITLE OR NON-INFRINGEMENT.
+ *
+ * IN NO EVENT WILL WE HAVE ANY LIABILITY TO YOU ARISING OUT OF OR RELATED TO THE
+ * SOFTWARE, INCLUDING INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES,
+ * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
+ */
+
+package com.endurancetrio.app.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+/**
+ * Web configuration class that customizes Spring MVC configuration. This class implements
+ * {@link WebMvcConfigurer} to customize various aspects of Spring MVC, including view controllers,
+ * resource handlers, and interceptors.
+ *
+ * @see WebMvcConfigurer
+ * @see ViewControllerRegistry
+ */
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+  /**
+   * Registers view controllers to handle direct URL-to-view mapping without requiring explicit
+   * controller methods.
+   * <p>
+   * This implementation sets up redirects for the OpenAPI documentation root paths to provide a
+   * more user-friendly entry point to the API documentation. Instead of requiring users to remember
+   * the full Swagger UI path, they can simply navigate to {@code /openapi} or {@code /openapi/} and
+   * be automatically redirected to the Swagger UI interface.
+   * <p>
+   * These redirects use HTTP status 302 (temporary redirect) by default, which is appropriate for
+   * this use case as the target URL may change in future versions of the application.
+   *
+   * @param registry the ViewControllerRegistry to which view controllers will be added, allowing
+   *                 for URL path to view name mappings and redirect configurations
+   * @see ViewControllerRegistry
+   */
+  @Override
+  public void addViewControllers(ViewControllerRegistry registry) {
+    registry.addRedirectViewController("/openapi", "/openapi/swagger-ui.html");
+    registry.addRedirectViewController("/openapi/", "/openapi/swagger-ui.html");
+  }
+}

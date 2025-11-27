@@ -101,3 +101,10 @@ spring:
   sql:
     init:
       mode: never
+
+springdoc:
+  api-docs:
+    path: /openapi/api-docs
+  swagger-ui:
+    path: /openapi/swagger-ui.html
+    url: /openapi/api-docs

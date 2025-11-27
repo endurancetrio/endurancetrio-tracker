@@ -215,8 +215,8 @@ ET-Owner: account-name-here
 
 ### Swagger UI & API Documentation
 
-Access the interactive API documentation at [`/swagger-ui.html`](http://localhost:8081/swagger-ui.html)
-when the application is running. This interface allows you to:
+Access the interactive API documentation at [`/openapi/`](http://localhost:8081/openapi/) when the
+application is running. This graphic interface allows you to:
 
 - Explore all available endpoints within the **Tracker** domain.
 - View request/response models (e.g., `TrackingDataDTO`).

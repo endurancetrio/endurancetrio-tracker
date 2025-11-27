@@ -95,14 +95,18 @@ public class AppSecurityConfig {
     http.authorizeHttpRequests(
             authorization -> authorization.requestMatchers("/h2-tracker", "/h2-tracker/**")
                 .permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**")
-                .permitAll()
                 .requestMatchers(
-                    "/swagger-ui.html",
+                    "/css/**",
+                    "/js/**",
+                    "/img/**"
+                ).permitAll()
+                .requestMatchers(
+                    "/openapi/**",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/swagger-resources/**",
-                    "/webjars/**"
+                    "/webjars/**",
+                    "/swagger-ui.html"
                 ).permitAll()
                 .anyRequest()
                 .authenticated())
