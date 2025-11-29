@@ -16,6 +16,7 @@
    3. [API Key Management](#api-key-management)
    4. [Installation](#installation)
    5. [Code & Naming Conventions](#code--naming-conventions)
+   6. [Programmatic Version Management](#programmatic-version-management)
 4. [Deployment](#deployment)
    1. [Container Architecture](#container-architecture)
    2. [Server Setup](#server-setup)
@@ -564,6 +565,31 @@ public class UserServiceMain implements UserService {
 ```java
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {}
+```
+
+### Programmatic Version Management
+
+This project supports programmatic version updates across all Maven modules. It can be achieved
+replacing the label as appropriate in the below command and then executing it.
+
+```shell
+mvn versions:set -DnewVersion={VERSION_NUMBER}
+```
+
+> **Label Definition**
+>
+> + **{VERSION_NUMBER}** : The new Sematic Version number to be applied across all Maven modules
+
+The changes applied with the above command can be reverted executing the following command:
+
+```shell
+mvn versions:revert
+```
+
+Or commited with the following command:
+
+```shell
+mvn versions:commit
 ```
 
 ## Deployment
