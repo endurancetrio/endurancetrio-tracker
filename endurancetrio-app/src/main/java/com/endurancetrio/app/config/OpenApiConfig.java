@@ -30,6 +30,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -50,6 +51,9 @@ import org.springframework.context.annotation.Configuration;
 )
 public class OpenApiConfig {
 
+  @Value("${app.version:unknown}")
+  private String appVersion;
+
   @Bean
   public OpenAPI enduranceTrioOpenAPI() {
     return new OpenAPI().info(new Info().title("EnduranceTrio Tracker API")
@@ -59,7 +63,9 @@ public class OpenApiConfig {
                 and secure solution for submitting and retrieving GPS data using API key
                 authentication. It is ideal for applications such as fleet management,
                 asset tracking, and general IoT device monitoring.
-                """)
+                
+                Application Version: %s
+                """.formatted(appVersion))
             .version("v1.0.0"))
         .addSecurityItem(new SecurityRequirement().addList("Account Name").addList("API Key"));
   }

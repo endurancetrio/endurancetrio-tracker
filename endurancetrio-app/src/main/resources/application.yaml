@@ -22,6 +22,7 @@ app:
   initialization:
     first-account-owner: ${FIRST_OWNER:}
     first-account-key-hash: ${FIRST_HASH:}
+  version: @project.version@
 
 logging:
   pattern:
