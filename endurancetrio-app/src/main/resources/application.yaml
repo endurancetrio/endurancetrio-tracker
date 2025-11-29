@@ -18,6 +18,11 @@
 # EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
 #
 
+app:
+  initialization:
+    first-account-owner: ${FIRST_OWNER:}
+    first-account-key-hash: ${FIRST_HASH:}
+
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n"

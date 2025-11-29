@@ -13,8 +13,9 @@
 3. [Development](#development)
    1. [Technology Stack](#technology-stack)
    2. [Database](#database)
-   3. [Installation](#installation)
-   4. [Code & Naming Conventions](#code--naming-conventions)
+   3. [API Key Management](#api-key-management)
+   4. [Installation](#installation)
+   5. [Code & Naming Conventions](#code--naming-conventions)
 4. [License](#license)
 
 ## Introduction
@@ -283,6 +284,118 @@ During development, you can access the H2 database console at:
 > **Note**
 >
 > All data in the development database is transient and will reset when the application restarts.
+
+### API Key Management
+
+#### Overview
+
+The **EnduranceTrio Tracker** REST API uses secure API key authentication. All API keys are stored
+as bcrypt hashes in the database for enhanced security. This section explains how to generate secure
+API keys, create their bcrypt hashes, and store them in the database.
+
+#### Generate Secure API keys
+
+Generate cryptographically secure random API keys, with `openssl`, executing the following command:
+
+```bash
+openssl rand -base64 32
+```
+
+The above command generates a 32-character secure API key. A 48-character secure API key (even more
+secure), can be generated executing the following command:
+
+```bash
+openssl rand -base64 48
+```
+
+#### Generate bcrypt Hashes
+
+Using **Python3** is the recommended method to generate bcrypt hashes. On Ubuntu/Debian, ensure
+the bcrypt library is installed with the following command:
+
+```bash
+sudo apt update && sudo apt install python3-bcrypt
+```
+
+Then, replace the **{LABEL}** in the below command as appropriate and execute it to generate
+the bcrypt hash from the previously generated API key.
+
+```bash
+python3 -c "import bcrypt; print(bcrypt.hashpw('{API_KEY}'.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8'))"
+```
+
+> **Label Definition**
+>
+> + **{API_KEY}** : The API key
+
+#### Initialize First Account via Environment Variables
+
+The application supports automatic initialization of the first tracker account using environment
+variables. This is the recommended approach for initial setup.
+
+The service responsible for initializing the first tracker account will be executed upon application
+first startup. This service checks for the presence of environment variables `FIRST_OWNER` and
+`FIRST_HASH` during application startup. If both variables are provided and valid, it creates
+the initial tracker account in the database. If an account with the provided owner name already
+exists in the database, its key hash will be overridden with the provided key hash.
+
+##### Complete Workflow
+
+```bash
+# 1. Generate a secure API key
+API_KEY=$(openssl rand -base64 32)
+echo "Generated API Key: ${API_KEY}"
+
+# 2. Generate bcrypt hash
+HASH=$(python3 -c "import bcrypt; print(bcrypt.hashpw('${API_KEY}'.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8'))")
+echo "Bcrypt Hash: ${HASH}"
+
+# 3. Set environment variables and start application
+export FIRST_OWNER="system"
+export FIRST_HASH="${HASH}"
+
+# IMPORTANT: Store the raw API key securely - you won't be able to retrieve it later!
+# Only the bcrypt hash should be stored in the database.
+```
+
+#### Store Hashes in the Database
+
+Access the database console, replace the **{LABELS}** in the below SQL command as appropriate and
+execute it to insert the new account into the `tracker_account` table.
+
+```sql
+INSERT INTO tracker_account (owner, account_key, enabled, version, created_at)
+    VALUES ('{OWNER}', '{API_KEY_HASH}', TRUE, 0, CURRENT_TIMESTAMP);
+```
+
+> **Label Definition**
+>
+> + **{OWNER}** : The name of the owner/user of the API key
+> + **{API_KEY_HASH}** : The bcrypt hash of the API key (not the raw API key)
+
+#### Security Best Practices
+
+1. Key Generation
+   - Use cryptographically secure random generators
+   - Minimum 32 characters length
+   - Base64 encoding for URL-safe characters
+2. Hash Storage
+   - Always use bcrypt with cost factor 12
+   - Never store raw API keys in the database
+   - Include account name and creation timestamp
+3. Operational Security
+   - Securely transmit the raw API key to the end user once
+   - Implement key rotation policies
+   - Monitor and audit API key usage
+   - Store the raw key securely during initial distribution
+   - When the application initial startup is completed, unset the environment variables
+     `FIRST_OWNER` and `FIRST_HASH`.
+
+#### Verification
+
+You can verify API keys work by testing with the provided endpoints using the
+`Authorization: Bearer api-key-here` and `ET-Owner: account-name-here` headers as shown
+in the API examples section.
 
 ### Installation
 

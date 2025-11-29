@@ -40,7 +40,9 @@ public class TrackerAccountServiceMain implements TrackerAccountService {
   private static final Logger LOG = LoggerFactory.getLogger(TrackerAccountServiceMain.class);
 
   private final TrackerAccountRepository repository;
+
   private final TrackerAccountMapper trackerAccountMapper;
+
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
