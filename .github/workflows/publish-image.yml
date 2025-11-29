@@ -21,13 +21,10 @@
 name: Build and Publish Docker Image
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
-      app_user_name:
-        description: 'Non-root user name for the container (e.g., appuser)'
-        required: false
-        # Matches the default in the Dockerfile
-        default: 'endurancetrio'
       reason:
         description: 'Reason for building (optional)'
         required: false
@@ -56,7 +53,7 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
-        run: ./mvnw package -DskipTests
+        run: ./mvnw package
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -71,8 +68,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
-            type=sha,format=short
+            # 1. Release Tag (Semantic Versioning - 0.0.0)
+            # Conditions: ONLY run if the event is 'release'.
+            type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
+
+            # 2. Short SHA Tag (Manual builds)
+            # Conditions: ONLY run if the event is NOT 'release'.
+            type=sha,format=short,enable=${{ github.event_name != 'release' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -81,6 +83,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # Pass the runtime input as a build argument
-          build-args: |
-            APP_USER=${{ github.event.inputs.app_user_name }}

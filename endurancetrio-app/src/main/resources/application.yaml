@@ -46,7 +46,7 @@ spring:
     name: EnduranceTrio Tracker
 
   config:
-    import: application-secrets.yaml
+    import: optional:application-secrets.yaml
 
   datasource:
     driver-class-name: org.h2.Driver

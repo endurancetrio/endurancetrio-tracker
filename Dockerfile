@@ -31,7 +31,11 @@ WORKDIR /opt/endurancetrio-tracker
 # We define a default user 'endurancetrio', but it can be overrided at build time
 ARG APP_USER=endurancetrio
 
-RUN addgroup -S ${APP_USER} && adduser -S ${APP_USER} -G ${APP_USER} && apk --no-cache add curl
+ENV APP_USER=${APP_USER}
+# We set the APP_HOME value matching the WORKDIR path
+ENV APP_HOME=/opt/endurancetrio-tracker
+
+RUN addgroup -S ${APP_USER} && adduser -S ${APP_USER} -G ${APP_USER} && apk --no-cache add curl shadow su-exec
 
 COPY --from=builder /opt/endurancetrio-tracker/dependencies/ ./
 COPY --from=builder /opt/endurancetrio-tracker/spring-boot-loader/ ./
@@ -40,10 +44,9 @@ COPY --from=builder /opt/endurancetrio-tracker/application/ ./
 
 RUN mkdir -p /opt/endurancetrio-tracker/logs && chown -R ${APP_USER}:${APP_USER} /opt/endurancetrio-tracker
 
-USER ${APP_USER}
+COPY docker/build-assets/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-ENTRYPOINT ["java", \
-            "-Xms512m", \
-            "-Xmx512m", \
-            "-XX:+UseG1GC", \
-            "org.springframework.boot.loader.launch.JarLauncher"]
+# The container starts as root to run the entrypoint script
+# The script will then switch to the user specified by PUID/PGID
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

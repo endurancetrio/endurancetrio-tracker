@@ -16,7 +16,13 @@
    3. [API Key Management](#api-key-management)
    4. [Installation](#installation)
    5. [Code & Naming Conventions](#code--naming-conventions)
-4. [License](#license)
+4. [Deployment](#deployment)
+   1. [Container Architecture](#container-architecture)
+   2. [Server Setup](#server-setup)
+   3. [Reverse Proxy Setup](#reverse-proxy-setup)
+   4. [SSL Certificate](#ssl-certificate)
+   5. [www to non-www redirection](#www-to-non-www-redirection)
+5. [License](#license)
 
 ## Introduction
 
@@ -53,7 +59,7 @@ This project was created by **Ricardo do Canto**, who is the lead developer and 
 
 #### 1. Submit a device location (Authenticated)
 
-```bash
+```shell
 POST /tracker/v1/devices
 Content-Type: application/json
 Authorization: Bearer api-key-here
@@ -87,7 +93,7 @@ ET-Owner: account-name-here
 
 ##### `cURL` request (assuming the application is running on localhost:8081):
 
-```bash
+```shell
 curl -X POST 'http://localhost:8081/api/tracker/v1/devices' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer <api-key-here>' \
@@ -103,7 +109,7 @@ curl -X POST 'http://localhost:8081/api/tracker/v1/devices' \
 
 #### 2. Get last known location for all existing devices (Authenticated)
 
-```bash
+```shell
 GET /tracker/v1/devices
 Content-Type: application/json
 Authorization: Bearer api-key-here
@@ -152,7 +158,7 @@ ET-Owner: account-name-here
 
 ##### `cURL` request (assuming the application is running on localhost:8081):
 
-```bash
+```shell
 curl -X GET 'http://localhost:8081/api/tracker/v1/devices' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer <api-key-here>' \
@@ -161,7 +167,7 @@ curl -X GET 'http://localhost:8081/api/tracker/v1/devices' \
 
 #### 3. Get historical locations for a device (Authenticated, Supports pagination)
 
-```bash
+```shell
 GET /tracker/v1/devices/{deviceId}/locations?page=0&size=20
 Content-Type: application/json
 Authorization: Bearer api-key-here
@@ -297,14 +303,14 @@ API keys, create their bcrypt hashes, and store them in the database.
 
 Generate cryptographically secure random API keys, with `openssl`, executing the following command:
 
-```bash
+```shell
 openssl rand -base64 32
 ```
 
 The above command generates a 32-character secure API key. A 48-character secure API key (even more
 secure), can be generated executing the following command:
 
-```bash
+```shell
 openssl rand -base64 48
 ```
 
@@ -313,14 +319,14 @@ openssl rand -base64 48
 Using **Python3** is the recommended method to generate bcrypt hashes. On Ubuntu/Debian, ensure
 the bcrypt library is installed with the following command:
 
-```bash
+```shell
 sudo apt update && sudo apt install python3-bcrypt
 ```
 
 Then, replace the **{LABEL}** in the below command as appropriate and execute it to generate
 the bcrypt hash from the previously generated API key.
 
-```bash
+```shell
 python3 -c "import bcrypt; print(bcrypt.hashpw('{API_KEY}'.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8'))"
 ```
 
@@ -341,7 +347,7 @@ exists in the database, its key hash will be overridden with the provided key ha
 
 ##### Complete Workflow
 
-```bash
+```shell
 # 1. Generate a secure API key
 API_KEY=$(openssl rand -base64 32)
 echo "Generated API Key: ${API_KEY}"
@@ -406,7 +412,7 @@ in the API examples section.
 
 #### 2. Clone the repository
 
-```bash
+```shell
 git clone git@github.com:endurancetrio/endurancetrio-tracker.git
 cd endurancetrio-tracker
 ```
@@ -417,7 +423,7 @@ Create the `application-secrets.yaml` configuration file from the provided
 [template](./endurancetrio-app/src/main/resources/template-secrets.yaml), with the following
 command:
 
-```bash
+```shell
 cp endurancetrio-app/src/main/resources/template-secrets.yaml endurancetrio-app/src/main/resources/application-secrets.yaml
 ```
 
@@ -436,7 +442,7 @@ Now, edit the `application-secrets.yaml` file:
 From the repository root, run the following command to compile the application and install
 its dependencies:
 
-```bash
+```shell
 mvn clean install
 ```
 
@@ -450,13 +456,13 @@ The application uses Spring Boot profiles for environment-specific configuration
 
 You can manually activate a profile when running the application with `spring-boot:run`:
 
-```bash
+```shell
 -Dspring-boot.run.profiles=local
 ```
 
 Or. for standard JAR execution:
 
-```bash
+```shell
 -Dspring.profiles.active=dev
 ```
 
@@ -464,7 +470,7 @@ A helper script, `launch-app.sh`, is provided to streamline local development. I
 a full Maven build and then starts the application using the packaged JAR with the **local**
 profile enabled:
 
-```bash
+```shell
 ./launch-app.sh
 ```
 
@@ -559,6 +565,326 @@ public class UserServiceMain implements UserService {
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {}
 ```
+
+## Deployment
+
+The **EnduranceTrio Tracker** REST API is optimized for containerized deployments using
+[Docker](https://www.docker.com/). The project includes a robust CI/CD pipeline that automatically
+builds and publishes OCI-compliant images to the GitHub Container Registry ([GHCR](https://github.com/orgs/endurancetrio/packages)).
+
+### Container Architecture
+
+The deployment uses a lightweight Alpine-based image (`eclipse-temurin:21-jre-alpine`) optimized
+for security and performance.
+
+Key features of the container setup include:
+- **Multi-stage Build**: Minimizes image size by separating the build environment from the runtime.
+- **Non-root Execution**: Runs as a dedicated non-root user for security.
+- **PUID/PGID Mapping**: A custom entrypoint script allows mapping the internal container user
+  to a host user, ensuring seamless volume permission management for logs and data.
+- **Health Checks**: Built-in integration with Spring Boot Actuator for orchestration health
+  monitoring.
+
+Official images are available at:
+
+`ghcr.io/endurancetrio/endurancetrio-tracker`
+
+| Tag Format    | Description                                      | Use Case        |
+|---------------|--------------------------------------------------|-----------------|
+| `vX.Y.Z`      | Semantic version release (e.g., `v1.0.0`)        | **Production**  |
+| `sha-XXXXXXX` | Short Git SHA commit hash                        | Testing/Staging |
+
+### Server Setup
+
+The recommended way to deploy the application is using Docker Compose. To create the necessary
+folders for the app installation, execute the following command in the deployment server:
+
+```shell
+sudo mkdir -p /opt/endurancetrio-tracker/logs
+```
+
+We will create a user to manage the **EnduranceTrio Tracker** application and set it as the owner
+of the folder `/opt/endurancetrio-tracker/logs/`. This will be achieved with the execution of the
+following commands:
+
+```shell
+sudo useradd -r -s /usr/sbin/nologin endurancetrio
+sudo chown -R endurancetrio:endurancetrio /opt/endurancetrio-tracker/logs/
+```
+
+To confirm that the folder `/opt/endurancetrio-tracker/logs/` has the correct ownership,
+check the output of the following command:
+
+```shell
+ls -lag
+```
+
+The folder `/opt/endurancetrio-tracker` will store the files necessary to deploy the application
+with Docker Compose. To download, from this repository to the server, the `docker-compose.yaml` file
+and the template for the `.env` file, execute the following commands:
+
+```shell
+cd /opt/endurancetrio-tracker/
+sudo wget https://raw.githubusercontent.com/endurancetrio/endurancetrio-tracker/refs/heads/tracker/docker/deployment/docker-compose.yaml
+sudo wget https://raw.githubusercontent.com/endurancetrio/endurancetrio-tracker/refs/heads/tracker/docker/deployment/.env-template
+```
+
+To confirm that the files were downloaded, check the output of the following command:
+
+```shell
+ls -lag
+```
+
+Check the content of the `docker-compose.yaml` file with the below command, and if necessary, use
+the [nano text editor](https://www.nano-editor.org/) to introduce the necessary adaptations.
+
+```shell
+cat docker-compose.yaml
+```
+
+Create a `.env` file in the deployment folder, based on the provided `.env-template`, using
+the following command:
+
+```shell
+sudo mv .env-template .env
+```
+
+The `.env` file manages environment-specific configurations and secrets.
+
+**Key Environment Variables:**
+
+| Variable                 | Description                                        | Required |
+|--------------------------|----------------------------------------------------|----------|
+| `VERSION`                | The image tag to deploy (e.g., `v1.0.0`)           | Yes      |
+| `PUID`                   | User ID under which the container process runs     | Yes      |
+| `PGID`                   | Group ID under which the container process runs    | Yes      |
+| `TRACKER_EXT_PORT`       | The host port mapped to the API (e.g., `8080`)     | Yes      |
+| `SPRING_PROFILES_ACTIVE` | Spring profile (e.g., `dev` or `prod`)             | Yes      |
+| `DB_USERNAME`            | Database username                                  | Yes      |
+| `DB_SECRET`              | Database password                                  | Yes      |
+| `FIRST_OWNER`            | Name for the initial account initialization        | Optional |
+| `FIRST_HASH`             | Bcrypt hash for the initial account initialization | Optional |
+
+The user ID of the created `endurancetrio` user is obtained with the following command:
+
+```shell
+id -u endurancetrio
+```
+
+The group ID of the created `endurancetrio` user is obtained with the following command:
+
+```shell
+id -g endurancetrio
+```
+
+Open the `.env` file with the [nano text editor](https://www.nano-editor.org/)
+and set the environment variables values. After setting the values for all variables,
+save the file with the command `CTRL + O` and then close the editor with the command `CTRL + X`.
+
+Given the sensitive nature of the variable `FIRST_HASH`, its value should be provided as a temporary
+environment variable rather than persisted in the `.env` file to reduce attack surface.
+
+> **Security Note**
+>
+> Refer to the [API Key Management](#api-key-management) section for details on generating
+> the `FIRST_HASH`.
+
+To complete deployment of **EnduranceTrio Tracker** REST API, execute the following command:
+
+```shell
+docker compose -p endurancetrio-tracker up -d
+```
+
+The output of the above command should show that **EnduranceTrio Tracker** REST API was deployed
+with success. For a second confirmation, replace the **{LABEL}** as appropriate in the below
+commands, and check its output.
+
+```shell
+docker ps
+docker logs endurancetrio-tracker
+curl -f http://localhost:{TRACKER_EXT_PORT}/actuator/health
+```
+
+> **Label Definition**
+>
+> + **{TRACKER_EXT_PORT}** : The external port on the Docker host for accessing the application
+
+### Reverse Proxy Setup
+
+To ensure that the necessary [Apache Server](https://httpd.apache.org/) modules for reverse
+proxying are enabled, execute the following commands:
+
+```shell
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod headers
+sudo systemctl reload apache2
+```
+
+To have a domain (or a subdomain) pointing to your **EnduranceTrio Tracker** REST API instance,
+you need to start by [creating the DNS records](https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/)
+of the desired domain (or subdomain) redirecting to your server's IP address.
+
+After creating the necessary [DNS Records](https://docs.digitalocean.com/products/networking/dns/),
+create an Apache Virtual Host for that domain (or a subdomain) following
+[the instructions provided here](https://github.com/EnduranceCode/server-setup-guide/blob/master/03-01-apache-server-management.md#311-apache--create-a-virtual-host).
+As you are setting a Reverse Proxy, use the file [`virtual-host-reverse-proxy-template.conf`](https://github.com/EnduranceCode/server-setup-guide/blob/master/system/etc/apache2/sites-available/virtual-host-reverse-proxy-template.conf).
+To download this file, execute the following command:
+
+```shell
+sudo wget -P /etc/apache2/sites-available/ https://raw.githubusercontent.com/EnduranceCode/server-setup-guide/refs/heads/master/system/etc/apache2/sites-available/virtual-host-reverse-proxy-template.confcurl -f http://localhost:8081/actuator/health
+```
+
+When customizing the Virtual Host configuration file downloaded with the previous command,
+besides replacing the ***{LABELS}*** listed on the [provided instructions](https://github.com/EnduranceCode/server-setup-guide/blob/master/03-01-apache-server-management.md#211-install-apache),
+replace also the label ***{HOST_PORT}*** with the value set on the `.env` file for the
+`TRACKER_EXT_PORT` variable.
+
+Check if it's necessary any further modifications, implement it if necessary and when everything
+completed, save the file with the command `CTRL + O` and then exit the
+[nano text editor](https://www.nano-editor.org/) with the command `CTRL + X`. Then, proceed with
+the creation of a Virtual Host, following the [instructions available here](https://github.com/EnduranceCode/server-setup-guide/blob/master/03-01-apache-server-management.md#311-apache--create-a-virtual-host).
+
+### SSL Certificate
+
+If [Certbot](https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal) isn't yet installed
+on you server, install it and set the SSL certificate for the **EnduranceTrio Tracker** REST API
+instance domain (or a subdomain) following the [instructions available here](https://github.com/EnduranceCode/server-setup-guide/blob/master/03-01-apache-server-management.md#312-apache--secure-apache-with-lets-encrypt).
+If you already have SSL Certificates installed on your server with
+[*Certbot*](https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal), you can expand it
+to include the new domain, or you can create a separate certificate for the new domain.
+
+To expand an existing certificate, replace the ***{LABELS}*** in the below command as appropriate
+and execute it.
+
+```shell
+sudo certbot --apache --cert-name {EXISTING_DOMAIN} --expand -d {EXISTING_DOMAIN} -d {NEW_DOMAIN}
+```
+
+> **Label Definition**
+>
+> + **{EXISTING_DOMAIN}** : The existing domain (or subdomain) that already has a SSL certificate
+> + **{NEW_DOMAIN}**      : The new domain (or subdomain) to be included in the existing SSL certificate
+
+Otherwise, to create a separate certificate for the new domain (or subdomain), replace the ***{LABEL}*** in the below command as appropriate and execute it.
+
+```shell
+sudo certbot --apache -d {DOMAIN}
+```
+
+> **Label Definition**
+>
+> + **{DOMAIN}** : The domain (or subdomain) of the new SSL certificate
+
+Restart the [Apache Server](https://httpd.apache.org/) to apply the updated configuration,
+executing the following command:
+
+```shell
+sudo systemctl restart apache2
+```
+
+[SSL Labs Server Test](https://www.ssllabs.com/ssltest/) can be used to verify the certificate’s
+grade and obtain detailed information about it, from the perspective of an external service.
+
+To test if the [Certbot](https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal) renewal
+script includes the new domain (or subdomain), execute the following command:
+
+```shell
+sudo certbot renew --dry-run
+```
+
+### www to non-www redirection
+
+To implement "www to non-www redirection", it's necessary to edit the Virtual Host configuration
+files (port `80` and port `443`). Start with port `443` Virtual Host file generated by **Certbot**,
+replace the ***{LABEL}*** in the below command as appropriate and then execute it to open the file
+with the [nano text editor](https://www.nano-editor.org/).
+
+```shell
+sudo nano /etc/apache2/sites-available/{VIRTUAL_HOST_FOLDER}-le-ssl.conf
+```
+
+> **Label Definition**
+>
+> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the Virtual Host file to edit
+
+Within the file, replace the ***{LABELS}*** in the below snippet as appropriate and then insert it before the proxy config inside the `<VirtualHost *:443>` block.
+
+```text
+# Redirect www.{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD} to {SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.{SUBDOMAIN}\.{VIRTUAL_HOST_FOLDER}\.{VIRTUAL_HOST_TLD}$ [NC]
+RewriteRule ^ https://{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}%{REQUEST_URI} [L,R=301]
+```
+
+> **Labels Definition**
+>
+> + **{SUBDOMAIN}**           : The [*subdomain*](https://en.wikipedia.org/wiki/Subdomain), if applicable, of the new Virtual Host
+> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
+> + **{VIRTUAL_HOST_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) of the new Virtual Host
+
+After making all the necessary changes, save the file with the command `CTRL + O` and then exit
+the [nano text editor](https://www.nano-editor.org/) with the command `CTRL + X`. Validate the
+**Apache Server** configuration with the following command:
+
+    sudo apachectl configtest
+
+If the configuration is correct, it's then time to edit the port `80` Virtual Host file. Replace the ***{LABEL}*** in the below command as appropriate and then execute it to open the file with the [*nano text editor*](https://www.nano-editor.org/).
+
+```shell
+sudo nano /etc/apache2/sites-available/{VIRTUAL_HOST_FOLDER}.conf
+```
+
+> **Label Definition**
+>
+> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the Virtual Host file to edit
+
+Within the file, delete the totality of it's content. Then, replace the ***{LABELS}*** in the below
+snippet as appropriate and then paste it in the file.
+
+```text
+<VirtualHost *:80>
+
+    ServerName {SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}
+
+    ServerAlias www.{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}
+
+    ServerAdmin {SERVER_ADMIN_EMAIL}
+
+    RewriteEngine on
+    RewriteCond %{HTTP_HOST} ^www\.{SUBDOMAIN}\.{VIRTUAL_HOST_FOLDER}\.{VIRTUAL_HOST_TLD}$ [NC]
+    RewriteRule ^ https://{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}%{REQUEST_URI} [L,R=301]
+
+    RewriteCond %{HTTP_HOST} ^{SUBDOMAIN}\.{VIRTUAL_HOST_FOLDER}\.{VIRTUAL_HOST_TLD}$ [NC]
+    RewriteRule ^ https://{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}%{REQUEST_URI} [L,R=301]
+</VirtualHost>
+```
+
+> **Labels Definition**
+>
+> + **{SUBDOMAIN}**           : The [*subdomain*](https://en.wikipedia.org/wiki/Subdomain), if applicable, of the new Virtual Host
+> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
+> + **{VIRTUAL_HOST_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) of the new Virtual Host
+> + **{SERVER_ADMIN_EMAIL}**  : The server's admin e-mail
+
+After making all the necessary changes, save the file with the command `CTRL + O` and then exit
+the [nano text editor](https://www.nano-editor.org/) with the command `CTRL + X`. Validate the
+**Apache Server** configuration with the following command:
+
+```shell
+sudo apachectl configtest
+```
+
+To activate the new Virtual Host, replace the ***{LABEL}*** in the below commands as appropriate and then execute it.
+
+```shell
+sudo a2ensite {VIRTUAL_HOST_FOLDER}.conf
+sudo systemctl reload apache2
+```
+
+> **Label Definition**
+>
+> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
 
 ## License
 
