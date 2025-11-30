@@ -44,7 +44,9 @@ chown -R "$HOST_UID":"$HOST_GID" "$APP_HOME"
 
 # 4. Drop privileges and execute the main Java application
 exec su-exec "$APP_USER" java \
-    -Xms512m \
-    -Xmx512m \
+    -Xms1024m \
+    -Xmx2048m \
     -XX:+UseG1GC \
+    -XX:MaxGCPauseMillis=200 \
+    -Djava.security.egd=file:/dev/./urandom \
     "org.springframework.boot.loader.launch.JarLauncher"
