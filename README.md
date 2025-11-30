@@ -22,7 +22,6 @@
    2. [Server Setup](#server-setup)
    3. [Reverse Proxy Setup](#reverse-proxy-setup)
    4. [SSL Certificate](#ssl-certificate)
-   5. [www to non-www redirection](#www-to-non-www-redirection)
 5. [License](#license)
 
 ## Introduction
@@ -752,24 +751,74 @@ you need to start by [creating the DNS records](https://docs.digitalocean.com/pr
 of the desired domain (or subdomain) redirecting to your server's IP address.
 
 After creating the necessary [DNS Records](https://docs.digitalocean.com/products/networking/dns/),
-create an Apache Virtual Host for that domain (or a subdomain) following
-[the instructions provided here](https://github.com/EnduranceCode/server-setup-guide/blob/master/03-01-apache-server-management.md#311-apache--create-a-virtual-host).
-As you are setting a Reverse Proxy, use the file [`virtual-host-reverse-proxy-template.conf`](https://github.com/EnduranceCode/server-setup-guide/blob/master/system/etc/apache2/sites-available/virtual-host-reverse-proxy-template.conf).
-To download this file, execute the following command:
+create an Apache Virtual Host configuration file. This repository includes a template that sets
+the following redirects:
+
+- `domain` -> `localhost:<PORT>/`
+- `api subdomain` -> `localhost:<PORT>/api/`
+- `openapi subdomain` -> `localhost:<PORT>/openapi/`
+
+To use the [provided template](./apache/vhost-template.conf), execute the following command:
 
 ```shell
-sudo wget -P /etc/apache2/sites-available/ https://raw.githubusercontent.com/EnduranceCode/server-setup-guide/refs/heads/master/system/etc/apache2/sites-available/virtual-host-reverse-proxy-template.confcurl -f http://localhost:8081/actuator/health
+sudo wget -P /etc/apache2/sites-available/ https://raw.githubusercontent.com/endurancetrio/endurancetrio-tracker/refs/heads/tracker/apache/vhost-template.conf
 ```
 
-When customizing the Virtual Host configuration file downloaded with the previous command,
-besides replacing the ***{LABELS}*** listed on the [provided instructions](https://github.com/EnduranceCode/server-setup-guide/blob/master/03-01-apache-server-management.md#211-install-apache),
-replace also the label ***{HOST_PORT}*** with the value set on the `.env` file for the
-`TRACKER_EXT_PORT` variable.
+Then, replace the **{LABEL}** in the below command as appropriate and execute it to rename the file.
 
-Check if it's necessary any further modifications, implement it if necessary and when everything
-completed, save the file with the command `CTRL + O` and then exit the
-[nano text editor](https://www.nano-editor.org/) with the command `CTRL + X`. Then, proceed with
-the creation of a Virtual Host, following the [instructions available here](https://github.com/EnduranceCode/server-setup-guide/blob/master/03-01-apache-server-management.md#311-apache--create-a-virtual-host).
+```shell
+sudo mv/etc/apache2/sites-available/vhost-template.conf {SECOND_LEVEL_DOMAIN_SLD}
+```
+
+> **Label Definition**
+>
+> + **{SECOND_LEVEL_DOMAIN_SLD}** : The domain name (e.g., 'example' in example.com)
+
+Customize the Virtual Host configuration file downloaded with the previous command, using
+[nano text editor](https://www.nano-editor.org/), and replace the included placeholders
+as described in the following table:
+
+| Placeholder               | Description                                                  |
+|---------------------------|--------------------------------------------------------------|
+| <SECOND_LEVEL_DOMAIN_SLD> | Domain name (e.g., 'example' in example.com)                 |
+| <TOP_LEVEL_DOMAIN_TLD>    | Top-level domain (e.g., 'com', 'org', 'net')                 |
+| <SERVER_ADMIN_EMAIL>      | Administrator email for server notifications                 |
+| <TRACKER_EXT_PORT>        | External port where your tracker app runs (e.g., 8080, 8081) |
+
+Check if it's necessary any further modifications, implement it if necessary and when finished,
+save the file with the command `CTRL + O` and then exit the
+[nano text editor](https://www.nano-editor.org/) with the command `CTRL + X`.
+
+Validate the Apache Server configuration with the following command:
+
+```shell
+sudo apachectl configtest
+```
+
+To activate the new Virtual Host, replace the ***{LABEL}*** in the below commands as appropriate
+and then execute it.
+
+```shell
+sudo a2ensite {VIRTUAL_HOST_FOLDER}.conf
+sudo systemctl reload apache2
+```
+
+> **Label Definition**
+>
+> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
+
+If the domain of the Virtual Host created with the previous procedure has already its DNS Records
+pointing to the server's IP address, replace the ***{LABELS}*** in the below URL as appropriate
+and enter it into a browser’s address bar to test the new local Virtual Host.
+
+```text
+http://{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}
+```
+
+> **Labels Definition**
+>
+> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
+> + **{VIRTUAL_HOST_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) of the new Virtual Host
 
 ### SSL Certificate
 
@@ -818,99 +867,6 @@ script includes the new domain (or subdomain), execute the following command:
 ```shell
 sudo certbot renew --dry-run
 ```
-
-### www to non-www redirection
-
-To implement "www to non-www redirection", it's necessary to edit the Virtual Host configuration
-files (port `80` and port `443`). Start with port `443` Virtual Host file generated by **Certbot**,
-replace the ***{LABEL}*** in the below command as appropriate and then execute it to open the file
-with the [nano text editor](https://www.nano-editor.org/).
-
-```shell
-sudo nano /etc/apache2/sites-available/{VIRTUAL_HOST_FOLDER}-le-ssl.conf
-```
-
-> **Label Definition**
->
-> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the Virtual Host file to edit
-
-Within the file, replace the ***{LABELS}*** in the below snippet as appropriate and then insert it before the proxy config inside the `<VirtualHost *:443>` block.
-
-```text
-# Redirect www.{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD} to {SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}
-RewriteEngine On
-RewriteCond %{HTTP_HOST} ^www\.{SUBDOMAIN}\.{VIRTUAL_HOST_FOLDER}\.{VIRTUAL_HOST_TLD}$ [NC]
-RewriteRule ^ https://{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}%{REQUEST_URI} [L,R=301]
-```
-
-> **Labels Definition**
->
-> + **{SUBDOMAIN}**           : The [*subdomain*](https://en.wikipedia.org/wiki/Subdomain), if applicable, of the new Virtual Host
-> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
-> + **{VIRTUAL_HOST_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) of the new Virtual Host
-
-After making all the necessary changes, save the file with the command `CTRL + O` and then exit
-the [nano text editor](https://www.nano-editor.org/) with the command `CTRL + X`. Validate the
-**Apache Server** configuration with the following command:
-
-    sudo apachectl configtest
-
-If the configuration is correct, it's then time to edit the port `80` Virtual Host file. Replace the ***{LABEL}*** in the below command as appropriate and then execute it to open the file with the [*nano text editor*](https://www.nano-editor.org/).
-
-```shell
-sudo nano /etc/apache2/sites-available/{VIRTUAL_HOST_FOLDER}.conf
-```
-
-> **Label Definition**
->
-> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the Virtual Host file to edit
-
-Within the file, delete the totality of it's content. Then, replace the ***{LABELS}*** in the below
-snippet as appropriate and then paste it in the file.
-
-```text
-<VirtualHost *:80>
-
-    ServerName {SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}
-
-    ServerAlias www.{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}
-
-    ServerAdmin {SERVER_ADMIN_EMAIL}
-
-    RewriteEngine on
-    RewriteCond %{HTTP_HOST} ^www\.{SUBDOMAIN}\.{VIRTUAL_HOST_FOLDER}\.{VIRTUAL_HOST_TLD}$ [NC]
-    RewriteRule ^ https://{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}%{REQUEST_URI} [L,R=301]
-
-    RewriteCond %{HTTP_HOST} ^{SUBDOMAIN}\.{VIRTUAL_HOST_FOLDER}\.{VIRTUAL_HOST_TLD}$ [NC]
-    RewriteRule ^ https://{SUBDOMAIN}.{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}%{REQUEST_URI} [L,R=301]
-</VirtualHost>
-```
-
-> **Labels Definition**
->
-> + **{SUBDOMAIN}**           : The [*subdomain*](https://en.wikipedia.org/wiki/Subdomain), if applicable, of the new Virtual Host
-> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
-> + **{VIRTUAL_HOST_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) of the new Virtual Host
-> + **{SERVER_ADMIN_EMAIL}**  : The server's admin e-mail
-
-After making all the necessary changes, save the file with the command `CTRL + O` and then exit
-the [nano text editor](https://www.nano-editor.org/) with the command `CTRL + X`. Validate the
-**Apache Server** configuration with the following command:
-
-```shell
-sudo apachectl configtest
-```
-
-To activate the new Virtual Host, replace the ***{LABEL}*** in the below commands as appropriate and then execute it.
-
-```shell
-sudo a2ensite {VIRTUAL_HOST_FOLDER}.conf
-sudo systemctl reload apache2
-```
-
-> **Label Definition**
->
-> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
 
 ## License
 
