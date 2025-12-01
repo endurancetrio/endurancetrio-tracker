@@ -18,6 +18,10 @@
 # EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
 #
 
+cors:
+  # Should be set in the .env file or as an environment variable
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
 logging:
   file:
     name: "./logs/endurancetrio-tracker.log"
@@ -43,6 +47,7 @@ server:
 
 spring:
   datasource:
+    # Database credentials must be set in the .env file or as an environment variable
     username: ${DB_USERNAME}
     password: ${DB_SECRET}
 

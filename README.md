@@ -222,12 +222,42 @@ ET-Owner: account-name-here
 
 ### Swagger UI & API Documentation
 
-Access the interactive API documentation at [`/openapi/`](http://localhost:8081/openapi/) when the
-application is running. This graphic interface allows you to:
+The EnduranceTrio Tracker API provides interactive documentation through **Swagger UI**, with
+separate documentation groups for different environments. This graphic interface allows you to:
 
 - Explore all available endpoints within the **Tracker** domain.
 - View request/response models (e.g., `TrackingDataDTO`).
 - Test API calls directly from your browser.
+
+#### Environment-Specific Access
+
+The Swagger UI endpoint varies by environment and deployment configuration:
+
+| Environment           | Default URL                             | Note                        |
+|-----------------------|-----------------------------------------|-----------------------------|
+| **Local Development** | `http://localhost:8081/swagger-ui.html` | Direct application access   |
+| **Public**            | `openapi` subdomain                     | Configured via Apache proxy |
+
+#### Selecting the Correct Environment Group
+
+When you access Swagger UI, **you must select the appropriate documentation group**
+for your environment:
+
+1. **Look for the dropdown menu** in the top-right corner of the Swagger UI page (labeled with
+   the current group name)
+2. **Choose the correct group** based on your environment:
+    - **`Tracker Domain (LOCAL)`** - For local development (shows paths with `/api` prefix)
+    - **`Tracker Domain (PROD)`** - For production use (shows paths without `/api` prefix)
+
+> **Important:**
+> When accessing Swagger UI through the **openapi subdomain** in production, the gateway strips
+> the `/api` prefix from paths. The documentation reflects the client-facing URLs, not the internal
+> application paths.
+
+**Why this matters:**
+- Different groups show different server URLs and path structures
+- Selecting the wrong group may show incorrect endpoint URLs
+- The authentication setup is shared between groups
 
 #### Authentication Guide
 
@@ -323,7 +353,7 @@ the bcrypt library is installed with the following command:
 sudo apt update && sudo apt install python3-bcrypt
 ```
 
-Then, replace the **{LABEL}** in the below command as appropriate and execute it to generate
+Then, replace the ***{LABEL}*** in the below command as appropriate and execute it to generate
 the bcrypt hash from the previously generated API key.
 
 ```shell
@@ -366,7 +396,7 @@ export FIRST_HASH="${HASH}"
 
 #### Store Hashes in the Database
 
-Access the database console, replace the **{LABELS}** in the below SQL command as appropriate and
+Access the database console, replace the ***{LABELS}*** in the below SQL command as appropriate and
 execute it to insert the new account into the `tracker_account` table.
 
 ```sql
@@ -721,7 +751,7 @@ docker compose -p endurancetrio-tracker up -d
 ```
 
 The output of the above command should show that **EnduranceTrio Tracker** REST API was deployed
-with success. For a second confirmation, replace the **{LABEL}** as appropriate in the below
+with success. For a second confirmation, replace the ***{LABEL}*** as appropriate in the below
 commands, and check its output.
 
 ```shell
@@ -743,6 +773,7 @@ proxying are enabled, execute the following commands:
 sudo a2enmod proxy
 sudo a2enmod proxy_http
 sudo a2enmod headers
+sudo a2enmod rewrite
 sudo systemctl reload apache2
 ```
 
@@ -764,15 +795,15 @@ To use the [provided template](./apache/vhost-template.conf), execute the follow
 sudo wget -P /etc/apache2/sites-available/ https://raw.githubusercontent.com/endurancetrio/endurancetrio-tracker/refs/heads/tracker/apache/vhost-template.conf
 ```
 
-Then, replace the **{LABEL}** in the below command as appropriate and execute it to rename the file.
+Then, replace the ***{LABEL}*** in the below command as appropriate and execute it to rename the file.
 
 ```shell
-sudo mv/etc/apache2/sites-available/vhost-template.conf {SECOND_LEVEL_DOMAIN_SLD}
+sudo mv /etc/apache2/sites-available/vhost-template.conf /etc/apache2/sites-available/{SECOND_LEVEL_DOMAIN_SLD}.conf
 ```
 
 > **Label Definition**
 >
-> + **{SECOND_LEVEL_DOMAIN_SLD}** : The domain name (e.g., 'example' in example.com)
+> + **{SECOND_LEVEL_DOMAIN_SLD}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) (e.g., 'example' in example.com)
 
 Customize the Virtual Host configuration file downloaded with the previous command, using
 [nano text editor](https://www.nano-editor.org/), and replace the included placeholders
@@ -786,8 +817,7 @@ as described in the following table:
 | <TRACKER_EXT_PORT>        | External port where your tracker app runs (e.g., 8080, 8081) |
 
 Check if it's necessary any further modifications, implement it if necessary and when finished,
-save the file with the command `CTRL + O` and then exit the
-[nano text editor](https://www.nano-editor.org/) with the command `CTRL + X`.
+save the file with the command `CTRL + O` and then exit the text editor with the command `CTRL + X`.
 
 Validate the Apache Server configuration with the following command:
 
@@ -799,26 +829,26 @@ To activate the new Virtual Host, replace the ***{LABEL}*** in the below command
 and then execute it.
 
 ```shell
-sudo a2ensite {VIRTUAL_HOST_FOLDER}.conf
+sudo a2ensite {SECOND_LEVEL_DOMAIN_SLD}.conf
 sudo systemctl reload apache2
 ```
 
 > **Label Definition**
 >
-> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
+> + **{SECOND_LEVEL_DOMAIN_SLD}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) (e.g., 'example' in example.com)
 
 If the domain of the Virtual Host created with the previous procedure has already its DNS Records
 pointing to the server's IP address, replace the ***{LABELS}*** in the below URL as appropriate
 and enter it into a browser’s address bar to test the new local Virtual Host.
 
 ```text
-http://{VIRTUAL_HOST_FOLDER}.{VIRTUAL_HOST_TLD}
+http://{SECOND_LEVEL_DOMAIN_SLD}.{TOP_LEVEL_DOMAIN_TLD}
 ```
 
 > **Labels Definition**
 >
-> + **{VIRTUAL_HOST_FOLDER}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) of the new Virtual Host
-> + **{VIRTUAL_HOST_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) of the new Virtual Host
+> + **{SECOND_LEVEL_DOMAIN_SLD}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) (e.g., 'example' in example.com)
+> + **{TOP_LEVEL_DOMAIN_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) (e.g., 'com', 'org', 'net')
 
 ### SSL Certificate
 
@@ -841,7 +871,8 @@ sudo certbot --apache --cert-name {EXISTING_DOMAIN} --expand -d {EXISTING_DOMAIN
 > + **{EXISTING_DOMAIN}** : The existing domain (or subdomain) that already has a SSL certificate
 > + **{NEW_DOMAIN}**      : The new domain (or subdomain) to be included in the existing SSL certificate
 
-Otherwise, to create a separate certificate for the new domain (or subdomain), replace the ***{LABEL}*** in the below command as appropriate and execute it.
+Otherwise, to create a separate certificate for the new domain (or subdomain), replace
+the ***{LABEL}*** in the below command as appropriate and execute it.
 
 ```shell
 sudo certbot --apache -d {DOMAIN}
@@ -851,10 +882,31 @@ sudo certbot --apache -d {DOMAIN}
 >
 > + **{DOMAIN}** : The domain (or subdomain) of the new SSL certificate
 
-Restart the [Apache Server](https://httpd.apache.org/) to apply the updated configuration,
-executing the following command:
+[Certbot](https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal) will create a file,
+at `/etc/apache2/sites-available/` named `{SECOND_LEVEL_DOMAIN_SLD}-le-ssl.conf` and it's necessary
+to check if the `RequestHeader` directives are set correctly. Replace the ***{LABEL}*** as appropriate
+in the below command and execute it to edit with the [nano text editor](https://www.nano-editor.org/).
 
 ```shell
+sudo nano {SECOND_LEVEL_DOMAIN_SLD}-le-ssl.conf
+```
+
+Ensure that the `RequestHeader` directives matches the content of the following snippet:
+
+```text
+RequestHeader set X-Forwarded-Proto "https"
+RequestHeader set X-Forwarded-Port "443"
+```
+
+Check if it's necessary any further modifications, implement it if required and when finished, save
+the file with the command `CTRL + O` and then exit the text editor  with the command `CTRL + X`.
+
+Validate the Apache Server configuration and, if everything is correct, restart the
+[Apache Server](https://httpd.apache.org/) to apply the updated configuration, executing the below
+commands:
+
+```shell
+sudo apachectl configtest
 sudo systemctl restart apache2
 ```
 

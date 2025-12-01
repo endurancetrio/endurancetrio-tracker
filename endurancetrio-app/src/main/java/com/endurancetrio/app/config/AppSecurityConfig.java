@@ -23,11 +23,15 @@ package com.endurancetrio.app.config;
 import com.endurancetrio.app.common.security.entrypoint.EnduranceTrioAuthEntryPoint;
 import com.endurancetrio.app.common.security.filter.EnduranceTrioAuthFilter;
 import com.endurancetrio.app.common.security.provider.EnduranceTrioAuthProvider;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
@@ -38,6 +42,9 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Security configuration for the EnduranceTrio application.
@@ -46,16 +53,66 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class AppSecurityConfig {
 
+  private final String allowedOrigins;
   private final EnduranceTrioAuthProvider authProvider;
   private final EnduranceTrioAuthEntryPoint entryPoint;
 
   @Autowired
   public AppSecurityConfig(
-      EnduranceTrioAuthProvider authProvider,
-      EnduranceTrioAuthEntryPoint entryPoint
+      @Value("${cors.allowed-origins}") String allowedOrigins,
+      EnduranceTrioAuthProvider authProvider, EnduranceTrioAuthEntryPoint entryPoint
   ) {
     this.authProvider = authProvider;
     this.entryPoint = entryPoint;
+    this.allowedOrigins = allowedOrigins;
+  }
+
+  /**
+   * Creates and configures a CORS (Cross-Origin Resource Sharing) configuration source bean. This
+   * bean defines CORS policies for the application, allowing or restricting cross-origin requests.
+   *
+   * @return {@link CorsConfigurationSource} a fully configured CORS configuration source registered
+   * for all application endpoints
+   */
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+
+    configuration.setAllowedOrigins(getAndValidateAllowedOrigins());
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+
+    return source;
+  }
+
+  /**
+   * Parses, validates, and normalizes the configured CORS allowed origins.
+   * <p>
+   * This method processes the comma-separated list of origins from the {@code cors.allowed-origins}
+   * configuration property. It performs the following steps:
+   * <ol>
+   *   <li>Returns an empty list if no origins are configured, effectively disabling CORS</li>
+   *   <li>Splits the comma-separated string into individual origin entries</li>
+   *   <li>Trims whitespace from each origin entry</li>
+   *   <li>Filters out any blank or empty entries</li>
+   * </ol>
+   *
+   * @return A list of validated and normalized origin strings, or an empty list if no origins are
+   * configured. Never returns {@code null}.
+   */
+  private List<String> getAndValidateAllowedOrigins() {
+
+    if (allowedOrigins == null || allowedOrigins.isEmpty()) {
+      return List.of();
+    }
+
+    List<String> origins = Arrays.asList(this.allowedOrigins.split(","));
+
+    return origins.stream().map(String::trim).filter(origin -> !origin.isBlank()).toList();
   }
 
   /**
@@ -69,11 +126,16 @@ public class AppSecurityConfig {
   @Order(1)
   public SecurityFilterChain securityFilterChainAPI(HttpSecurity http) throws Exception {
 
-    http.securityMatcher("/api/**")
+    http.cors(Customizer.withDefaults())
+        .securityMatcher("/api/**", "/tracker/**")
         .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(authorization -> authorization.anyRequest().authenticated())
+        .authorizeHttpRequests(
+            authorization -> authorization.requestMatchers(HttpMethod.OPTIONS, "/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated())
         .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(entryPoint))
         .formLogin(AbstractHttpConfigurer::disable)
@@ -101,12 +163,14 @@ public class AppSecurityConfig {
                     "/img/**"
                 ).permitAll()
                 .requestMatchers(
-                    "/openapi/**",
+                    "/",
+                    "/favicon.ico",
+                    "/swagger-ui.html",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/swagger-resources/**",
                     "/webjars/**",
-                    "/swagger-ui.html"
+                    "/error"
                 ).permitAll()
                 .anyRequest()
                 .authenticated())

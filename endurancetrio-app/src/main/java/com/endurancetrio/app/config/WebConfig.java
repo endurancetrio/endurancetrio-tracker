@@ -38,14 +38,6 @@ public class WebConfig implements WebMvcConfigurer {
   /**
    * Registers view controllers to handle direct URL-to-view mapping without requiring explicit
    * controller methods.
-   * <p>
-   * This implementation sets up redirects for the OpenAPI documentation root paths to provide a
-   * more user-friendly entry point to the API documentation. Instead of requiring users to remember
-   * the full Swagger UI path, they can simply navigate to {@code /openapi} or {@code /openapi/} and
-   * be automatically redirected to the Swagger UI interface.
-   * <p>
-   * These redirects use HTTP status 302 (temporary redirect) by default, which is appropriate for
-   * this use case as the target URL may change in future versions of the application.
    *
    * @param registry the ViewControllerRegistry to which view controllers will be added, allowing
    *                 for URL path to view name mappings and redirect configurations
@@ -53,7 +45,7 @@ public class WebConfig implements WebMvcConfigurer {
    */
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
-    registry.addRedirectViewController("/openapi", "/openapi/swagger-ui.html");
-    registry.addRedirectViewController("/openapi/", "/openapi/swagger-ui.html");
+    registry.addRedirectViewController("/swagger-ui", "/swagger-ui/index.html");
+    registry.addRedirectViewController("/swagger-ui/", "/swagger-ui/index.html");
   }
 }
