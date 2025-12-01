@@ -25,9 +25,10 @@ on:
     types: [published]
   workflow_dispatch:
     inputs:
-      reason:
-        description: 'Reason for building (optional)'
-        required: false
+      build-tag-suffix:
+        description: 'Suffix to append to the image tag (e.g., bugfix-123)'
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
@@ -44,6 +45,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -73,8 +76,8 @@ jobs:
             type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
 
             # 2. Short SHA Tag (Manual builds)
-            # Conditions: ONLY run if the event is NOT 'release'.
-            type=sha,format=short,enable=${{ github.event_name != 'release' }}
+            # Conditions: ONLY run if the event is 'workflow_dispatch'
+            type=raw,value=sha-{{sha}}-${{ github.event.inputs.build-tag-suffix }},enable=${{ github.event_name == 'workflow_dispatch' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
