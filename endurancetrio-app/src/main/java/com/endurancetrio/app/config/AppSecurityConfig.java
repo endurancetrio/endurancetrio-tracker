@@ -26,6 +26,8 @@ import com.endurancetrio.app.common.security.provider.EnduranceTrioAuthProvider;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +54,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class AppSecurityConfig {
+
+  private static final Logger LOG = LoggerFactory.getLogger(AppSecurityConfig.class);
 
   private final String allowedOrigins;
   private final EnduranceTrioAuthProvider authProvider;
@@ -106,13 +110,23 @@ public class AppSecurityConfig {
    */
   private List<String> getAndValidateAllowedOrigins() {
 
+    LOG.info("CORS allowed-origins configuration is set to {}", allowedOrigins);
+
     if (allowedOrigins == null || allowedOrigins.isEmpty()) {
+      LOG.warn("CORS allowed-origins is not set!");
       return List.of();
     }
 
     List<String> origins = Arrays.asList(this.allowedOrigins.split(","));
 
-    return origins.stream().map(String::trim).filter(origin -> !origin.isBlank()).toList();
+    List<String> valiAllowedOrigins = origins.stream()
+        .map(String::trim)
+        .filter(origin -> !origin.isBlank())
+        .toList();
+
+    LOG.info("CORS valid allowed-origins: {}", valiAllowedOrigins);
+
+    return valiAllowedOrigins;
   }
 
   /**

@@ -26,6 +26,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,6 +45,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * Expected Headers: 1. Authorization: Bearer {KEY} 2. ET-Owner: {OWNER_ID}
  */
 public class EnduranceTrioAuthFilter extends OncePerRequestFilter {
+
+  private static final Logger LOG = LoggerFactory.getLogger(EnduranceTrioAuthFilter.class);
 
   private static final String AUTH_HEADER_NAME = "Authorization";
   private static final String OWNER_HEADER_NAME = "ET-Owner";
@@ -69,8 +73,19 @@ public class EnduranceTrioAuthFilter extends OncePerRequestFilter {
     String authHeader = request.getHeader(AUTH_HEADER_NAME);
     String ownerHeader = request.getHeader(OWNER_HEADER_NAME);
 
+    if (authHeader == null || authHeader.isBlank()) {
+      authHeader = request.getHeader(AUTH_HEADER_NAME.toLowerCase());
+    }
+
+    if (ownerHeader == null || ownerHeader.isBlank()) {
+      ownerHeader = request.getHeader(OWNER_HEADER_NAME.toLowerCase());
+    }
+
     if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX) || ownerHeader == null
         || ownerHeader.isBlank()) {
+
+      LOG.warn("Authentication request for owner {} failed pre-check", ownerHeader);
+
       filterChain.doFilter(request, response);
       return;
     }
@@ -82,6 +97,9 @@ public class EnduranceTrioAuthFilter extends OncePerRequestFilter {
       EnduranceTrioAuthToken authRequest = new EnduranceTrioAuthToken(owner, key);
 
       Authentication authResult = authManager.authenticate(authRequest);
+
+      boolean authenticated = authResult.isAuthenticated();
+      LOG.info("Authentication request for owner {} returned {}", owner, authenticated);
 
       SecurityContextHolder.getContext().setAuthentication(authResult);
 
