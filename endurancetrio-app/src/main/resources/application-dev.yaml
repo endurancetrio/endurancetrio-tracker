@@ -48,18 +48,10 @@ server:
 
 spring:
   datasource:
-    # Database credentials must be set in the .env file or as an environment variable
+    # Datasource url and credentials must be set in the .env file or as an environment variable
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_SECRET}
-
-  flyway:
-    locations:
-      - classpath:db/migration/ddl/h2
-      - classpath:db/migration/dml/h2
-
-  h2:
-    console:
-      enabled: false
 
   jpa:
     properties:

@@ -87,7 +87,7 @@ To make this structure work, the `spring.flyway.locations` property is set with 
 in the `application-{profile}.yaml` files, enabling Flyway to use the correct folders
 for each database.
 
-#### H2 Database (local and dev profiles)
+#### H2 Database (test profile)
 
 ```yaml
 spring:
@@ -97,7 +97,7 @@ spring:
       - classpath:db/migration/dml
 ```
 
-#### PostgreSQL Database (prod profile)
+#### PostgreSQL Database
 
 ```yaml
 spring:
@@ -109,12 +109,12 @@ spring:
 
 ## Migration Scripts
 
-The migration scripts are duplicated for each supported database (H2 and PostgreSQL) to ensure full
-compatibility with the targeted databases.
+The migration scripts are duplicated, when necessary for tests) for each supported database
+(H2 and PostgreSQL) to ensure full compatibility with the targeted databases.
 
 1. Creates the **EnduranceTrio Tracker** REST API database tables:
    - [V000.000.001.001__create-tables-h2.sql](migration/ddl/h2/V000.000.001.001__create-tables-h2.sql)
    - [V000.000.001.001__create-tables-postgres.sql](migration/ddl/postgres/V000.000.001.001__create-tables-postgres.sql)
 2. Inserts test data into **EnduranceTrio Tracker** REST API database tables:
     - [V000.000.001.002__insert-test-data-h2.sql](migration/dml/h2/V000.000.001.002__insert-test-data-h2.sql)
-   - [V000.000.001.002__insert-test-data-postgres.sql](migration/dml/postgres/V000.000.001.002__insert-test-data-postgres.sql)
+    - [V000.000.001.002__insert-test-data-postgres.sql](migration/dml/postgres/V000.000.001.002__insert-test-data-postgres.sql)

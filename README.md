@@ -1,7 +1,9 @@
 # EnduranceTrio Tracker REST API
 
-![Custom Badge](https://img.shields.io/badge/java-21-orange)
-![Custom Badge](https://img.shields.io/badge/Spring_Boot-4.0.0-green)
+![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.0-brightgreen?logo=springboot)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
 
 ## Table of Contents
 
@@ -35,8 +37,8 @@ management, asset tracking, and general IoT device monitoring.
 
 This project was created by **Ricardo do Canto**, who is the lead developer and maintainer.
 
-[![GitHub](https://img.shields.io/badge/GitHub-EnduranceCode-orange?logo=github)](https://github.com/EnduranceCode)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Ricardo_do_Canto-blue?logo=linkedin)](https://www.linkedin.com/in/ricardodocanto/)
+[![GitHub](https://img.shields.io/badge/GitHub-EnduranceCode-black?logo=github&logoColor=white)](https://github.com/EnduranceCode)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Ricardo_do_Canto-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ricardodocanto/)
 
 ## Features
 
@@ -222,7 +224,7 @@ ET-Owner: account-name-here
 
 ### Swagger UI & API Documentation
 
-The EnduranceTrio Tracker API provides interactive documentation through **Swagger UI**, with
+The **EnduranceTrio Tracker** API provides interactive documentation through **Swagger UI**, with
 separate documentation groups for different environments. This graphic interface allows you to:
 
 - Explore all available endpoints within the **Tracker** domain.
@@ -261,8 +263,8 @@ for your environment:
 
 #### Authentication Guide
 
-The EnduranceTrio Tracker API requires **Dual-Header Authentication**. To test protected endpoints
-in Swagger UI, follow these steps:
+The **EnduranceTrio Tracker** API requires **Dual-Header Authentication**. To test protected
+endpoints in Swagger UI, follow these steps:
 
 1. Click the **Authorize** button at the top right of the page.
 2. You will see a modal with two separate sections. You must configure **both** to successfully
@@ -284,7 +286,8 @@ in Swagger UI, follow these steps:
 - **Java 21** - Latest LTS version for optimal performance and features
 - **Spring Boot 4.0.0** - Modern application framework with latest stable features
 - **Spring Data JPA** - Robust data persistence and repository abstraction
-- **H2 Database** - In-memory database for development and testing (To be replaced with PostgreSQL)
+- **PostgreSQL 18** - An advanced Open Source Relational Database for data persistence
+- **H2 Database** - In-memory database for testing
 - **Flyway** - Database migration and version control
 - **Spring Security** - API key authentication and security configuration
 - **SpringDoc OpenAPI** - Automated Swagger/OpenAPI documentation generation
@@ -292,34 +295,118 @@ in Swagger UI, follow these steps:
 
 ### Database
 
-The application uses an **H2 in-memory database** for development and testing purposes,
-configured with PostgreSQL compatibility mode. For production environments, the database will be
-switched to [**PostgreSQL**](https://www.postgresql.org/).
+The application uses a [PostgreSQL](https://www.postgresql.org/) database and an *H2 in-memory
+database*, configured with PostgreSQL compatibility mode for testing purposes.
 
-All database schema changes are managed with Flyway. Migration scripts are located in the
-`endurancetrio-data/src/main/resources/db/migration` folder and are automatically executed on
-application startup. As the project evolves, migrations will support both H2 (development) and
-PostgreSQL (production).
+All database schema changes are managed with [Flyway](https://github.com/flyway/flyway). Migration
+scripts are located in the `endurancetrio-data/src/main/resources/db/migration` folder and are
+automatically executed on application startup. Migrations support both H2 (test)
+and PostgreSQL (development and production).
 
-The file [`DATABASE.md`](./endurancetrio-data/src/main/resources/db/DATABASE.md) documents
-the development and management of application's database.
+The file [`DATABASE.md`](./endurancetrio-data/src/main/resources/db/DATABASE.md) documents the
+development and management of the application's database.
 
-#### H2 Database Console
+#### Database, Schema, and Application User Setup
 
-During development, you can access the H2 database console at:
+Login into the [PostgreSQL](https://www.postgresql.org/) server, replace the placeholders in the
+commands below as appropriate, and execute them to [create](https://www.postgresql.org/docs/current/sql-createdatabase.html)
+the database for the **EnduranceTrio Tracker** REST API:
 
-**URL:** `http://localhost:8081/h2-tracker/`
+```shell
+sudo -u postgres psql
+```
 
-#### Database Characteristics
+```sql
+CREATE DATABASE {DATABASE_NAME} ENCODING = 'UTF8' LC_COLLATE = 'C.UTF-8' LC_CTYPE = 'C.UTF-8' TEMPLATE = template0;
+```
 
-- **Type:** In-memory H2 database
-- **Mode:** PostgreSQL compatibility
-- **Persistence:** Data is cleared on application restart
-- **Purpose:** Development and testing environment
-
-> **Note**
+> **Placeholder Definition**
 >
-> All data in the development database is transient and will reset when the application restarts.
+> + **{DATABASE_NAME}** : The name chosen for the new database;
+
+Confirm that the database was created, then connect to it:
+
+```sql
+\l
+\c {DATABASE_NAME}
+```
+
+Create the schema for the **EnduranceTrio Tracker** REST API:
+
+```sql
+CREATE SCHEMA IF NOT EXISTS {SCHEMA_NAME};
+```
+
+> **Placeholder Definition**
+>
+> + **{SCHEMA_NAME}** : The name chosen for the new schema;
+
+Confirm the schema creation:
+
+```sql
+\dn
+```
+
+[Create a user](https://www.postgresql.org/docs/current/sql-createuser.html) for the
+**EnduranceTrio Tracker** database/schema management:
+
+```sql
+CREATE USER {USERNAME} WITH PASSWORD '{PASSWORD}';
+```
+
+> **Placeholder Definition**
+>
++ > + **{USERNAME}** : The new account name in the PostgreSQL Server;
++ > + **{PASSWORD}** : The password of the new account in the PostgreSQL Server.
+
+Confirm that the user creation:
+
+```sql
+\du
+```
+
+[Grant](https://www.postgresql.org/docs/current/sql-grant.html) the necessary permissions to the
+**EnduranceTrio Tracker** schema user:
+
+```sql
+GRANT CONNECT ON DATABASE {DATABASE_NAME} TO {USERNAME};
+GRANT CREATE ON DATABASE {DATABASE_NAME} TO {USERNAME};
+ALTER SCHEMA {SCHEMA_NAME} OWNER TO {USERNAME};
+```
+
+> **Placeholder Definition**
+>
+> + **{DATABASE_NAME}** : The name chosen for the new database;
+> + **{SCHEMA_NAME}** : The name chosen for the new schema;
+> + **{USERNAME}** : The account name in the PostgreSQL Server to whom the privileges will be assigned.
+
+Confirm that the privileges were granted:
+
+```sql
+\l
+```
+
+Once all the commands were executes, exit the PostgreSQL server:
+
+```sql
+\q
+```
+
+#### Troubleshooting
+
+#### Troubleshooting
+
+**Connection refused**: Ensure PostgreSQL is running:
+
+```bash
+sudo systemctl status postgresql
+```
+
+**Permission denied**: Verify user has proper grants:
+
+```sql
+SELECT * FROM information_schema.role_table_grants  WHERE grantee = '{USERNAME}';
+```
 
 ### API Key Management
 
@@ -353,14 +440,14 @@ the bcrypt library is installed with the following command:
 sudo apt update && sudo apt install python3-bcrypt
 ```
 
-Then, replace the ***{LABEL}*** in the below command as appropriate and execute it to generate
+Then, replace the placeholder in the below command as appropriate and execute it to generate
 the bcrypt hash from the previously generated API key.
 
 ```shell
 python3 -c "import bcrypt; print(bcrypt.hashpw('{API_KEY}'.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8'))"
 ```
 
-> **Label Definition**
+> **Placeholder Definition**
 >
 > + **{API_KEY}** : The API key
 
@@ -382,13 +469,13 @@ exists in the database, its key hash will be overridden with the provided key ha
 API_KEY=$(openssl rand -base64 32)
 echo "Generated API Key: ${API_KEY}"
 
-# 2. Generate bcrypt hash
-HASH=$(python3 -c "import bcrypt; print(bcrypt.hashpw('${API_KEY}'.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8'))")
-echo "Bcrypt Hash: ${HASH}"
-
-# 3. Set environment variables and start application
+# 2. Set environment variables and start application
 export FIRST_OWNER="system"
-export FIRST_HASH="${HASH}"
+export FIRST_HASH=$(python3 -c "import bcrypt; print(bcrypt.hashpw('${API_KEY}'.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8'))")
+
+# 3. Check if the environment variables are correct
+echo "First Owner: ${FIRST_OWNER}"
+echo "First Hash: ${FIRST_HASH}"
 
 # IMPORTANT: Store the raw API key securely - you won't be able to retrieve it later!
 # Only the bcrypt hash should be stored in the database.
@@ -396,7 +483,7 @@ export FIRST_HASH="${HASH}"
 
 #### Store Hashes in the Database
 
-Access the database console, replace the ***{LABELS}*** in the below SQL command as appropriate and
+Access the database console, replace the placeholders in the below SQL command as appropriate and
 execute it to insert the new account into the `tracker_account` table.
 
 ```sql
@@ -404,7 +491,7 @@ INSERT INTO tracker_account (owner, account_key, enabled, version, created_at)
     VALUES ('{OWNER}', '{API_KEY_HASH}', TRUE, 0, CURRENT_TIMESTAMP);
 ```
 
-> **Label Definition**
+> **Placeholder Definition**
 >
 > + **{OWNER}** : The name of the owner/user of the API key
 > + **{API_KEY_HASH}** : The bcrypt hash of the API key (not the raw API key)
@@ -438,7 +525,8 @@ in the API examples section.
 #### 1. Prerequisites
 
 - [Java 21](https://javaalmanac.io/jdk/21/) or higher
-- [Apache Maven](https://maven.apache.org/) (Latest stable release)
+- [Apache Maven](https://maven.apache.org/)
+- [PostgreSQL](https://www.postgresql.org/)
 
 #### 2. Clone the repository
 
@@ -482,7 +570,7 @@ The application uses Spring Boot profiles for environment-specific configuration
 
 - `application-local.yaml` – Active during local development.
 - `application-dev.yaml` – For development environments.
-- `application-prod.yaml` – For production environments (Not ready yet).
+- `application-prod.yaml` – For production environments.
 
 You can manually activate a profile when running the application with `spring-boot:run`:
 
@@ -605,7 +693,7 @@ replacing the label as appropriate in the below command and then executing it.
 mvn versions:set -DnewVersion={VERSION_NUMBER}
 ```
 
-> **Label Definition**
+> **Placeholder Definition**
 >
 > + **{VERSION_NUMBER}** : The new Sematic Version number to be applied across all Maven modules
 
@@ -646,7 +734,7 @@ Official images are available at:
 
 | Tag Format    | Description                                      | Use Case        |
 |---------------|--------------------------------------------------|-----------------|
-| `vX.Y.Z`      | Semantic version release (e.g., `v1.0.0`)        | **Production**  |
+| `X.Y.Z`       | Semantic version release (e.g., `1.0.0`)         | **Production**  |
 | `sha-XXXXXXX` | Short Git SHA commit hash                        | Testing/Staging |
 
 ### Server Setup
@@ -715,6 +803,7 @@ The `.env` file manages environment-specific configurations and secrets.
 | `PGID`                   | Group ID under which the container process runs    | Yes      |
 | `TRACKER_EXT_PORT`       | The host port mapped to the API (e.g., `8080`)     | Yes      |
 | `SPRING_PROFILES_ACTIVE` | Spring profile (e.g., `dev` or `prod`)             | Yes      |
+| `DB_URL`                 | Datasource URL                                     | Yes      |
 | `DB_USERNAME`            | Database username                                  | Yes      |
 | `DB_SECRET`              | Database password                                  | Yes      |
 | `FIRST_OWNER`            | Name for the initial account initialization        | Optional |
@@ -751,8 +840,8 @@ docker compose -p endurancetrio-tracker up -d
 ```
 
 The output of the above command should show that **EnduranceTrio Tracker** REST API was deployed
-with success. For a second confirmation, replace the ***{LABEL}*** as appropriate in the below
-commands, and check its output.
+with success. For a second confirmation, replace the placeholders in the below commands as
+appropriate, and check its output.
 
 ```shell
 docker ps
@@ -760,7 +849,7 @@ docker logs endurancetrio-tracker
 curl -f http://localhost:{TRACKER_EXT_PORT}/actuator/health
 ```
 
-> **Label Definition**
+> **Placeholder Definition**
 >
 > + **{TRACKER_EXT_PORT}** : The external port on the Docker host for accessing the application
 
@@ -795,13 +884,13 @@ To use the [provided template](./apache/vhost-template.conf), execute the follow
 sudo wget -P /etc/apache2/sites-available/ https://raw.githubusercontent.com/endurancetrio/endurancetrio-tracker/refs/heads/tracker/apache/vhost-template.conf
 ```
 
-Then, replace the ***{LABEL}*** in the below command as appropriate and execute it to rename the file.
+Then, replace the placeholder in the below command as appropriate and execute it to rename the file.
 
 ```shell
 sudo mv /etc/apache2/sites-available/vhost-template.conf /etc/apache2/sites-available/{SECOND_LEVEL_DOMAIN_SLD}.conf
 ```
 
-> **Label Definition**
+> **Placeholder Definition**
 >
 > + **{SECOND_LEVEL_DOMAIN_SLD}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) (e.g., 'example' in example.com)
 
@@ -825,7 +914,7 @@ Validate the Apache Server configuration with the following command:
 sudo apachectl configtest
 ```
 
-To activate the new Virtual Host, replace the ***{LABEL}*** in the below commands as appropriate
+To activate the new Virtual Host, replace the placeholder in the below commands as appropriate
 and then execute it.
 
 ```shell
@@ -833,19 +922,19 @@ sudo a2ensite {SECOND_LEVEL_DOMAIN_SLD}.conf
 sudo systemctl reload apache2
 ```
 
-> **Label Definition**
+> **Placeholder Definition**
 >
 > + **{SECOND_LEVEL_DOMAIN_SLD}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) (e.g., 'example' in example.com)
 
 If the domain of the Virtual Host created with the previous procedure has already its DNS Records
-pointing to the server's IP address, replace the ***{LABELS}*** in the below URL as appropriate
-and enter it into a browser’s address bar to test the new local Virtual Host.
+pointing to the server's IP address, enter the below URL into a browser’s address bar to test
+the new local Virtual Host.
 
 ```text
 http://{SECOND_LEVEL_DOMAIN_SLD}.{TOP_LEVEL_DOMAIN_TLD}
 ```
 
-> **Labels Definition**
+> **Placeholder Definition**
 >
 > + **{SECOND_LEVEL_DOMAIN_SLD}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) (e.g., 'example' in example.com)
 > + **{TOP_LEVEL_DOMAIN_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) (e.g., 'com', 'org', 'net')
@@ -859,33 +948,32 @@ If you already have SSL Certificates installed on your server with
 [*Certbot*](https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal), you can expand it
 to include the new domain, or you can create a separate certificate for the new domain.
 
-To expand an existing certificate, replace the ***{LABELS}*** in the below command as appropriate
-and execute it.
+To expand an existing certificate, execute the following command:
 
 ```shell
 sudo certbot --apache --cert-name {EXISTING_DOMAIN} --expand -d {EXISTING_DOMAIN} -d {NEW_DOMAIN}
 ```
 
-> **Label Definition**
+> **Placeholder Definition**
 >
 > + **{EXISTING_DOMAIN}** : The existing domain (or subdomain) that already has a SSL certificate
 > + **{NEW_DOMAIN}**      : The new domain (or subdomain) to be included in the existing SSL certificate
 
-Otherwise, to create a separate certificate for the new domain (or subdomain), replace
-the ***{LABEL}*** in the below command as appropriate and execute it.
+Otherwise, to create a separate certificate for the new domain (or subdomain), execute the following
+command:
 
 ```shell
 sudo certbot --apache -d {DOMAIN}
 ```
 
-> **Label Definition**
+> **Placeholder Definition**
 >
 > + **{DOMAIN}** : The domain (or subdomain) of the new SSL certificate
 
 [Certbot](https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal) will create a file,
 at `/etc/apache2/sites-available/` named `{SECOND_LEVEL_DOMAIN_SLD}-le-ssl.conf` and it's necessary
-to check if the `RequestHeader` directives are set correctly. Replace the ***{LABEL}*** as appropriate
-in the below command and execute it to edit with the [nano text editor](https://www.nano-editor.org/).
+to check if the `RequestHeader` directives are set correctly. Execute the below command to be able
+to edit the referred file with the [nano text editor](https://www.nano-editor.org/).
 
 ```shell
 sudo nano {SECOND_LEVEL_DOMAIN_SLD}-le-ssl.conf
