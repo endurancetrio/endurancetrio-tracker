@@ -1,7 +1,7 @@
 # EnduranceTrio Tracker REST API
 
 ![Custom Badge](https://img.shields.io/badge/java-21-orange)
-![Custom Badge](https://img.shields.io/badge/Spring_Boot-3.5.7-green)
+![Custom Badge](https://img.shields.io/badge/Spring_Boot-4.0.0-green)
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@
 ## Introduction
 
 **EnduranceTrio Tracker** is a modern REST API designed for managing IoT device locations. Built
-with Java 21 and Spring Boot, the service provides a scalable and secure solution for submitting
+with Java 21 and Spring Boot 4, the service provides a scalable and secure solution for submitting
 and retrieving GPS data using API key authentication. It is ideal for applications such as fleet
 management, asset tracking, and general IoT device monitoring.
 
@@ -282,7 +282,7 @@ in Swagger UI, follow these steps:
 ### Technology Stack
 
 - **Java 21** - Latest LTS version for optimal performance and features
-- **Spring Boot 3.5.7** - Modern application framework with latest stable features
+- **Spring Boot 4.0.0** - Modern application framework with latest stable features
 - **Spring Data JPA** - Robust data persistence and repository abstraction
 - **H2 Database** - In-memory database for development and testing (To be replaced with PostgreSQL)
 - **Flyway** - Database migration and version control

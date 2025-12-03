@@ -134,11 +134,10 @@ public class AppSecurityConfig {
    *
    * @param http the HttpSecurity to configure
    * @return the configured SecurityFilterChain
-   * @throws Exception if an error occurs during configuration
    */
   @Bean
   @Order(1)
-  public SecurityFilterChain securityFilterChainAPI(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChainAPI(HttpSecurity http) {
 
     http.cors(Customizer.withDefaults())
         .securityMatcher("/api/**", "/tracker/**")
@@ -163,11 +162,10 @@ public class AppSecurityConfig {
    *
    * @param http the HttpSecurity to configure
    * @return the configured SecurityFilterChain
-   * @throws Exception if an error occurs during configuration
    */
   @Bean
   @Order(2)
-  public SecurityFilterChain securityFilterChainWeb(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChainWeb(HttpSecurity http) {
     http.authorizeHttpRequests(
             authorization -> authorization.requestMatchers("/h2-tracker", "/h2-tracker/**")
                 .permitAll()

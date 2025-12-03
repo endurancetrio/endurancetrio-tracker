@@ -29,6 +29,7 @@ import com.endurancetrio.app.common.response.EnduranceTrioResponse;
 import com.endurancetrio.business.common.dto.ErrorDTO;
 import com.endurancetrio.business.common.exception.base.EnduranceTrioException;
 import java.util.List;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class EnduranceTrioExceptionHandlerAPI extends ResponseEntityExceptionHan
   private static final Logger LOG = LoggerFactory.getLogger(EnduranceTrioExceptionHandlerAPI.class);
 
   @ExceptionHandler(EnduranceTrioException.class)
-  public ResponseEntity<EnduranceTrioResponse<List<ErrorDTO>>> handledException(
+  public ResponseEntity<@NonNull EnduranceTrioResponse<List<ErrorDTO>>> handledException(
       EnduranceTrioException exception
   ) {
 
@@ -67,7 +68,7 @@ public class EnduranceTrioExceptionHandlerAPI extends ResponseEntityExceptionHan
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<EnduranceTrioResponse<String>> unhandledException(Exception exception) {
+  public ResponseEntity<@NonNull EnduranceTrioResponse<String>> unhandledException(Exception exception) {
 
     LOG.error("Unhandled exception ({}); {}", STATUS_500, exception.getMessage());
 

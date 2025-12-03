@@ -22,6 +22,7 @@ package com.endurancetrio.app.common.security.provider;
 
 import com.endurancetrio.app.common.security.token.EnduranceTrioAuthToken;
 import com.endurancetrio.business.tracker.service.TrackerAccountService;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -47,7 +48,7 @@ public class EnduranceTrioAuthProvider implements AuthenticationProvider {
   }
 
   @Override
-  public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+  public Authentication authenticate(@NonNull Authentication authentication) throws AuthenticationException {
     EnduranceTrioAuthToken authRequest = (EnduranceTrioAuthToken) authentication;
 
     String owner = (String) authRequest.getPrincipal();
@@ -65,7 +66,7 @@ public class EnduranceTrioAuthProvider implements AuthenticationProvider {
   }
 
   @Override
-  public boolean supports(Class<?> authentication) {
+  public boolean supports(@NonNull Class<?> authentication) {
     return EnduranceTrioAuthToken.class.isAssignableFrom(authentication);
   }
 }

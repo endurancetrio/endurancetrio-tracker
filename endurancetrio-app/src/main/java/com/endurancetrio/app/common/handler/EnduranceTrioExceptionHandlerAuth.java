@@ -24,6 +24,7 @@ import static com.endurancetrio.app.common.constants.ControllerConstants.DETAILS
 import static com.endurancetrio.app.common.constants.ControllerConstants.DETAILS_AUTH_FAILURE;
 
 import com.endurancetrio.app.common.response.EnduranceTrioResponse;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -52,7 +53,7 @@ public class EnduranceTrioExceptionHandlerAuth {
    * uses the AuthenticationEntryPoint.
    */
   @ExceptionHandler({AuthenticationException.class})
-  public ResponseEntity<EnduranceTrioResponse<String>> authException(
+  public ResponseEntity<@NonNull EnduranceTrioResponse<String>> authException(
       AuthenticationException exception
   ) {
 
@@ -72,7 +73,7 @@ public class EnduranceTrioExceptionHandlerAuth {
    * resource without the necessary permissions.
    */
   @ExceptionHandler({AccessDeniedException.class})
-  public ResponseEntity<EnduranceTrioResponse<String>> handleAuthorizationException(
+  public ResponseEntity<@NonNull EnduranceTrioResponse<String>> handleAuthorizationException(
       AccessDeniedException exception
   ) {
 

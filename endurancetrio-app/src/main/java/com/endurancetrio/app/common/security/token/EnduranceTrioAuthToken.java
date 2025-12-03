@@ -20,6 +20,7 @@
 
 package com.endurancetrio.app.common.security.token;
 
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -35,7 +36,7 @@ public class EnduranceTrioAuthToken extends AbstractAuthenticationToken {
   private final String credentials;
 
   public EnduranceTrioAuthToken(String principal, String credentials) {
-    super(null);
+    super((Collection<? extends GrantedAuthority>) null);
     this.principal = principal;
     this.credentials = credentials;
     setAuthenticated(false);
@@ -60,7 +61,7 @@ public class EnduranceTrioAuthToken extends AbstractAuthenticationToken {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
 
     if (this == o) {
       return true;
