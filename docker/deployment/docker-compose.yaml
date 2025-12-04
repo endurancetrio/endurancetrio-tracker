@@ -36,7 +36,7 @@ services:
     networks:
       - endurancetrio-tracker
     ports:
-      - "${TRACKER_EXT_PORT}:${TRACKER_INT_PORT}"
+      - "127.0.0.1:${TRACKER_EXT_PORT}:${TRACKER_INT_PORT}"
     volumes:
       - ./logs:/opt/endurancetrio-tracker/logs
     healthcheck:
