@@ -21,8 +21,8 @@
 -- Description: Creates the EnduranceTrio Tracker REST API database tables
 --
 
--- Create and use the schema for the EnduranceTrio Tracker
-CREATE SCHEMA IF NOT EXISTS endurancetrio_tracker;
+-- The schema has to be created before the app's first execution
+-- Use the schema for the EnduranceTrio Tracker
 SET search_path TO endurancetrio_tracker;
 
 -- Create sequence for tracking tracking data primary key
