@@ -28,10 +28,10 @@
 
 ## Introduction
 
-**EnduranceTrio Tracker** is a modern REST API designed for managing IoT device locations. Built
+**EnduranceTrio Tracker** is a modern REST API designed for managing IoT device telemetry. Built
 with Java 21 and Spring Boot 4, the service provides a scalable and secure solution for submitting
-and retrieving GPS data using API key authentication. It is ideal for applications such as fleet
-management, asset tracking, and general IoT device monitoring.
+and retrieving devices telemetry data using API key authentication. It is ideal for applications
+such as fleet management, asset tracking, and general IoT device monitoring.
 
 ### Development Team
 
@@ -44,9 +44,9 @@ This project was created by **Ricardo do Canto**, who is the lead developer and 
 
 ### Core Functionality
 
-- **Secure Location Submission**: Submit device location data with API key authentication
-- **Device Location Retrieval**: Get the last known location for all existing devices
-- **Location History**: Access historical location data for comprehensive tracking and analysis
+- **Secure Telemetry Submission**: Submit device telemetry data with API key authentication
+- **Device Telemetry Retrieval**: Get the last known telemetry for all existing devices
+- **Telemetry History**: Access historical telemetry data for comprehensive tracking and analysis
 - **Auto-generated Documentation**: Interactive API documentation via Swagger UI
 
 ### API Endpoints
@@ -55,14 +55,14 @@ The following table summarizes the available endpoints.
 
 | Method | Endpoint                                         | Description                                                         | Authentication     |
 |--------|--------------------------------------------------|---------------------------------------------------------------------|--------------------|
-| `POST` | `/tracker/v1/devices`                            | Submit a new device location                                        | API Key Required   |
-| `GET`  | `/tracker/v1/devices`                            | Get last known location for all existing devices                    | API Key Required   |
-| `GET`  | `/tracker/v1/devices/{device}/locations`         | Get historical locations for a device (supports pagination)         | API Key Required   |
+| `POST` | `/tracker/v1/devices`                            | Submit a device telemetry data point                                | API Key Required   |
+| `GET`  | `/tracker/v1/devices`                            | Get last known telemetry for all existing devices                   | API Key Required   |
+| `GET`  | `/tracker/v1/devices/{device}/telemetry`         | Get historical telemetry for a device (supports pagination)         | API Key Required   |
 
 For comprehensive documentation including request/response schemas, examples, and error handling,
-see the following documents.
+see the following documents:
 
-- [Tracker API Endpoints](docs/api-endpoints-tracker.md).
+- [Tracker Domain](docs/api-endpoints-tracker.md)
 
 ### Swagger UI & API Documentation
 
@@ -70,7 +70,7 @@ The **EnduranceTrio Tracker** API provides interactive documentation through **S
 separate documentation groups for different environments. This graphic interface allows you to:
 
 - Explore all available endpoints within the **Tracker** domain.
-- View request/response models (e.g., `TrackingDataDTO`).
+- View request/response models (e.g., `DeviceTelemetryDTO`).
 - Test API calls directly from your browser.
 
 #### Environment-Specific Access
@@ -90,8 +90,8 @@ for your environment:
 1. **Look for the dropdown menu** in the top-right corner of the Swagger UI page (labeled with
    the current group name)
 2. **Choose the correct group** based on your environment:
-    - **`Tracker Domain (LOCAL)`** - For local development (shows paths with `/api` prefix)
-    - **`Tracker Domain (PROD)`** - For production use (shows paths without `/api` prefix)
+    - **`Tracker Domain (LOCAL)`** - For local development (uses paths with `/api` prefix)
+    - **`Tracker Domain (PROD)`** - For production use (uses paths without `/api` prefix)
 
 > **Important:**
 > When accessing Swagger UI through the **openapi subdomain** in production, the gateway strips
@@ -99,7 +99,7 @@ for your environment:
 > application paths.
 
 **Why this matters:**
-- Different groups show different server URLs and path structures
+- Different groups uses different server URLs and path structures
 - Selecting the wrong group may show incorrect endpoint URLs
 - The authentication setup is shared between groups
 

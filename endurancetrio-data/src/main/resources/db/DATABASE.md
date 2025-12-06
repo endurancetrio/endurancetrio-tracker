@@ -94,7 +94,7 @@ spring:
   flyway:
     locations:
       - classpath:db/migration/ddl/h2
-      - classpath:db/migration/dml
+      - classpath:db/migration/dml/h2
 ```
 
 #### PostgreSQL Database
@@ -104,7 +104,7 @@ spring:
   flyway:
     locations:
       - classpath:db/migration/ddl/postgres
-      - classpath:db/migration/dml
+      - classpath:db/migration/dml/postgres
 ```
 
 ## Migration Scripts
@@ -118,3 +118,9 @@ The migration scripts are duplicated, when necessary for tests) for each support
 2. Inserts test data into **EnduranceTrio Tracker** REST API database tables:
     - [V000.000.001.002__insert-test-data-h2.sql](migration/dml/h2/V000.000.001.002__insert-test-data-h2.sql)
     - [V000.000.001.002__insert-test-data-postgres.sql](migration/dml/postgres/V000.000.001.002__insert-test-data-postgres.sql)
+3. Create the **EnduranceTrio Tracker** telemetry management database table:
+    - [V000.002.000.001__create-telemetry-management-table-h2.sql](migration/ddl/h2/V000.002.000.001__create-telemetry-management-table-h2.sql)
+    - [V000.002.000.001__create-telemetry-management-table-postgres.sql](migration/ddl/postgres/V000.002.000.001__create-telemetry-management-table-postgres.sql)
+4. Inserts test data into **EnduranceTrio Tracker** telemetry management database table:
+    - [V000.002.000.002__insert-telemetry-management-test-data-h2.sql](migration/dml/h2/V000.002.000.002__insert-telemetry-management-test-data-h2.sql)
+    - [V000.002.000.002__insert-telemetry-management-test-data-postgres.sql](migration/dml/postgres/V000.002.000.002__insert-telemetry-management-test-data-postgres.sql)

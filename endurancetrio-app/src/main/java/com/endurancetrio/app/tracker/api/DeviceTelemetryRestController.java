@@ -31,10 +31,11 @@ import com.endurancetrio.app.common.response.EnduranceTrioResponse;
 import com.endurancetrio.business.common.exception.BadRequestException;
 import com.endurancetrio.business.common.exception.NotFoundException;
 import com.endurancetrio.business.common.exception.base.EnduranceTrioError;
-import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
-import com.endurancetrio.business.tracker.service.TrackingDataService;
+import com.endurancetrio.business.tracker.dto.DeviceTelemetryDTO;
+import com.endurancetrio.business.tracker.service.DeviceTelemetryService;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,15 +52,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @EnduranceTrioRestController
 @RequestMapping(API_PATH + TRACKER_DOMAIN + TRACKER_V1)
-public class TrackerRestController implements TrackerAPI {
+public class DeviceTelemetryRestController implements DeviceTelemetryAPI {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TrackerRestController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DeviceTelemetryRestController.class);
 
-  private final TrackingDataService trackingDataService;
+  private final DeviceTelemetryService deviceTelemetryService;
 
   @Autowired
-  public TrackerRestController(TrackingDataService trackingDataService) {
-    this.trackingDataService = trackingDataService;
+  public DeviceTelemetryRestController(DeviceTelemetryService deviceTelemetryService) {
+    this.deviceTelemetryService = deviceTelemetryService;
   }
 
   @Override
@@ -68,12 +69,12 @@ public class TrackerRestController implements TrackerAPI {
       value = TRACKER_RESOURCE_DEVICES, consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public ResponseEntity<EnduranceTrioResponse<TrackingDataDTO>> save(
-      @Valid @RequestBody TrackingDataDTO trackingDataDTO
+  public ResponseEntity<@NonNull EnduranceTrioResponse<DeviceTelemetryDTO>> save(
+      @Valid @RequestBody DeviceTelemetryDTO deviceTelemetryDTO
   ) {
 
-    if (trackingDataDTO == null) {
-      LOG.warn("The request made to save tracking data is invalid (null)");
+    if (deviceTelemetryDTO == null) {
+      LOG.warn("The request made to save telemetry data is invalid (null)");
       throw new BadRequestException(EnduranceTrioError.BAD_REQUEST);
     }
 
@@ -84,14 +85,14 @@ public class TrackerRestController implements TrackerAPI {
     String owner = authentication.getName();
 
     if (owner == null || owner.isBlank()) {
-      LOG.error("There is no authenticated owner for saving tracking data");
+      LOG.error("There is no authenticated owner for saving telemetry data");
       throw new NotFoundException(EnduranceTrioError.NOT_FOUND);
     }
 
     HttpStatus status = HttpStatus.CREATED;
-    TrackingDataDTO data = trackingDataService.save(owner, trackingDataDTO);
+    DeviceTelemetryDTO data = deviceTelemetryService.save(owner, deviceTelemetryDTO);
 
-    EnduranceTrioResponse<TrackingDataDTO> response = new EnduranceTrioResponse<>(status.value(),
+    EnduranceTrioResponse<DeviceTelemetryDTO> response = new EnduranceTrioResponse<>(status.value(),
         status.getReasonPhrase(), DETAILS_SUCCESS, data
     );
 
@@ -103,12 +104,12 @@ public class TrackerRestController implements TrackerAPI {
   @GetMapping(
       value = TRACKER_RESOURCE_DEVICES, produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public ResponseEntity<EnduranceTrioResponse<List<TrackingDataDTO>>> getMostRecentRecordForEachDevice() {
+  public ResponseEntity<@NonNull EnduranceTrioResponse<List<DeviceTelemetryDTO>>> getMostRecentRecordForEachDevice() {
 
     HttpStatus status = HttpStatus.OK;
-    List<TrackingDataDTO> data = trackingDataService.findMostRecentRecordForEachDevice();
+    List<DeviceTelemetryDTO> data = deviceTelemetryService.findMostRecentRecordForEachDevice();
 
-    EnduranceTrioResponse<List<TrackingDataDTO>> response = new EnduranceTrioResponse<>(
+    EnduranceTrioResponse<List<DeviceTelemetryDTO>> response = new EnduranceTrioResponse<>(
         status.value(), status.getReasonPhrase(), DETAILS_SUCCESS, data);
 
     return ResponseEntity.status(status).body(response);

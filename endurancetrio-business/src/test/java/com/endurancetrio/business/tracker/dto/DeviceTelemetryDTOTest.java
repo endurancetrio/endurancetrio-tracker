@@ -28,13 +28,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for the {@link TrackingDataDTO} DTO.
+ * Unit test for the {@link DeviceTelemetryDTO} DTO.
  * <p>
  * This test may seem redundant since it only verify getters and setters, but its purpose is to
  * establish a testing culture from the very beginning of the project. It serves as a reminder that
  * every part of the application should be testable and that tests should always be present.
  */
-class TrackingDataDTOTest {
+class DeviceTelemetryDTOTest {
 
   private static final String DEVICE = "SDABC";
   private static final Instant TIME = Instant.parse("2026-09-19T06:00:00Z");
@@ -42,12 +42,12 @@ class TrackingDataDTOTest {
   private static final Double LONGITUDE = -9.136079;
   private static final Boolean IS_ACTIVE = true;
 
-  private TrackingDataDTO underTest;
+  private DeviceTelemetryDTO underTest;
 
   @BeforeEach
   void setUp() {
 
-    underTest = new TrackingDataDTO(DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
+    underTest = new DeviceTelemetryDTO(DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
   }
 
   @Test

@@ -21,7 +21,7 @@
 package com.endurancetrio.app.tracker.api;
 
 import com.endurancetrio.app.common.response.EnduranceTrioResponse;
-import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
+import com.endurancetrio.business.tracker.dto.DeviceTelemetryDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -33,35 +33,36 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@Tag(name = "Tracker", description = "EnduranceTrio Tracker API for managing tracking data")
-public interface TrackerAPI {
+@Tag(name = "Tracker", description = "EnduranceTrio Tracker API for managing telemetry data")
+public interface DeviceTelemetryAPI {
 
   /**
-   * Saves the provided tracking data, using the authenticated user as the owner account
+   * Saves the provided telemetry data, using the authenticated user as the owner account
    *
-   * @param trackingDataDTO the tracking data to be saved
-   * @return the saved {@link TrackingDataDTO} wrapped in an {@link EnduranceTrioResponse}
+   * @param deviceTelemetryDTO the device telemetry data to be saved
+   * @return the saved {@link DeviceTelemetryDTO} wrapped in an {@link EnduranceTrioResponse}
    */
   @Operation(
-      summary = "Save tracking data",
-      description = "Saves tracking data for a device, using the authenticated user as the owner account",
+      summary = "Save telemetry data",
+      description = "Saves the device telemetry data, using the authenticated user as the owner account",
       security = {
           @SecurityRequirement(name = "Account Name"),
           @SecurityRequirement(name = "API Key")
       }
   )
   @ApiResponse(
-      responseCode = "201", description = "Tracking data successfully saved",
+      responseCode = "201", description = "Telemetry data successfully saved",
       content = @Content(
           mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = EnduranceTrioResponse.class),
           examples = {
               @ExampleObject(
                   name = "Success Response",
-                  summary = "Tracking data saved successfully",
+                  summary = "Telemetry data saved successfully",
                   value = """
                           {
                             "code": 201,
@@ -81,17 +82,17 @@ public interface TrackerAPI {
       ),
       headers = {
           @Header(
-              name = "Device locations",
-              description = "URI to list the newly created device location",
+              name = "Device telemetry",
+              description = "URI to list the newly created device telemetry",
               schema = @Schema(
                   type = "string",
-                  example = "/tracker/v1/devices/{device}/locations"
+                  example = "/tracker/v1/devices/{device}/telemetry"
               )
           )
       }
   )
   @ApiResponse(
-      responseCode = "400", description = "Bad request - invalid tracking data",
+      responseCode = "400", description = "Bad request - invalid telemetry data",
       content = @Content(
           mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = EnduranceTrioResponse.class),
@@ -151,14 +152,14 @@ public interface TrackerAPI {
       )
   )
   @RequestBody(
-      description = "Tracking data to be saved", required = true,
+      description = "Telemetry data to be saved", required = true,
       content = @Content(
           mediaType = MediaType.APPLICATION_JSON_VALUE,
-          schema = @Schema(implementation = TrackingDataDTO.class),
+          schema = @Schema(implementation = DeviceTelemetryDTO.class),
           examples = {
               @ExampleObject(
-                  name = "Tracking Data Example",
-                  summary = "A typical tracking data payload",
+                  name = "Telemetry Data Example",
+                  summary = "A typical telemetry data payload",
                   value = """
                         {
                           "device": "SDABC",
@@ -172,35 +173,35 @@ public interface TrackerAPI {
           }
       )
   )
-  ResponseEntity<EnduranceTrioResponse<TrackingDataDTO>> save(
+  ResponseEntity<@NonNull EnduranceTrioResponse<DeviceTelemetryDTO>> save(
       @Parameter(
           description = "Tracking data transfer object containing device location information",
           required = true
-      ) TrackingDataDTO trackingDataDTO
+      ) DeviceTelemetryDTO deviceTelemetryDTO
   );
 
   /**
-   * Gets the most recent tracking data record for each device present in the database.
+   * Gets the most recent telemetry data record for each device present in the database.
    *
-   * @return list of tracking data records containing the latest record for each device
+   * @return list of telemetry data records containing the latest record for each device
    */
   @Operation(
-      summary = "Gets most recent data per device",
-      description = "Gets the most recent tracking data record for each device present in the database",
+      summary = "Gets most recent telemetry data per device",
+      description = "Gets the most recent telemetry data record for each device present in the database",
       security = {
           @SecurityRequirement(name = "Account Name"),
           @SecurityRequirement(name = "API Key")
       }
   )
   @ApiResponse(
-      responseCode = "200", description = "Tracking data successfully obtained",
+      responseCode = "200", description = "Telemetry data successfully obtained",
       content = @Content(
           mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = EnduranceTrioResponse.class),
           examples = {
               @ExampleObject(
                   name = "Success Response",
-                  summary = "Tracking data successfully obtained",
+                  summary = "Telemetry data successfully obtained",
                   value = """
                           {
                             "code": 200,
@@ -295,5 +296,5 @@ public interface TrackerAPI {
           }
       )
   )
-  ResponseEntity<EnduranceTrioResponse<List<TrackingDataDTO>>> getMostRecentRecordForEachDevice();
+  ResponseEntity<@NonNull EnduranceTrioResponse<List<DeviceTelemetryDTO>>> getMostRecentRecordForEachDevice();
 }

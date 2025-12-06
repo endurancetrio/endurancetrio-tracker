@@ -59,7 +59,7 @@ To confirm that the folder `/opt/endurancetrio-tracker/logs/` has the correct ow
 check the output of the following command:
 
 ```shell
-ls -lag
+ls -lag /opt/endurancetrio-tracker/logs/
 ```
 
 The folder `/opt/endurancetrio-tracker` will store the files necessary to deploy the application
@@ -132,6 +132,9 @@ environment variable rather than persisted in the `.env` file to reduce attack s
 >
 > Refer to the [API Key Management](./development.md#api-key-management) section for details
 > on generating the `FIRST_HASH`.
+
+Prepare the database for the application by following the instructions available
+in the [Development Guide](../docs/development.md#database).
 
 To complete deployment of **EnduranceTrio Tracker** REST API, execute the following command:
 

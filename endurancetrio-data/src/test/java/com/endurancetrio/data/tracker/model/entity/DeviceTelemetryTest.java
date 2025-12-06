@@ -28,13 +28,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for the {@link TrackingData} entity.
+ * Unit test for the {@link DeviceTelemetry} entity.
  * <p>
  * This test may seem redundant since it only verify getters and constructor, but its purpose is to
  * establish a testing culture from the very beginning of the project. It serves as a reminder that
  * every part of the application should be testable and that tests should always be present.
  */
-class TrackingDataTest {
+class DeviceTelemetryTest {
 
   private static final String OWNER = "system";
   private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
@@ -47,14 +47,14 @@ class TrackingDataTest {
   private static final Double LONGITUDE = -9.136079;
   private static final Boolean IS_ACTIVE = true;
 
-  private TrackingData underTest;
+  private DeviceTelemetry underTest;
 
   @BeforeEach
   void setUp() {
 
     TrackerAccount account = new TrackerAccount(OWNER, KEY, IS_ENABLED);
 
-    underTest = new TrackingData();
+    underTest = new DeviceTelemetry();
     underTest.setId(ID);
     underTest.setAccount(account);
     underTest.setDevice(DEVICE);

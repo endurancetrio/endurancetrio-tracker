@@ -20,24 +20,24 @@
 
 package com.endurancetrio.business.tracker.service;
 
-import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
+import com.endurancetrio.business.tracker.dto.DeviceTelemetryDTO;
 import java.util.List;
 
-public interface TrackingDataService {
+public interface DeviceTelemetryService {
 
   /**
-   * Saves the provided tracking data for the specified owner.
+   * Saves the provided telemetry data for the specified owner.
    *
-   * @param owner           the owner of the tracking data
-   * @param trackingDataDTO the tracking data to be saved
-   * @return the saved {@link TrackingDataDTO}
+   * @param owner              the owner of the telemetry data
+   * @param deviceTelemetryDTO the telemetry data to be saved
+   * @return the saved {@link DeviceTelemetryDTO}
    */
-  TrackingDataDTO save(String owner, TrackingDataDTO trackingDataDTO);
+  DeviceTelemetryDTO save(String owner, DeviceTelemetryDTO deviceTelemetryDTO);
 
   /**
-   * Finds the most recent tracking data record for each device present in the database.
+   * Finds the most recent telemetry data record for each device present in the database.
    *
-   * @return list of tracking data records containing the latest record for each device
+   * @return list of telemetry data records containing the latest record for each device
    */
-  List<TrackingDataDTO> findMostRecentRecordForEachDevice();
+  List<DeviceTelemetryDTO> findMostRecentRecordForEachDevice();
 }

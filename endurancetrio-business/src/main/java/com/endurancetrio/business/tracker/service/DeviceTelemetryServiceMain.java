@@ -22,44 +22,44 @@ package com.endurancetrio.business.tracker.service;
 
 import com.endurancetrio.business.common.exception.NotFoundException;
 import com.endurancetrio.business.common.exception.base.EnduranceTrioError;
-import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
-import com.endurancetrio.business.tracker.mapper.TrackingDataMapper;
+import com.endurancetrio.business.tracker.dto.DeviceTelemetryDTO;
+import com.endurancetrio.business.tracker.mapper.DeviceTelemetryMapper;
+import com.endurancetrio.data.tracker.model.entity.DeviceTelemetry;
 import com.endurancetrio.data.tracker.model.entity.TrackerAccount;
-import com.endurancetrio.data.tracker.model.entity.TrackingData;
+import com.endurancetrio.data.tracker.repository.DeviceTelemetryRepository;
 import com.endurancetrio.data.tracker.repository.TrackerAccountRepository;
-import com.endurancetrio.data.tracker.repository.TrackingDataRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TrackingDataServiceMain implements TrackingDataService {
+public class DeviceTelemetryServiceMain implements DeviceTelemetryService {
 
   private final TrackerAccountRepository trackerAccountRepository;
-  private final TrackingDataRepository trackingDataRepository;
-  private final TrackingDataMapper trackingDataMapper;
+  private final DeviceTelemetryRepository deviceTelemetryRepository;
+  private final DeviceTelemetryMapper deviceTelemetryMapper;
 
-  public TrackingDataServiceMain(
+  public DeviceTelemetryServiceMain(
       TrackerAccountRepository trackerAccountRepository,
-      TrackingDataRepository trackingDataRepository, TrackingDataMapper trackingDataMapper
+      DeviceTelemetryRepository deviceTelemetryRepository, DeviceTelemetryMapper deviceTelemetryMapper
   ) {
     this.trackerAccountRepository = trackerAccountRepository;
-    this.trackingDataRepository = trackingDataRepository;
-    this.trackingDataMapper = trackingDataMapper;
+    this.deviceTelemetryRepository = deviceTelemetryRepository;
+    this.deviceTelemetryMapper = deviceTelemetryMapper;
   }
 
   @Override
   @Transactional
-  public TrackingDataDTO save(String owner, TrackingDataDTO trackingDataDTO) {
+  public DeviceTelemetryDTO save(String owner, DeviceTelemetryDTO deviceTelemetryDTO) {
 
     TrackerAccount accountReference = trackerAccountRepository.getReferenceById(owner);
 
-    TrackingData trackingData = trackingDataMapper.map(trackingDataDTO, null);
-    trackingData.setAccount(accountReference);
+    DeviceTelemetry deviceTelemetry = deviceTelemetryMapper.map(deviceTelemetryDTO, null);
+    deviceTelemetry.setAccount(accountReference);
 
     try {
-      return trackingDataMapper.map(trackingDataRepository.save(trackingData));
+      return deviceTelemetryMapper.map(deviceTelemetryRepository.save(deviceTelemetry));
     } catch (EntityNotFoundException exception) {
       throw new NotFoundException(EnduranceTrioError.NOT_FOUND);
     }
@@ -67,10 +67,10 @@ public class TrackingDataServiceMain implements TrackingDataService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<TrackingDataDTO> findMostRecentRecordForEachDevice() {
+  public List<DeviceTelemetryDTO> findMostRecentRecordForEachDevice() {
 
-    List<TrackingData> latestLocations = trackingDataRepository.findMostRecentRecordForEachDevice();
+    List<DeviceTelemetry> latestLocations = deviceTelemetryRepository.findMostRecentRecordForEachDevice();
 
-    return latestLocations.stream().map(trackingDataMapper::map).toList();
+    return latestLocations.stream().map(deviceTelemetryMapper::map).toList();
   }
 }

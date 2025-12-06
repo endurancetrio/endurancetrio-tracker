@@ -34,29 +34,29 @@ import java.time.Instant;
 import java.util.StringJoiner;
 
 /**
- * The {@link TrackingData} represents a geographic tracking point recorded by a device at a
+ * The {@link DeviceTelemetry} represents the telemetry data recorded by a device at a
  * specific time.
  * <p>
- * The {@link TrackingData} fields are defined as follows:
+ * The {@link DeviceTelemetry} fields are defined as follows:
  * <ul>
  *   <li>
- *     {@link #getId()} id : The unique identifier of the {@link TrackingData} that is automatically
- *     generated and is the primary key.
+ *     {@link #getId()} id : The unique identifier of the {@link DeviceTelemetry} that is
+ *     automatically generated and is the primary key.
  *  </li>
  *  <li>
- *    {@link #getAccount()} account : The account that recorded this tracking point
+ *    {@link #getAccount()} account : The account that recorded this telemetry data
  *  </li>
  *  <li>
- *    {@link #getDevice()} device : Identifier of the device that recorded this tracking point
+ *    {@link #getDevice()} device : Identifier of the device that recorded this telemetry data
  *  </li>
  *  <li>
- *    {@link #getTime()} time : The timestamp when the tracking point was recorded
+ *    {@link #getTime()} time : The timestamp when the telemetry data was recorded
  *  </li>
  *  <li>
- *    {@link #getLatitude()} latitude : The latitude coordinate of the tracking point
+ *    {@link #getLatitude()} latitude : The latitude coordinate within the telemetry data
  *  </li>
  *  <li>
- *    {@link #getLongitude()} longitude : The longitude coordinate of the tracking point
+ *    {@link #getLongitude()} longitude : The longitude coordinate within the telemetry data
  *  </li>
  *  <li>
  *    {@link #isActive()} active : Flag indicating whether the device is active
@@ -76,11 +76,11 @@ import java.util.StringJoiner;
  * </ul>
  */
 @Entity
-@Table(name = "tracking_data")
+@Table(name = "device_telemetry")
 @SequenceGenerator(
-    name = "seq_endurancetrio_generator", sequenceName = "seq_tracking_data_id", allocationSize = 5
+    name = "seq_endurancetrio_generator", sequenceName = "seq_device_telemetry_id", allocationSize = 5
 )
-public class TrackingData extends BaseEntity<Long> {
+public class DeviceTelemetry extends BaseEntity<Long> {
 
   @Serial
   private static final long serialVersionUID = 1L;
@@ -104,11 +104,11 @@ public class TrackingData extends BaseEntity<Long> {
   @Column(name = "active", nullable = false)
   private boolean active;
 
-  public TrackingData() {
+  public DeviceTelemetry() {
     super();
   }
 
-  public TrackingData(
+  public DeviceTelemetry(
       TrackerAccount account, String device, Instant time, Double latitude, Double longitude,
       boolean active
   ) {

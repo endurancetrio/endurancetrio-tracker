@@ -59,10 +59,10 @@ public class OpenApiConfig {
     return new OpenAPI().info(new Info().title("EnduranceTrio Tracker API")
             .description("""
                 EnduranceTrio Tracker is a modern REST API designed for managing IoT device
-                locations. Built with Java 21 and Spring Boot, the service provides a scalable
-                and secure solution for submitting and retrieving GPS data using API key
-                authentication. It is ideal for applications such as fleet management,
-                asset tracking, and general IoT device monitoring.
+                telemetry. Built with Java 21 and Spring Boot, the service provides a scalable
+                and secure solution for submitting and retrieving devices telemetry data
+                 using API key authentication. It is ideal for applications
+                 such as fleet management, asset tracking, and general IoT device monitoring.
                 
                 Application Version: %s
                 """.formatted(appVersion))

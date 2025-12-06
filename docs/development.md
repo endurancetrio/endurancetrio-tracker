@@ -135,7 +135,7 @@ INSERT INTO tracker_account (owner, account_key, enabled, version, created_at)
 
 You can verify API keys work by testing with the provided endpoints using the
 `Authorization: Bearer api-key-here` and `ET-Owner: account-name-here` headers as shown
-in the API examples section.
+in the [API Endpoints](../README.md#api-endpoints) section of the [main README.md](../README.md).
 
 ### Database
 
@@ -147,7 +147,7 @@ scripts are located in the `endurancetrio-data/src/main/resources/db/migration` 
 automatically executed on application startup. Migrations support both H2 (test)
 and PostgreSQL (development and production).
 
-The file [`DATABASE.md`](./endurancetrio-data/src/main/resources/db/DATABASE.md) documents the
+The file [`DATABASE.md`](../endurancetrio-data/src/main/resources/db/DATABASE.md) documents the
 development and management of the application's database.
 
 #### Database, Schema, and Application User Setup

@@ -31,10 +31,10 @@ import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * The {@link TrackingDataDTO} represents a geographic tracking point recorded by a device at a
+ * The {@link DeviceTelemetryDTO} represents the telemetry data recorded by a device at a
  * specific time.
  */
-public record TrackingDataDTO(
+public record DeviceTelemetryDTO(
 
     @NotBlank(message = "Device identifier is required")
     @Size(min = 1, max = 50, message = "Device identifier must be between 1 and 50 characters")

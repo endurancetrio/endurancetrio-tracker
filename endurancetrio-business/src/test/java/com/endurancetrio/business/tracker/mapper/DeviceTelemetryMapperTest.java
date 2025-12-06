@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.endurancetrio.business.tracker.dto.TrackerAccountDTO;
-import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
+import com.endurancetrio.business.tracker.dto.DeviceTelemetryDTO;
 import com.endurancetrio.data.tracker.model.entity.TrackerAccount;
-import com.endurancetrio.data.tracker.model.entity.TrackingData;
+import com.endurancetrio.data.tracker.model.entity.DeviceTelemetry;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class TrackingDataMapperTest {
+class DeviceTelemetryMapperTest {
 
   private static final String OWNER = "system";
   private static final String KEY = "TEST_ACCOUNT_KEY_1234567890";
@@ -50,15 +50,15 @@ class TrackingDataMapperTest {
   private static final Double LONGITUDE = -9.136079;
   private static final Boolean IS_ACTIVE = true;
 
-  private TrackingData entityTest;
-  private TrackingDataDTO dtoTest;
+  private DeviceTelemetry entityTest;
+  private DeviceTelemetryDTO dtoTest;
   private TrackerAccount account;
 
   @Mock
   private TrackerAccountMapper accountMapper;
 
   @InjectMocks
-  private TrackingDataMapper underTest;
+  private DeviceTelemetryMapper underTest;
 
   @BeforeEach
   void setUp() {
@@ -67,7 +67,7 @@ class TrackingDataMapperTest {
 
     account = new TrackerAccount(OWNER, KEY, IS_ENABLED);
 
-    entityTest = new TrackingData();
+    entityTest = new DeviceTelemetry();
     entityTest.setId(testId);
     entityTest.setAccount(account);
     entityTest.setDevice(DEVICE);
@@ -76,7 +76,7 @@ class TrackingDataMapperTest {
     entityTest.setLongitude(LONGITUDE);
     entityTest.setActive(IS_ACTIVE);
 
-    dtoTest = new TrackingDataDTO(DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
+    dtoTest = new DeviceTelemetryDTO(DEVICE, TIME, LATITUDE, LONGITUDE, IS_ACTIVE);
   }
 
   @Test
@@ -86,7 +86,7 @@ class TrackingDataMapperTest {
 
     when(accountMapper.map(accountDto)).thenReturn(this.account);
 
-    TrackingData result = underTest.map(dtoTest, accountDto);
+    DeviceTelemetry result = underTest.map(dtoTest, accountDto);
 
     assertNull(result.getId());
     assertEquals(OWNER, result.getAccount().getOwner());
@@ -100,7 +100,7 @@ class TrackingDataMapperTest {
   @Test
   void mapEntity() {
 
-    TrackingDataDTO result = underTest.map(entityTest);
+    DeviceTelemetryDTO result = underTest.map(entityTest);
 
     assertEquals(DEVICE, result.device());
     assertEquals(TIME, result.time());
@@ -112,14 +112,14 @@ class TrackingDataMapperTest {
   @Test
   void mapNullDTO() {
 
-    TrackingData result = underTest.map(null, null);
+    DeviceTelemetry result = underTest.map(null, null);
     assertNull(result);
   }
 
   @Test
   void mapNullEntity() {
 
-    TrackingDataDTO result = underTest.map(null);
+    DeviceTelemetryDTO result = underTest.map(null);
     assertNull(result);
   }
 }

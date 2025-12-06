@@ -21,38 +21,38 @@
 package com.endurancetrio.business.tracker.mapper;
 
 import com.endurancetrio.business.tracker.dto.TrackerAccountDTO;
-import com.endurancetrio.business.tracker.dto.TrackingDataDTO;
-import com.endurancetrio.data.tracker.model.entity.TrackingData;
+import com.endurancetrio.business.tracker.dto.DeviceTelemetryDTO;
+import com.endurancetrio.data.tracker.model.entity.DeviceTelemetry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link TrackingDataMapper} is a utility class for converting between {@link TrackingDataDTO} and
- * {@link TrackingData} objects.
+ * {@link DeviceTelemetryMapper} is a utility class for converting between {@link DeviceTelemetryDTO} and
+ * {@link DeviceTelemetry} objects.
  */
 @Component
-public class TrackingDataMapper {
+public class DeviceTelemetryMapper {
 
   private final TrackerAccountMapper accountMapper;
 
   @Autowired
-  public TrackingDataMapper(TrackerAccountMapper accountMapper) {
+  public DeviceTelemetryMapper(TrackerAccountMapper accountMapper) {
     this.accountMapper = accountMapper;
   }
 
   /**
-   * Converts a {@link TrackingDataDTO} to a {@link TrackingData} entity.
+   * Converts a {@link DeviceTelemetryDTO} to a {@link DeviceTelemetry} entity.
    *
-   * @param dto the {@link TrackingDataDTO} to be mapped
-   * @return the corresponding {@link TrackingData} entity
+   * @param dto the {@link DeviceTelemetryDTO} to be mapped
+   * @return the corresponding {@link DeviceTelemetry} entity
    */
-  public TrackingData map(TrackingDataDTO dto, TrackerAccountDTO account) {
+  public DeviceTelemetry map(DeviceTelemetryDTO dto, TrackerAccountDTO account) {
 
     if (dto == null) {
       return null;
     }
 
-    TrackingData entity = new TrackingData();
+    DeviceTelemetry entity = new DeviceTelemetry();
     entity.setAccount(accountMapper.map(account));
     entity.setDevice(dto.device());
     entity.setTime(dto.time());
@@ -64,18 +64,18 @@ public class TrackingDataMapper {
   }
 
   /**
-   * Converts a {@link TrackingData} entity to a {@link TrackingDataDTO}.
+   * Converts a {@link DeviceTelemetry} entity to a {@link DeviceTelemetryDTO}.
    *
-   * @param entity the {@link TrackingData} entity to be mapped
-   * @return the corresponding {@link TrackingDataDTO}
+   * @param entity the {@link DeviceTelemetry} entity to be mapped
+   * @return the corresponding {@link DeviceTelemetryDTO}
    */
-  public TrackingDataDTO map(TrackingData entity) {
+  public DeviceTelemetryDTO map(DeviceTelemetry entity) {
 
     if (entity == null) {
       return null;
     }
 
-    return new TrackingDataDTO(entity.getDevice(), entity.getTime(), entity.getLatitude(),
+    return new DeviceTelemetryDTO(entity.getDevice(), entity.getTime(), entity.getLatitude(),
         entity.getLongitude(), entity.isActive()
     );
   }
