@@ -59,13 +59,14 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       pool-name: EnduranceTrio-HikariPool
-      connection-timeout: 3000
-      maximum-pool-size: 10
-      minimum-idle: 1
-      idle-timeout: 300000
-      max-lifetime: 1200000
-      connection-test-query: SELECT 1
       auto-commit: false
+      connection-test-query: SELECT 1
+      connection-timeout: 30000
+      idle-timeout: 600000
+      keepalive-time: 300000
+      maximum-pool-size: 3
+      max-lifetime: 1800000
+      minimum-idle: 1
       transaction-isolation: TRANSACTION_READ_COMMITTED
 
   flyway:

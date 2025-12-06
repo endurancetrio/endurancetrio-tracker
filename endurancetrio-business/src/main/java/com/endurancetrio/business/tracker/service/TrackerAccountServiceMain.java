@@ -56,7 +56,7 @@ public class TrackerAccountServiceMain implements TrackerAccountService {
   }
 
   @Override
-  @Transactional(readOnly = true)
+  @Transactional
   public boolean validateKey(String owner, String key) {
 
     Optional<TrackerAccount> accountOptional = findByOwner(owner);
