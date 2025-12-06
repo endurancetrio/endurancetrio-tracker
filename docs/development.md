@@ -266,7 +266,7 @@ SELECT * FROM information_schema.role_table_grants  WHERE grantee = '{USERNAME}'
 #### 2. Clone the repository
 
 ```shell
-git clone git@github.com:endurancetrio/endurancetrio-tracker.git
+git clone git@github.com:EnduranceCode/endurancetrio-tracker.git
 cd endurancetrio-tracker
 ```
 

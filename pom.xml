@@ -39,7 +39,7 @@
   <name>EnduranceTrio Tracker</name>
   <description>A modern REST API for IoT device location tracking</description>
 
-  <url>https://github.com/endurancetrio/endurancetrio-tracker</url>
+  <url>https://github.com/EnduranceCode/endurancetrio-tracker</url>
 
   <licenses>
     <license>
@@ -61,11 +61,11 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/endurancetrio/endurancetrio-tracker.git</connection>
+    <connection>scm:git:https://github.com/EnduranceCode/endurancetrio-tracker.git</connection>
     <developerConnection>
-      scm:git:ssh://git@github.com:endurancetrio/endurancetrio-tracker.git
+      scm:git:ssh://git@github.com:EnduranceCode/endurancetrio-tracker.git
     </developerConnection>
-    <url>https://github.com/endurancetrio/endurancetrio-tracker</url>
+    <url>https://github.com/EnduranceCode/endurancetrio-tracker</url>
     <tag>HEAD</tag>
   </scm>
 

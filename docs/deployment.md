@@ -68,8 +68,8 @@ and the template for the `.env` file, execute the following commands:
 
 ```shell
 cd /opt/endurancetrio-tracker/
-sudo wget https://raw.githubusercontent.com/endurancetrio/endurancetrio-tracker/refs/heads/tracker/docker/deployment/docker-compose.yaml
-sudo wget https://raw.githubusercontent.com/endurancetrio/endurancetrio-tracker/refs/heads/tracker/docker/deployment/.env-template
+sudo wget https://raw.githubusercontent.com/EnduranceCode/endurancetrio-tracker/refs/heads/tracker/docker/deployment/docker-compose.yaml
+sudo wget https://raw.githubusercontent.com/EnduranceCode/endurancetrio-tracker/refs/heads/tracker/docker/deployment/.env-template
 ```
 
 To confirm that the files were downloaded, check the output of the following command:
@@ -181,7 +181,7 @@ the following redirects:
 To use the [provided template](../apache/vhost-template.conf), execute the following command:
 
 ```shell
-sudo wget -P /etc/apache2/sites-available/ https://raw.githubusercontent.com/endurancetrio/endurancetrio-tracker/refs/heads/tracker/apache/vhost-template.conf
+sudo wget -P /etc/apache2/sites-available/ https://raw.githubusercontent.com/EnduranceCode/endurancetrio-tracker/refs/heads/tracker/apache/vhost-template.conf
 ```
 
 Then, replace the placeholder in the below command as appropriate and execute it to rename the file.
