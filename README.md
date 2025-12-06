@@ -51,176 +51,18 @@ This project was created by **Ricardo do Canto**, who is the lead developer and 
 
 ### API Endpoints
 
+The following table summarizes the available endpoints.
+
 | Method | Endpoint                                         | Description                                                         | Authentication     |
 |--------|--------------------------------------------------|---------------------------------------------------------------------|--------------------|
 | `POST` | `/tracker/v1/devices`                            | Submit a new device location                                        | API Key Required   |
 | `GET`  | `/tracker/v1/devices`                            | Get last known location for all existing devices                    | API Key Required   |
 | `GET`  | `/tracker/v1/devices/{device}/locations`         | Get historical locations for a device (supports pagination)         | API Key Required   |
 
-### API Examples
+For comprehensive documentation including request/response schemas, examples, and error handling,
+see the following documents.
 
-#### 1. Submit a device location (Authenticated)
-
-```shell
-POST /tracker/v1/devices
-Content-Type: application/json
-Authorization: Bearer api-key-here
-ET-Owner: account-name-here
-
-{
-  "device": "SDABC",
-  "time": "2026-09-19T06:00:00Z",
-  "lat": 39.510058,
-  "lon": -9.136079,
-  "active": true
-}
-```
-
-**Response**: `201 Created`
-
-```json
-{
-  "code": 201,
-  "status": "Created",
-  "details": "Request handled successfully",
-  "data": {
-    "device": "SDABC",
-    "time": "2026-09-19T06:00:00Z",
-    "lat": 39.510058,
-    "lon": -9.136079,
-    "active": true
-  }
-}
-```
-
-##### `cURL` request (assuming the application is running on localhost:8081):
-
-```shell
-curl -X POST 'http://localhost:8081/api/tracker/v1/devices' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer <api-key-here>' \
-  -H 'ET-Owner: <account-name-here>' \
-  -d '{
-    "device": "SDABC",
-    "time": "2026-09-19T06:00:00Z",
-    "lat": 39.510058,
-    "lon": -9.136079,
-    "active": true
-  }'
-```
-
-#### 2. Get last known location for all existing devices (Authenticated)
-
-```shell
-GET /tracker/v1/devices
-Content-Type: application/json
-Authorization: Bearer api-key-here
-ET-Owner: account-name-here
-```
-
-**Response**: `200 OK`
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "details": "Request handled successfully",
-  "data": [
-    {
-      "device": "SDABC",
-      "time": "2026-09-19T06:00:00Z",
-      "lat": 39.510058,
-      "lon": -9.136079,
-      "active": true
-    },
-    {
-      "device": "SDDEF",
-      "time": "2026-09-19T06:00:06Z",
-      "lat":  39.509001,
-      "lon": -9.139602,
-      "active": true
-    },
-    {
-      "device": "SDFGH",
-      "time": "2026-09-19T06:00:12Z",
-      "lat": 39.509773,
-      "lon": -9.140004,
-      "active": true
-    },
-    {
-      "device": "SDJKL",
-      "time": "2026-09-19T06:00:24Z",
-      "lat": 39.511075,
-      "lon":  -9.136516,
-      "active": true
-    }
-  ]
-}
-```
-
-##### `cURL` request (assuming the application is running on localhost:8081):
-
-```shell
-curl -X GET 'http://localhost:8081/api/tracker/v1/devices' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer <api-key-here>' \
-  -H 'ET-Owner: <account-name-here>'
-```
-
-#### 3. Get historical locations for a device (Authenticated, Supports pagination)
-
-```shell
-GET /tracker/v1/devices/{deviceId}/locations?page=0&size=20
-Content-Type: application/json
-Authorization: Bearer api-key-here
-ET-Owner: account-name-here
-```
-
-**Response**: `200 OK`
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "details": "Request handled successfully",
-  "data": [
-    {
-      "device": "SDABC",
-      "time": "2026-09-19T06:00:00Z",
-      "lat": 39.510058,
-      "lon": -9.136079,
-      "active": true
-    },
-    {
-      "device": "SDABC",
-      "time": "2026-09-19T06:06:00Z",
-      "lat": 39.510071,
-      "lon": -9.136071,
-      "active": true
-    },
-    {
-      "device": "SDABC",
-      "time": "2026-09-19T06:12:00Z",
-      "lat": 39.510082,
-      "lon": -9.136062,
-      "active": true
-    },
-    {
-      "device": "SDABC",
-      "time": "2026-09-19T06:24:00Z",
-      "lat": 39.510093,
-      "lon": -9.136053,
-      "active": true
-    }
-  ],
-  "page": {
-    "number": 0,
-    "size": 20,
-    "totalElements": 4,
-    "totalPages": 1
-  }
-}
-```
+- [Tracker API Endpoints](docs/api-endpoints-tracker.md).
 
 ### Swagger UI & API Documentation
 
@@ -288,7 +130,7 @@ to the [Development Guide](./docs/development.md).
 ### Quick Start
 
 1. **Prerequisites**: Java 21, Maven, PostgreSQL
-2. **Clone**: `git clone git@github.com:endurancetrio/endurancetrio-tracker.git`
+2. **Clone**: `git clone git@github.com:EnduranceCode/endurancetrio-tracker.git`
 3. **Configure**: Set up `application-secrets.yaml` from template
 4. **Build**: `mvn clean install`
 5. **Run**: Use `./launch-app.sh` or the provided IntelliJ run configuration
