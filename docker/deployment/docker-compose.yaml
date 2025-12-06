@@ -23,16 +23,8 @@ services:
     container_name: endurancetrio-tracker
     image: ghcr.io/endurancetrio/endurancetrio-tracker:${VERSION}
     restart: unless-stopped
-    environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      DB_URL: ${DB_URL}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_SECRET: ${DB_SECRET}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
-      FIRST_OWNER: ${FIRST_OWNER}
-      FIRST_HASH: ${FIRST_HASH}
+    env_file:
+      - .env
     networks:
       - endurancetrio-tracker
     ports:
