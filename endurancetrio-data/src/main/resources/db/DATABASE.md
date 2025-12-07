@@ -124,3 +124,9 @@ The migration scripts are duplicated, when necessary for tests) for each support
 4. Inserts test data into **EnduranceTrio Tracker** telemetry management database table:
     - [V000.002.000.002__insert-telemetry-management-test-data-h2.sql](migration/dml/h2/V000.002.000.002__insert-telemetry-management-test-data-h2.sql)
     - [V000.002.000.002__insert-telemetry-management-test-data-postgres.sql](migration/dml/postgres/V000.002.000.002__insert-telemetry-management-test-data-postgres.sql)
+5. Creates the **EnduranceTrio Tracker** route database tables:
+    - [V000.002.000.001__create-route-tables-h2.sql](migration/ddl/h2/V000.002.000.003__create-route-tables-h2.sql)
+    - [V000.002.000.001__create-route-tables-postgres.sql](migration/ddl/postgres/V000.002.000.003__create-route-tables-postgres.sql)
+6. Inserts test data into **EnduranceTrio Tracker** route database tables:
+    - [V000.002.002.002__insert-route-test-data-h2.sql](migration/dml/h2/V000.002.000.004__insert-route-test-data-h2.sql)
+    - [V000.002.002.002__insert-route-test-data-postgres.sql](migration/dml/postgres/V000.002.000.004__insert-route-test-data-postgres.sql)
