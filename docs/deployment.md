@@ -15,7 +15,7 @@ The **EnduranceTrio Tracker** REST API is optimized for containerized deployment
 that automatically builds and publishes OCI-compliant images to the GitHub
 Container Registry ([GHCR](https://github.com/orgs/endurancetrio/packages)).
 
-### Container Architecture
+## Container Architecture
 
 The deployment uses a lightweight Alpine-based image (`eclipse-temurin:21-jre-alpine`) optimized
 for security and performance.
@@ -37,7 +37,7 @@ Official images are available at:
 | `X.Y.Z`       | Semantic version release (e.g., `1.0.0`)         | **Production**  |
 | `sha-XXXXXXX` | Short Git SHA commit hash                        | Testing/Staging |
 
-### Server Setup
+## Server Setup
 
 The recommended way to deploy the application is using Docker Compose. To create the necessary
 folders for the app installation, execute the following command in the deployment server:
@@ -156,7 +156,7 @@ curl -f http://localhost:{TRACKER_EXT_PORT}/actuator/health
 >
 > + **{TRACKER_EXT_PORT}** : The external port on the Docker host for accessing the application
 
-### Reverse Proxy Setup
+## Reverse Proxy Setup
 
 To ensure that the necessary [Apache Server](https://httpd.apache.org/) modules for reverse
 proxying are enabled, execute the following commands:
@@ -242,7 +242,7 @@ http://{SECOND_LEVEL_DOMAIN_SLD}.{TOP_LEVEL_DOMAIN_TLD}
 > + **{SECOND_LEVEL_DOMAIN_SLD}** : The [*Second-level domain*](https://en.wikipedia.org/wiki/Second-level_domain) (e.g., 'example' in example.com)
 > + **{TOP_LEVEL_DOMAIN_TLD}**    : The [TLD](https://en.wikipedia.org/wiki/Top-level_domain) (e.g., 'com', 'org', 'net')
 
-### SSL Certificate
+## SSL Certificate
 
 If [Certbot](https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal) isn't yet installed
 on you server, install it and set the SSL certificate for the **EnduranceTrio Tracker** REST API

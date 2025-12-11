@@ -87,6 +87,23 @@ public class RouteServiceMain implements RouteService {
   }
 
   /**
+   * Extracts unique device identifiers from the segments of the provided RouteDTO.
+   *
+   * @param routeDTO the RouteDTO containing segments with device information
+   * @return a set of unique device identifiers
+   */
+  private Set<String> extractDevices(RouteDTO routeDTO) {
+
+    return Optional.ofNullable(routeDTO)
+        .map(RouteDTO::segments)
+        .orElseGet(Collections::emptyList)
+        .stream()
+        .filter(Objects::nonNull)
+        .flatMap(segment -> Stream.of(segment.startDevice(), segment.endDevice()))
+        .collect(Collectors.toSet());
+  }
+
+  /**
    * Validates that all devices referenced in the RouteDTO exist in the system.
    *
    * @param routeDTO the RouteDTO containing segments with device information
@@ -109,22 +126,5 @@ public class RouteServiceMain implements RouteService {
       LOG.warn(errorMessage);
       throw new BadRequestException(errorMessage, EnduranceTrioError.BAD_REQUEST);
     }
-  }
-
-  /**
-   * Extracts unique device identifiers from the segments of the provided RouteDTO.
-   *
-   * @param routeDTO the RouteDTO containing segments with device information
-   * @return a set of unique device identifiers
-   */
-  private Set<String> extractDevices(RouteDTO routeDTO) {
-
-    return Optional.ofNullable(routeDTO)
-        .map(RouteDTO::segments)
-        .orElseGet(Collections::emptyList)
-        .stream()
-        .filter(Objects::nonNull)
-        .flatMap(segment -> Stream.of(segment.startDevice(), segment.endDevice()))
-        .collect(Collectors.toSet());
   }
 }

@@ -25,6 +25,14 @@ import com.endurancetrio.business.tracker.dto.TrackerAccountDTO;
 public interface TrackerAccountService {
 
   /**
+   * Retrieves the tracker account details for the specified owner.
+   *
+   * @param owner the owner of the tracker account
+   * @return the {@link TrackerAccountDTO} containing the account details
+   */
+  TrackerAccountDTO getByOwner(String owner);
+
+  /**
    * Validates the provided key for the given owner.
    *
    * @param owner the owner of the key
@@ -32,12 +40,4 @@ public interface TrackerAccountService {
    * @return true if the provided key is valid and the account is enabled, false otherwise
    */
   boolean validateKey(String owner, String key);
-
-  /**
-   * Retrieves the tracker account details for the specified owner.
-   *
-   * @param owner the owner of the tracker account
-   * @return the {@link TrackerAccountDTO} containing the account details
-   */
-  TrackerAccountDTO getByOwner(String owner);
 }

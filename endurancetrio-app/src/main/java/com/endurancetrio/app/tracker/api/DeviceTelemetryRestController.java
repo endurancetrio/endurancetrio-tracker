@@ -64,6 +64,22 @@ public class DeviceTelemetryRestController implements DeviceTelemetryAPI {
   }
 
   @Override
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping(
+      value = TRACKER_RESOURCE_DEVICES, produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<@NonNull EnduranceTrioResponse<List<DeviceTelemetryDTO>>> getMostRecentRecordForEachDevice() {
+
+    HttpStatus status = HttpStatus.OK;
+    List<DeviceTelemetryDTO> data = deviceTelemetryService.findMostRecentRecordForEachDevice();
+
+    EnduranceTrioResponse<List<DeviceTelemetryDTO>> response = new EnduranceTrioResponse<>(
+        status.value(), status.getReasonPhrase(), DETAILS_SUCCESS, data);
+
+    return ResponseEntity.status(status).body(response);
+  }
+
+  @Override
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(
       value = TRACKER_RESOURCE_DEVICES, consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -95,22 +111,6 @@ public class DeviceTelemetryRestController implements DeviceTelemetryAPI {
     EnduranceTrioResponse<DeviceTelemetryDTO> response = new EnduranceTrioResponse<>(status.value(),
         status.getReasonPhrase(), DETAILS_SUCCESS, data
     );
-
-    return ResponseEntity.status(status).body(response);
-  }
-
-  @Override
-  @ResponseStatus(HttpStatus.OK)
-  @GetMapping(
-      value = TRACKER_RESOURCE_DEVICES, produces = MediaType.APPLICATION_JSON_VALUE
-  )
-  public ResponseEntity<@NonNull EnduranceTrioResponse<List<DeviceTelemetryDTO>>> getMostRecentRecordForEachDevice() {
-
-    HttpStatus status = HttpStatus.OK;
-    List<DeviceTelemetryDTO> data = deviceTelemetryService.findMostRecentRecordForEachDevice();
-
-    EnduranceTrioResponse<List<DeviceTelemetryDTO>> response = new EnduranceTrioResponse<>(
-        status.value(), status.getReasonPhrase(), DETAILS_SUCCESS, data);
 
     return ResponseEntity.status(status).body(response);
   }

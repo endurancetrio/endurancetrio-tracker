@@ -56,6 +56,24 @@ public class TrackerAccountServiceMain implements TrackerAccountService {
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public TrackerAccountDTO getByOwner(String owner) {
+
+    Optional<TrackerAccount> accountOptional = findByOwner(owner);
+
+    if (accountOptional.isEmpty()) {
+      LOG.warn("No account found for owner '{}'", owner);
+      throw new NotFoundException(EnduranceTrioError.NOT_FOUND);
+    }
+
+    return trackerAccountMapper.map(accountOptional.get());
+  }
+
+  private Optional<TrackerAccount> findByOwner(String owner) {
+    return repository.findByOwner(owner);
+  }
+
+  @Override
   @Transactional
   public boolean validateKey(String owner, String key) {
 
@@ -80,23 +98,5 @@ public class TrackerAccountServiceMain implements TrackerAccountService {
     }
 
     return isValidKey;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public TrackerAccountDTO getByOwner(String owner) {
-
-    Optional<TrackerAccount> accountOptional = findByOwner(owner);
-
-    if (accountOptional.isEmpty()) {
-      LOG.warn("No account found for owner '{}'", owner);
-      throw new NotFoundException(EnduranceTrioError.NOT_FOUND);
-    }
-
-    return trackerAccountMapper.map(accountOptional.get());
-  }
-
-  private Optional<TrackerAccount> findByOwner(String owner) {
-    return repository.findByOwner(owner);
   }
 }
