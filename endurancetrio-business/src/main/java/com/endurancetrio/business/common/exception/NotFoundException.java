@@ -46,4 +46,8 @@ public class NotFoundException extends EnduranceTrioException {
   public NotFoundException(EnduranceTrioError error) {
     super(error.getCode(), error.getMessage(), Collections.singletonList(new ErrorDTO(error)));
   }
+
+  public NotFoundException(String message, EnduranceTrioError error) {
+    super(error.getCode(), message, Collections.singletonList(new ErrorDTO(error)));
+  }
 }

@@ -22,11 +22,25 @@ package com.endurancetrio.data.tracker.repository;
 
 import com.endurancetrio.data.tracker.model.entity.DeviceTelemetry;
 import java.util.List;
+import java.util.Set;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-public interface DeviceTelemetryRepository extends JpaRepository<@NonNull DeviceTelemetry, @NonNull Long> {
+@Repository
+public interface DeviceTelemetryRepository extends
+    JpaRepository<@NonNull DeviceTelemetry, @NonNull Long> {
+
+  /**
+   * Finds existing devices from the provided set of device identifiers.
+   *
+   * @param devices set of device identifiers to check for existence
+   * @return set of device identifiers that exist in the database
+   */
+  @Query("SELECT DISTINCT d.device FROM DeviceTelemetry d WHERE d.device IN :devices")
+  Set<String> findExistingDevicesFrom(@Param("devices") Set<String> devices);
 
   /**
    * Finds the most recent telemetry data record for each device present in the database.

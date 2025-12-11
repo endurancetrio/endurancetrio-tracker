@@ -22,11 +22,13 @@ package com.endurancetrio.data.tracker.repository;
 
 import com.endurancetrio.data.tracker.model.entity.TrackerAccount;
 import java.util.Optional;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TrackerAccountRepository extends JpaRepository<TrackerAccount, String> {
+public interface TrackerAccountRepository extends
+    JpaRepository<@NonNull TrackerAccount, @NonNull String> {
 
   Optional<TrackerAccount> findByOwner(String owner);
 }

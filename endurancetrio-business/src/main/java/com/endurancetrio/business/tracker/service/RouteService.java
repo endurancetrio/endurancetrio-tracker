@@ -18,22 +18,17 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.app.tracker.constants;
+package com.endurancetrio.business.tracker.service;
 
-/**
- * The {@link TrackerPathsAPI} class contains path constant values used across controller classes
- * for the Tracker domain in the application.
- */
-public class TrackerPathsAPI {
+import com.endurancetrio.business.tracker.dto.RouteDTO;
 
-  public static final String TRACKER_V1 = "/v1";
-  public static final String TRACKER_DOMAIN = "/tracker";
+public interface RouteService {
 
-  public static final String TRACKER_RESOURCE_DEVICES = "/devices";
-  public static final String TRACKER_RESOURCE_ROUTES = "/routes";
-
-  @SuppressWarnings("java:S1118")
-  public TrackerPathsAPI() {
-    throw new IllegalStateException("Utility Class");
-  }
+  /**
+   * Saves the provided route configuration.
+   *
+   * @param routeDTO the route configuration to be saved
+   * @return the saved {@link RouteDTO}
+   */
+  RouteDTO save(RouteDTO routeDTO);
 }

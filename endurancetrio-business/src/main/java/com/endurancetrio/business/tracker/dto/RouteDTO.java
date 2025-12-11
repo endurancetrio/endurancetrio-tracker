@@ -18,22 +18,33 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.app.tracker.constants;
+package com.endurancetrio.business.tracker.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * The {@link TrackerPathsAPI} class contains path constant values used across controller classes
- * for the Tracker domain in the application.
+ * The {@link RouteDTO} represents a route in the EnduranceTrio Tracker system.
+ *
+ * @param id        The unique identifier of the {@link RouteDTO}.
+ * @param reference The reference name of the route.
+ * @param segments  The list of segments that make up the route.
  */
-public class TrackerPathsAPI {
+public record RouteDTO(
 
-  public static final String TRACKER_V1 = "/v1";
-  public static final String TRACKER_DOMAIN = "/tracker";
+    Long id,
 
-  public static final String TRACKER_RESOURCE_DEVICES = "/devices";
-  public static final String TRACKER_RESOURCE_ROUTES = "/routes";
+    @NotBlank(message = "Route reference is required")
+    String reference,
 
-  @SuppressWarnings("java:S1118")
-  public TrackerPathsAPI() {
-    throw new IllegalStateException("Utility Class");
-  }
+    @NotEmpty(message = "Route must have at least one segment")
+    List<RouteSegmentDTO> segments
+
+) implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 }

@@ -37,7 +37,13 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@Tag(name = "Tracker", description = "EnduranceTrio Tracker API for managing telemetry data")
+@Tag(
+    name = "Device",
+    description = """
+        Manages tracking device telemetry data including GPS coordinates, timestamps, and
+        operational status for monitoring IoT devices
+        """
+)
 public interface DeviceTelemetryAPI {
 
   /**

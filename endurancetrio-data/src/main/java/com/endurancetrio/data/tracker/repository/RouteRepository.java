@@ -18,22 +18,14 @@
  * EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
  */
 
-package com.endurancetrio.app.tracker.constants;
+package com.endurancetrio.data.tracker.repository;
 
-/**
- * The {@link TrackerPathsAPI} class contains path constant values used across controller classes
- * for the Tracker domain in the application.
- */
-public class TrackerPathsAPI {
+import com.endurancetrio.data.tracker.model.entity.Route;
+import org.jspecify.annotations.NonNull;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-  public static final String TRACKER_V1 = "/v1";
-  public static final String TRACKER_DOMAIN = "/tracker";
+@Repository
+public interface RouteRepository extends JpaRepository<@NonNull Route, @NonNull Long> {
 
-  public static final String TRACKER_RESOURCE_DEVICES = "/devices";
-  public static final String TRACKER_RESOURCE_ROUTES = "/routes";
-
-  @SuppressWarnings("java:S1118")
-  public TrackerPathsAPI() {
-    throw new IllegalStateException("Utility Class");
-  }
 }

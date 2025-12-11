@@ -46,4 +46,8 @@ public class BadRequestException extends EnduranceTrioException {
   public BadRequestException(EnduranceTrioError error) {
     super(error.getCode(), error.getMessage(), Collections.singletonList(new ErrorDTO(error)));
   }
+
+  public BadRequestException(String message, EnduranceTrioError error) {
+    super(error.getCode(), message, Collections.singletonList(new ErrorDTO(error)));
+  }
 }

@@ -9,6 +9,7 @@ requirements. For an overview of the project, see the [main README.md](../README
 1. [Submit a device telemetry data point](#1-submit-a-device-telemetry-data-point)
 2. [Get last known telemetry for all existing devices](#2-get-last-known-telemetry-for-all-existing-devices)
 3. [Get historical telemetry for a device](#3-get-historical-telemetry-for-a-device)
+4. [Submit a route configuration](#4-submit-a-route-configuration)
 
 ## 1. Submit a device telemetry data point
 
@@ -173,4 +174,97 @@ ET-Owner: account-name-here
     "totalPages": 1
   }
 }
+```
+
+# 4. Submit a route configuration
+
+```shell
+POST /tracker/v1/routes
+Content-Type: application/json
+Authorization: Bearer api-key-here
+ET-Owner: account-name-here
+
+{
+  "reference": "20260921ETU001-001S",
+  "segments": [
+    {
+      "order": 1,
+      "startDevice": "SDABC",
+      "endDevice": "SDDEF"
+    },
+    {
+      "order": 2,
+      "startDevice": "SDDEF",
+      "endDevice": "SDFGH"
+    },
+    {
+      "order": 3,
+      "startDevice": "SDFGH",
+      "endDevice": "SDJKL"
+    }
+  ]
+}
+```
+
+**Response**: `201 Created`
+
+```json
+{
+  "code": 201,
+  "status": "Created",
+  "details": "Request handled successfully",
+  "data": {
+    "id": 1,
+    "reference": "20260921ETU001-001S",
+    "segments": [
+      {
+        "id": 1,
+        "order": 1,
+        "startDevice": "SDABC",
+        "endDevice": "SDDEF"
+      },
+      {
+        "id": 2,
+        "order": 2,
+        "startDevice": "SDDEF",
+        "endDevice": "SDFGH"
+      },
+      {
+        "id": 3,
+        "order": 3,
+        "startDevice": "SDFGH",
+        "endDevice": "SDJKL"
+      }
+    ]
+  }
+}
+```
+
+### `cURL` request (assuming the application is running on localhost:8081):
+
+```shell
+curl -X POST 'http://localhost:8081/api/tracker/v1/routes' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>' \
+  -d '{
+    "reference": "20260921ETU001-001S",
+    "segments": [
+      {
+        "order": 1,
+        "startDevice": "SDABC",
+        "endDevice": "SDDEF"
+      },
+      {
+        "order": 2,
+        "startDevice": "SDDEF",
+        "endDevice": "SDFGH"
+      },
+      {
+        "order": 3,
+        "startDevice": "SDFGH",
+        "endDevice": "SDJKL"
+      }
+    ]
+  }'
 ```
