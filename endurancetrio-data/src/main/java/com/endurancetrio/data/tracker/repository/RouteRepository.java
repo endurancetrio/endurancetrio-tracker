@@ -21,11 +21,17 @@
 package com.endurancetrio.data.tracker.repository;
 
 import com.endurancetrio.data.tracker.model.entity.Route;
+import java.util.List;
 import org.jspecify.annotations.NonNull;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RouteRepository extends JpaRepository<@NonNull Route, @NonNull Long> {
 
+  @Override
+  @NonNull
+  @EntityGraph(attributePaths = {"segments"})
+  List<Route> findAll();
 }

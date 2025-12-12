@@ -29,11 +29,13 @@ import com.endurancetrio.data.tracker.model.entity.Route;
 import com.endurancetrio.data.tracker.repository.DeviceTelemetryRepository;
 import com.endurancetrio.data.tracker.repository.RouteRepository;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +86,15 @@ public class RouteServiceMain implements RouteService {
     }
 
     return routeMapper.map(routeRepository.save(entity));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<RouteDTO> findAll() {
+
+    List<@NonNull Route> routes = routeRepository.findAll();
+
+    return routes.stream().map(routeMapper::map).toList();
   }
 
   /**

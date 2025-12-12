@@ -21,6 +21,7 @@
 package com.endurancetrio.business.tracker.service;
 
 import com.endurancetrio.business.tracker.dto.RouteDTO;
+import java.util.List;
 
 public interface RouteService {
 
@@ -31,4 +32,11 @@ public interface RouteService {
    * @return the saved {@link RouteDTO}
    */
   RouteDTO save(RouteDTO routeDTO);
+
+  /**
+   * Retrieves all route configurations.
+   *
+   * @return a list of {@link RouteDTO} representing all route configurations
+   */
+  List<RouteDTO> findAll();
 }

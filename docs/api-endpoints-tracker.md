@@ -6,62 +6,13 @@ requirements. For an overview of the project, see the [main README.md](../README
 
 ## Table of Contents
 
-1. [Submit a device telemetry data point](#1-submit-a-device-telemetry-data-point)
-2. [Get last known telemetry for all existing devices](#2-get-last-known-telemetry-for-all-existing-devices)
-3. [Get historical telemetry for a device](#3-get-historical-telemetry-for-a-device)
-4. [Submit a route configuration](#4-submit-a-route-configuration)
+1. [Get last known telemetry for all existing devices](#get-last-known-telemetry-for-all-existing-devices)
+2. [Get historical telemetry for a device](#get-historical-telemetry-for-a-device)
+3. [Submit a device telemetry data point](#submit-a-device-telemetry-data-point)
+4. [Get all route configurations](#get-all-route-configurations)
+5. [Submit a route configuration](#submit-a-route-configuration)
 
-## 1. Submit a device telemetry data point
-
-```shell
-POST /tracker/v1/devices
-Content-Type: application/json
-Authorization: Bearer api-key-here
-ET-Owner: account-name-here
-
-{
-  "device": "SDABC",
-  "time": "2026-09-19T06:00:00Z",
-  "lat": 39.510058,
-  "lon": -9.136079,
-  "active": true
-}
-```
-
-**Response**: `201 Created`
-
-```json
-{
-  "code": 201,
-  "status": "Created",
-  "details": "Request handled successfully",
-  "data": {
-    "device": "SDABC",
-    "time": "2026-09-19T06:00:00Z",
-    "lat": 39.510058,
-    "lon": -9.136079,
-    "active": true
-  }
-}
-```
-
-### `cURL` request (assuming the application is running on localhost:8081):
-
-```shell
-curl -X POST 'http://localhost:8081/api/tracker/v1/devices' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer <api-key-here>' \
-  -H 'ET-Owner: <account-name-here>' \
-  -d '{
-    "device": "SDABC",
-    "time": "2026-09-19T06:00:00Z",
-    "lat": 39.510058,
-    "lon": -9.136079,
-    "active": true
-  }'
-```
-
-## 2. Get last known telemetry for all existing devices
+## Get last known telemetry for all existing devices
 
 ```shell
 GET /tracker/v1/devices
@@ -119,7 +70,7 @@ curl -X GET 'http://localhost:8081/api/tracker/v1/devices' \
   -H 'ET-Owner: <account-name-here>'
 ```
 
-## 3. Get historical telemetry for a device
+## Get historical telemetry for a device
 
 **To be implemented**
 
@@ -176,7 +127,135 @@ ET-Owner: account-name-here
 }
 ```
 
-# 4. Submit a route configuration
+## Submit a device telemetry data point
+
+```shell
+POST /tracker/v1/devices
+Content-Type: application/json
+Authorization: Bearer api-key-here
+ET-Owner: account-name-here
+
+{
+  "device": "SDABC",
+  "time": "2026-09-19T06:00:00Z",
+  "lat": 39.510058,
+  "lon": -9.136079,
+  "active": true
+}
+```
+
+**Response**: `201 Created`
+
+```json
+{
+  "code": 201,
+  "status": "Created",
+  "details": "Request handled successfully",
+  "data": {
+    "device": "SDABC",
+    "time": "2026-09-19T06:00:00Z",
+    "lat": 39.510058,
+    "lon": -9.136079,
+    "active": true
+  }
+}
+```
+
+### `cURL` request (assuming the application is running on localhost:8081):
+
+```shell
+curl -X POST 'http://localhost:8081/api/tracker/v1/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>' \
+  -d '{
+    "device": "SDABC",
+    "time": "2026-09-19T06:00:00Z",
+    "lat": 39.510058,
+    "lon": -9.136079,
+    "active": true
+  }'
+```
+
+## Get all route configurations
+
+```shell
+GET /tracker/v1/routes
+Content-Type: application/json
+Authorization: Bearer api-key-here
+ET-Owner: account-name-here
+```
+
+**Response**: `200 OK`
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "details": "Request handled successfully",
+  "data": [
+    {
+      "id": 1,
+      "reference": "20260921ETU001-001S",
+      "segments": [
+        {
+          "id": 1,
+          "order": 1,
+          "startDevice": "SDABC",
+          "endDevice": "SDDEF"
+        },
+        {
+          "id": 2,
+          "order": 2,
+          "startDevice": "SDDEF",
+          "endDevice": "SDFGH"
+        },
+        {
+          "id": 3,
+          "order": 3,
+          "startDevice": "SDFGH",
+          "endDevice": "SDJKL"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "reference": "20260921ETU001-001S",
+      "segments": [
+        {
+          "id": 1,
+          "order": 4,
+          "startDevice": "SDABC",
+          "endDevice": "SDDEF"
+        },
+        {
+          "id": 5,
+          "order": 2,
+          "startDevice": "SDDEF",
+          "endDevice": "SDFGH"
+        },
+        {
+          "id": 6,
+          "order": 3,
+          "startDevice": "SDFGH",
+          "endDevice": "SDABC"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### `cURL` request (assuming the application is running on localhost:8081):
+
+```shell
+curl -X GET 'http://localhost:8081/api/tracker/v1/routes' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>'
+```
+
+# Submit a route configuration
 
 ```shell
 POST /tracker/v1/routes

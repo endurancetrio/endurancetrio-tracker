@@ -31,10 +31,12 @@ import com.endurancetrio.app.common.response.EnduranceTrioResponse;
 import com.endurancetrio.business.tracker.dto.RouteDTO;
 import com.endurancetrio.business.tracker.service.RouteService;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +50,22 @@ public class RouteRestController implements RouteApi {
 
   public RouteRestController(RouteService routeService) {
     this.routeService = routeService;
+  }
+
+  @Override
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping(value = TRACKER_RESOURCE_ROUTES, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<@NonNull EnduranceTrioResponse<List<RouteDTO>>> findAll() {
+
+    List<RouteDTO> data = routeService.findAll();
+
+    HttpStatus status = HttpStatus.OK;
+
+    EnduranceTrioResponse<List<RouteDTO>> response = new EnduranceTrioResponse<>(status.value(),
+        status.getReasonPhrase(), DETAILS_SUCCESS, data
+    );
+
+    return ResponseEntity.status(status).body(response);
   }
 
   @Override

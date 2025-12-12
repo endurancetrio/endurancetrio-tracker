@@ -167,4 +167,34 @@ class RouteServiceMainTest {
 
     assertEquals(EnduranceTrioError.NOT_FOUND.getCode(), result.getCode());
   }
+
+  @Test
+  void findAll() {
+    when(routeRepository.findAll()).thenReturn(List.of(testEntity));
+    when(routeMapper.map(any(Route.class))).thenReturn(testDTO);
+
+    List<RouteDTO> result = underTest.findAll();
+
+    verify(routeRepository, times(1)).findAll();
+    verify(routeMapper, times(1)).map(any(Route.class));
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(ROUTE_ID, result.getFirst().id());
+    assertEquals(REFERENCE, result.getFirst().reference());
+    assertEquals(1, result.getFirst().segments().size());
+  }
+
+  @Test
+  void findAllWhenNoRoutesExist() {
+    when(routeRepository.findAll()).thenReturn(List.of());
+
+    List<RouteDTO> result = underTest.findAll();
+
+    verify(routeRepository, times(1)).findAll();
+    verify(routeMapper, times(0)).map(any(Route.class));
+
+    assertNotNull(result);
+    assertEquals(0, result.size());
+  }
 }

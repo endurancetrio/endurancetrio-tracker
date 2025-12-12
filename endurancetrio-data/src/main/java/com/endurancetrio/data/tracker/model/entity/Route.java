@@ -35,6 +35,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
+import org.hibernate.Hibernate;
 
 /**
  * The {@link Route} represents a route segment in the EnduranceTrio Tracker system.
@@ -135,7 +136,7 @@ public class Route extends BaseEntity<Long> {
     return new StringJoiner(", ", Route.class.getSimpleName() + "[", "]")
         .add("id=" + this.getId())
         .add("name='" + reference + "'")
-        .add("segments=" + segments)
+        .add("segments=" + (Hibernate.isInitialized(segments) ? segments : "[Lazy]"))
         .toString();
   }
 }
