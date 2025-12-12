@@ -18,6 +18,12 @@
 # EVEN IF WE HAVE BEEN INFORMED OF THEIR POSSIBILITY IN ADVANCE.
 #
 
+# Build and publish Docker image to the repository owner (organization) GHCR namespace.
+# Requirements:
+#  - Add GHCR_USERNAME and GHCR_SECRET as repository secrets in the fork.
+#  - GHCR_SECRET must have permission to write packages in the target org namespace.
+#
+
 name: Build and Publish Docker Image
 
 on:
@@ -30,23 +36,21 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository_owner }}/${{ github.event.repository.name }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -58,12 +62,12 @@ jobs:
       - name: Build with Maven
         run: ./mvnw package
 
-      - name: Log in to the Container registry
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_SECRET }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -78,6 +82,10 @@ jobs:
             # 2. Short SHA Tag (Manual builds)
             # Conditions: ONLY run if the event is 'workflow_dispatch'
             type=raw,value=sha-{{sha}}-${{ github.event.inputs.build-tag-suffix }},enable=${{ github.event_name == 'workflow_dispatch' }}
+          labels: |
+            org.opencontainers.image.vendor=EnduranceTrio
+            org.opencontainers.image.authors=Ricardo do Canto <https://github.com/EnduranceCode>
+            org.opencontainers.image.source=https://github.com/endurancetrio/endurancetrio-tracker
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
