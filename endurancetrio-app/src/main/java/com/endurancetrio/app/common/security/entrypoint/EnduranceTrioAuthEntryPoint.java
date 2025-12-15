@@ -23,6 +23,8 @@ package com.endurancetrio.app.common.security.entrypoint;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -35,6 +37,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
  */
 @Component
 public class EnduranceTrioAuthEntryPoint implements AuthenticationEntryPoint {
+
+  private static final Logger LOG = LoggerFactory.getLogger(EnduranceTrioAuthEntryPoint.class);
 
   private final HandlerExceptionResolver resolver;
 
@@ -49,6 +53,11 @@ public class EnduranceTrioAuthEntryPoint implements AuthenticationEntryPoint {
       @NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
       @NonNull AuthenticationException authException
   ) {
+
+    LOG.debug(
+        "Authentication required for URI: '{}'. Delegating exception type {} with message: '{}' to HandlerExceptionResolver.",
+        request.getRequestURI(), authException.getClass().getName(), authException.getMessage()
+    );
 
     resolver.resolveException(request, response, null, authException);
   }
