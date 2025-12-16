@@ -197,4 +197,35 @@ class RouteServiceMainTest {
     assertNotNull(result);
     assertEquals(0, result.size());
   }
+
+  @Test
+  void findById() {
+
+    when(routeRepository.findById(ROUTE_ID)).thenReturn(Optional.of(testEntity));
+    when(routeMapper.map(any(Route.class))).thenReturn(testDTO);
+
+    RouteDTO result = underTest.findById(ROUTE_ID);
+
+    verify(routeRepository, times(1)).findById(ROUTE_ID);
+    verify(routeMapper, times(1)).map(any(Route.class));
+
+    assertNotNull(result);
+    assertEquals(ROUTE_ID, result.id());
+    assertEquals(REFERENCE, result.reference());
+    assertEquals(1, result.segments().size());
+  }
+
+  @Test
+  void findByIdWhenRouteDoesNotExist() {
+    when(routeRepository.findById(ROUTE_ID)).thenReturn(Optional.empty());
+
+    NotFoundException result = assertThrows(NotFoundException.class,
+        () -> underTest.findById(ROUTE_ID)
+    );
+
+    verify(routeRepository, times(1)).findById(ROUTE_ID);
+    verify(routeMapper, times(0)).map(any(Route.class));
+
+    assertEquals(EnduranceTrioError.NOT_FOUND.getCode(), result.getCode());
+  }
 }

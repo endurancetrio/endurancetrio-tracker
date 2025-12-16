@@ -10,7 +10,8 @@ requirements. For an overview of the project, see the [main README.md](../README
 2. [Get historical telemetry for a device](#get-historical-telemetry-for-a-device)
 3. [Submit a device telemetry data point](#submit-a-device-telemetry-data-point)
 4. [Get all route configurations](#get-all-route-configurations)
-5. [Submit a route configuration](#submit-a-route-configuration)
+5. [Find route configuration by id](#find-route-configuration-by-id)
+6. [Submit a route configuration](#submit-a-route-configuration)
 
 ## Get last known telemetry for all existing devices
 
@@ -249,7 +250,59 @@ ET-Owner: account-name-here
 ### `cURL` request (assuming the application is running on localhost:8081):
 
 ```shell
-curl -X GET 'http://localhost:8081/api/tracker/v1/routes' \
+curl -X GET 'http://localhost:8081/api/tracker/v1/routes/{id}' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>'
+```
+
+# Find route configuration by id
+
+```shell
+GET /tracker/v1/routes/{id}
+Content-Type: application/json
+Authorization: Bearer api-key-here
+ET-Owner: account-name-here
+```
+
+**Response**: `200 OK`
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "details": "Request handled successfully",
+  "data": {
+    "id": 1,
+    "reference": "20260921ETU001-001S",
+    "segments": [
+      {
+        "id": 1,
+        "order": 1,
+        "startDevice": "SDABC",
+        "endDevice": "SDDEF"
+      },
+      {
+        "id": 2,
+        "order": 2,
+        "startDevice": "SDDEF",
+        "endDevice": "SDFGH"
+      },
+      {
+        "id": 3,
+        "order": 3,
+        "startDevice": "SDFGH",
+        "endDevice": "SDJKL"
+      }
+    ]
+  }
+}
+```
+
+### `cURL` request (assuming the application is running on localhost:8081):
+
+```shell
+curl -X GET 'http://localhost:8081/api/tracker/v1/routes/{id}' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer <api-key-here>' \
   -H 'ET-Owner: <account-name-here>'

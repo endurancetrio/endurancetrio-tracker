@@ -163,6 +163,131 @@ public interface RouteApi {
   ResponseEntity<@NonNull EnduranceTrioResponse<List<RouteDTO>>> findAll();
 
   /**
+   * Finds a route configuration by its unique identifier.
+   *
+   * @param id the unique identifier of the route configuration
+   * @return a {@link ResponseEntity} containing an {@link EnduranceTrioResponse} with the
+   * corresponding {@link RouteDTO}
+   */
+  @Operation(
+      summary = "Find route configuration by it s id",
+      description = "Finds a route configuration by its unique identifier",
+      security = {
+          @SecurityRequirement(name = "Account Name"), @SecurityRequirement(name = "API Key")
+      }
+  )
+  @ApiResponse(
+      responseCode = "200",
+      description = "Route configuration successfully retrieved",
+      content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = EnduranceTrioResponse.class),
+          examples = {
+              @ExampleObject(
+                  name = "Success Response",
+                  summary = "Route configuration successfully retrieved",
+                  value = """
+                      {
+                        "code": 200,
+                        "status": "OK",
+                        "details": "Request handled successfully",
+                        "data": {
+                          "id": 1,
+                          "reference": "20260921ETU001-001S",
+                          "segments": [
+                            {
+                              "id": 1,
+                              "order": 1,
+                              "startDevice": "SDABC",
+                              "endDevice": "SDDEF"
+                            },
+                            {
+                              "id": 2,
+                              "order": 2,
+                              "startDevice": "SDDEF",
+                              "endDevice": "SDFGH"
+                            },
+                            {
+                              "id": 3,
+                              "order": 3,
+                              "startDevice": "SDFGH",
+                              "endDevice": "SDJKL"
+                            }
+                          ]
+                        }
+                      }
+                      """
+              )
+          }
+      )
+  )
+  @ApiResponse(
+      responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+      content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = EnduranceTrioResponse.class),
+          examples = {
+              @ExampleObject(
+                  name = "Auth Error",
+                  summary = "Example of authentication failure",
+                  value = """
+                      {
+                        "code": 401,
+                        "status": "Unauthorized",
+                        "details": "Authentication failed"
+                      }
+                      """
+              )
+          }
+      )
+  )
+  @ApiResponse(
+      responseCode = "404", description = "Resource not found - the route configuration could not be found",
+      content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = EnduranceTrioResponse.class),
+          examples = {
+              @ExampleObject(
+                  name = "Not found Error",
+                  summary = "Example of a resource not found failure",
+                  value = """
+                      {
+                        "code": 404,
+                        "status": "Not Found",
+                        "details": "No route found with ID {id}",
+                        "data": {
+                          "error": "NOT_FOUND",
+                          "message": "The requested resource was not found"
+                        }
+                      }
+                      """
+              )
+          }
+      )
+  )
+  @ApiResponse(
+      responseCode = "500", description = "Internal Server Error",
+      content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = EnduranceTrioResponse.class),
+          examples = {
+              @ExampleObject(
+                  name = "Internal Server Error",
+                  summary = "Example of an internal server failure",
+                  value = """
+                      {
+                        "code": 500,
+                        "status": "Internal Server Error",
+                        "details": "An internal server error occurred"
+                      }
+                      """
+              )
+          }
+      )
+  )
+  ResponseEntity<EnduranceTrioResponse<RouteDTO>> findById(@NonNull Long id);
+
+  /**
    * Saves the provided route configuration.
    *
    * @param routeDTO the route configuration to be saved
@@ -225,7 +350,7 @@ public interface RouteApi {
               name = "Route Configuration",
               description = "URI to list the newly created route configuration",
               schema = @Schema(
-                  type = "string", example = "/tracker/v1/routes/{reference}"
+                  type = "string", example = "/tracker/v1/routes/{id}"
               )
           )
       }

@@ -60,6 +60,7 @@ The following table summarizes the available endpoints.
 | `POST` | `/tracker/v1/devices`                            | Submit a device telemetry data point                                | API Key Required   |
 |        |                                                  |                                                                     |                    |
 | `GET`  | `/tracker/v1/routes`                             | Get all route configurations                                        | API Key Required   |
+| `GET`  | `/tracker/v1/routes/({id}`                       | Find route configuration by id                                      | API Key Required   |
 | `POST` | `/tracker/v1/routes`                             | Submit a route configuration                                        | API Key Required   |
 
 For comprehensive documentation including request/response schemas, examples, and error handling,

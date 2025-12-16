@@ -39,4 +39,12 @@ public interface RouteService {
    * @return a list of {@link RouteDTO} representing all route configurations
    */
   List<RouteDTO> findAll();
+
+  /**
+   * Finds a route configuration by its unique identifier.
+   *
+   * @param id the unique identifier of the route configuration
+   * @return the {@link RouteDTO} corresponding to the provided id
+   */
+  RouteDTO findById(Long id);
 }

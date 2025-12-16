@@ -97,6 +97,19 @@ public class RouteServiceMain implements RouteService {
     return routes.stream().map(routeMapper::map).toList();
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public RouteDTO findById(Long id) {
+
+    Route route = routeRepository.findById(id).orElseThrow(() -> {
+      String errorMessage = String.format("No route found with ID %d", id);
+      LOG.warn(errorMessage);
+      return new NotFoundException(errorMessage, EnduranceTrioError.NOT_FOUND);
+    });
+
+    return routeMapper.map(route);
+  }
+
   /**
    * Extracts unique device identifiers from the segments of the provided RouteDTO.
    *
