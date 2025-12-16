@@ -30,6 +30,8 @@ cors:
   allowed-origins: "http://localhost:3000,http://localhost:8081"
 
 logging:
+  level:
+    org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator: WARN
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n"
 
@@ -96,6 +98,9 @@ spring:
         jdbc:
           time_zone: UTC
         show_sql: false
+        transaction:
+          jta:
+            coordinator_class: jdbc
         use_sql_comments: true
 
   messages:

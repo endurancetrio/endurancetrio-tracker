@@ -30,6 +30,7 @@ logging:
     org.flywaydb: INFO
     org.hibernate.orm.jdbc.bind: INFO
     org.hibernate.SQL: WARN
+    org.springdoc: OFF
   logback:
     rollingpolicy:
       max-file-size: 5MB
