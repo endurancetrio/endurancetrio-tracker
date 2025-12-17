@@ -20,6 +20,7 @@
 
 package com.endurancetrio.business.tracker.dto;
 
+import com.endurancetrio.business.tracker.annotation.RouteSegmentsValid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import java.io.Serial;
@@ -33,6 +34,7 @@ import java.util.List;
  * @param reference The reference name of the route.
  * @param segments  The list of segments that make up the route.
  */
+@RouteSegmentsValid
 public record RouteDTO(
 
     Long id,

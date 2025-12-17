@@ -417,38 +417,44 @@ public interface RouteApi {
       )
   )
   @RequestBody(
-      description = "Route configuration to be saved", required = true, content = @Content(
-      mediaType = MediaType.APPLICATION_JSON_VALUE,
-      schema = @Schema(implementation = RouteDTO.class),
-      examples = {
-          @ExampleObject(
-              name = "Route Configuration Example",
-              summary = "A typical route configuration payload",
-              value = """
-                  {
-                    "reference": "20260921ETU001-001S",
-                    "segments": [
+      description = """
+          Route configuration to be saved. The first route segments must start at order 1,
+          the segments order must be sequential and the segment N end device must match
+          the segment N+1 start device.
+          """,
+      required = true,
+      content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = RouteDTO.class),
+          examples = {
+              @ExampleObject(
+                  name = "Route Configuration Example",
+                  summary = "A typical route configuration payload",
+                  value = """
                       {
-                        "order": 1,
-                        "startDevice": "SDABC",
-                        "endDevice": "SDDEF"
-                      },
-                      {
-                        "order": 2,
-                        "startDevice": "SDDEF",
-                        "endDevice": "SDFGH"
-                      },
-                      {
-                        "order": 3,
-                        "startDevice": "SDFGH",
-                        "endDevice": "SDJKL"
+                        "reference": "20260921ETU001-001S",
+                        "segments": [
+                          {
+                            "order": 1,
+                            "startDevice": "SDABC",
+                            "endDevice": "SDDEF"
+                          },
+                          {
+                            "order": 2,
+                            "startDevice": "SDDEF",
+                            "endDevice": "SDFGH"
+                          },
+                          {
+                            "order": 3,
+                            "startDevice": "SDFGH",
+                            "endDevice": "SDJKL"
+                          }
+                        ]
                       }
-                    ]
-                  }
-                  """
-          )
-      }
-  )
+                      """
+              )
+          }
+      )
   )
   ResponseEntity<@NonNull EnduranceTrioResponse<RouteDTO>> save(
       @Parameter(description = "Route configuration to be saved", required = true) RouteDTO routeDTO
