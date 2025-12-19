@@ -394,8 +394,6 @@ of the Swagger/OpenAPI web page.
 
 - **Sequence**: Methods should appear in the class in the same sequence they are rendered in the UI
   (typically sorted by path and then by HTTP verb: `GET`, `POST`, `PUT`, `DELETE`).
-- **Path Ordering (Same Verb)**: When multiple methods share the same HTTP verb
-  (e.g., multiple `GET` requests), order them **alphabetically by their endpoint path**.
     - *Example*: A `GET` request for `/users` must appear before a `GET` request for `/users/{id}`.
     - *Example*: `/users/active` must appear before `/users/{id}`.
 - **Grouping**: Do not scatter related endpoints; keep the code structure linear

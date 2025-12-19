@@ -7,11 +7,12 @@ requirements. For an overview of the project, see the [main README.md](../README
 ## Table of Contents
 
 1. [Get last known telemetry for all existing devices](#get-last-known-telemetry-for-all-existing-devices)
-2. [Get historical telemetry for a device](#get-historical-telemetry-for-a-device)
-3. [Submit a device telemetry data point](#submit-a-device-telemetry-data-point)
+2. [Submit a device telemetry data point](#submit-a-device-telemetry-data-point)
+3. [Get historical telemetry for a device](#get-historical-telemetry-for-a-device)
 4. [Get all route configurations](#get-all-route-configurations)
-5. [Find route configuration by id](#find-route-configuration-by-id)
-6. [Submit a route configuration](#submit-a-route-configuration)
+5. [Submit a route configuration](#submit-a-route-configuration)
+6. [Find route configuration by id](#find-route-configuration-by-id)
+7. [Retrieves the GeoJSON definition for a specific route](#retrieves-the-geojson-definition-for-a-specific-route)
 
 ## Get last known telemetry for all existing devices
 
@@ -71,6 +72,56 @@ curl -X GET 'http://localhost:8081/api/tracker/v1/devices' \
   -H 'ET-Owner: <account-name-here>'
 ```
 
+## Submit a device telemetry data point
+
+```shell
+POST /tracker/v1/devices
+Content-Type: application/json
+Authorization: Bearer api-key-here
+ET-Owner: account-name-here
+
+{
+  "device": "SDABC",
+  "time": "2026-09-19T06:00:00Z",
+  "lat": 39.510058,
+  "lon": -9.136079,
+  "active": true
+}
+```
+
+**Response**: `201 Created`
+
+```json
+{
+  "code": 201,
+  "status": "Created",
+  "details": "Request handled successfully",
+  "data": {
+    "device": "SDABC",
+    "time": "2026-09-19T06:00:00Z",
+    "lat": 39.510058,
+    "lon": -9.136079,
+    "active": true
+  }
+}
+```
+
+### `cURL` request (assuming the application is running on localhost:8081):
+
+```shell
+curl -X POST 'http://localhost:8081/api/tracker/v1/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>' \
+  -d '{
+    "device": "SDABC",
+    "time": "2026-09-19T06:00:00Z",
+    "lat": 39.510058,
+    "lon": -9.136079,
+    "active": true
+  }'
+```
+
 ## Get historical telemetry for a device
 
 **To be implemented**
@@ -126,56 +177,6 @@ ET-Owner: account-name-here
     "totalPages": 1
   }
 }
-```
-
-## Submit a device telemetry data point
-
-```shell
-POST /tracker/v1/devices
-Content-Type: application/json
-Authorization: Bearer api-key-here
-ET-Owner: account-name-here
-
-{
-  "device": "SDABC",
-  "time": "2026-09-19T06:00:00Z",
-  "lat": 39.510058,
-  "lon": -9.136079,
-  "active": true
-}
-```
-
-**Response**: `201 Created`
-
-```json
-{
-  "code": 201,
-  "status": "Created",
-  "details": "Request handled successfully",
-  "data": {
-    "device": "SDABC",
-    "time": "2026-09-19T06:00:00Z",
-    "lat": 39.510058,
-    "lon": -9.136079,
-    "active": true
-  }
-}
-```
-
-### `cURL` request (assuming the application is running on localhost:8081):
-
-```shell
-curl -X POST 'http://localhost:8081/api/tracker/v1/devices' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer <api-key-here>' \
-  -H 'ET-Owner: <account-name-here>' \
-  -d '{
-    "device": "SDABC",
-    "time": "2026-09-19T06:00:00Z",
-    "lat": 39.510058,
-    "lon": -9.136079,
-    "active": true
-  }'
 ```
 
 ## Get all route configurations
@@ -244,58 +245,6 @@ ET-Owner: account-name-here
       ]
     }
   ]
-}
-```
-
-### `cURL` request (assuming the application is running on localhost:8081):
-
-```shell
-curl -X GET 'http://localhost:8081/api/tracker/v1/routes/{id}' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer <api-key-here>' \
-  -H 'ET-Owner: <account-name-here>'
-```
-
-# Find route configuration by id
-
-```shell
-GET /tracker/v1/routes/{id}
-Content-Type: application/json
-Authorization: Bearer api-key-here
-ET-Owner: account-name-here
-```
-
-**Response**: `200 OK`
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "details": "Request handled successfully",
-  "data": {
-    "id": 1,
-    "reference": "20260921ETU001-001S",
-    "segments": [
-      {
-        "id": 1,
-        "order": 1,
-        "startDevice": "SDABC",
-        "endDevice": "SDDEF"
-      },
-      {
-        "id": 2,
-        "order": 2,
-        "startDevice": "SDDEF",
-        "endDevice": "SDFGH"
-      },
-      {
-        "id": 3,
-        "order": 3,
-        "startDevice": "SDFGH",
-        "endDevice": "SDJKL"
-      }
-    ]
-  }
 }
 ```
 
@@ -399,4 +348,184 @@ curl -X POST 'http://localhost:8081/api/tracker/v1/routes' \
       }
     ]
   }'
+```
+
+# Find route configuration by id
+
+```shell
+GET /tracker/v1/routes/{id}
+Content-Type: application/json
+Authorization: Bearer api-key-here
+ET-Owner: account-name-here
+```
+
+**Response**: `200 OK`
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "details": "Request handled successfully",
+  "data": {
+    "id": 1,
+    "reference": "20260921ETU001-001S",
+    "segments": [
+      {
+        "id": 1,
+        "order": 1,
+        "startDevice": "SDABC",
+        "endDevice": "SDDEF"
+      },
+      {
+        "id": 2,
+        "order": 2,
+        "startDevice": "SDDEF",
+        "endDevice": "SDFGH"
+      },
+      {
+        "id": 3,
+        "order": 3,
+        "startDevice": "SDFGH",
+        "endDevice": "SDJKL"
+      }
+    ]
+  }
+}
+```
+
+### `cURL` request (assuming the application is running on localhost:8081):
+
+```shell
+curl -X GET 'http://localhost:8081/api/tracker/v1/routes/{id}' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>'
+```
+
+# Retrieves the GeoJSON definition for a specific route
+
+```shell
+GET /tracker/v1/routes/{id}/metrics
+Content-Type: application/json
+Authorization: Bearer api-key-here
+ET-Owner: account-name-here
+```
+
+**Response**: `200 OK`
+
+```json
+{
+  "status": 200,
+  "message": "OK",
+  "details": "Request handled successfully",
+  "data": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -9.136053,
+            39.510093
+          ]
+        },
+        "properties": {
+          "order": 1
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -9.139602,
+            39.509001
+          ]
+        },
+        "properties": {
+          "order": 2
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -9.140004,
+            39.509773
+          ]
+        },
+        "properties": {
+          "order": 3
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -9.136516,
+            39.511075
+          ]
+        },
+        "properties": {
+          "order": 4
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              -9.136053,
+              39.510093
+            ],
+            [
+              -9.139602,
+              39.509001
+            ],
+            [
+              -9.140004,
+              39.509773
+            ],
+            [
+              -9.136516,
+              39.511075
+            ]
+          ]
+        },
+        "properties": {
+          "id": 1,
+          "reference": "20260921ETU001-001S",
+          "totalDistance": 753,
+          "segments": [
+            {
+              "order": 1,
+              "segmentDistance": 328
+            },
+            {
+              "order": 2,
+              "segmentDistance": 93
+            },
+            {
+              "order": 3,
+              "segmentDistance": 332
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+### `cURL` request (assuming the application is running on localhost:8081):
+
+```shell
+curl -X GET 'http://localhost:8081/api/tracker/v1/routes/{id}/metrics' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <api-key-here>' \
+  -H 'ET-Owner: <account-name-here>'
 ```

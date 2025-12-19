@@ -20,6 +20,7 @@
 
 package com.endurancetrio.app.tracker.api;
 
+import com.endurancetrio.app.common.annotation.OpenApiStandardErrors;
 import com.endurancetrio.app.common.response.EnduranceTrioResponse;
 import com.endurancetrio.business.tracker.dto.DeviceTelemetryDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,99 +70,60 @@ public interface DeviceTelemetryAPI {
                   name = "Success Response",
                   summary = "Telemetry data successfully obtained",
                   value = """
+                      {
+                        "status": 200,
+                        "message": "OK",
+                        "details": "Request handled successfully",
+                        "data": [
                           {
-                            "code": 200,
-                            "status": "OK",
-                            "details": "Request handled successfully",
-                            "data": [
-                              {
-                                "device": "SDABC",
-                                "time": "2026-09-19T06:00:00Z",
-                                "lat": 39.510058,
-                                "lon": -9.136079,
-                                "active": true
-                              },
-                              {
-                                "device": "SDDEF",
-                                "time": "2026-09-19T06:00:06Z",
-                                "lat":  39.509001,
-                                "lon": -9.139602,
-                                "active": true
-                              },
-                              {
-                                "device": "SDFGH",
-                                "time": "2026-09-19T06:00:12Z",
-                                "lat": 39.509773,
-                                "lon": -9.140004,
-                                "active": true
-                              },
-                              {
-                                "device": "SDJKL",
-                                "time": "2026-09-19T06:00:24Z",
-                                "lat": 39.511075,
-                                "lon":  -9.136516,
-                                "active": true
-                              }
-                            ]
+                            "device": "SDABC",
+                            "time": "2026-09-19T06:00:00Z",
+                            "lat": 39.510058,
+                            "lon": -9.136079,
+                            "active": true
+                          },
+                          {
+                            "device": "SDDEF",
+                            "time": "2026-09-19T06:00:06Z",
+                            "lat":  39.509001,
+                            "lon": -9.139602,
+                            "active": true
+                          },
+                          {
+                            "device": "SDFGH",
+                            "time": "2026-09-19T06:00:12Z",
+                            "lat": 39.509773,
+                            "lon": -9.140004,
+                            "active": true
+                          },
+                          {
+                            "device": "SDJKL",
+                            "time": "2026-09-19T06:00:24Z",
+                            "lat": 39.511075,
+                            "lon":  -9.136516,
+                            "active": true
                           }
-                          """
+                        ]
+                      }
+                      """
               ),
               @ExampleObject(
                   name = "Success Response with empty list",
                   summary = "Empty list",
                   value = """
-                          {
-                            "code": 200,
-                            "status": "OK",
-                            "details": "Request handled successfully",
-                            "data": [
-                            ]
-                          }
-                          """
+                      {
+                        "status": 200,
+                        "message": "OK",
+                        "details": "Request handled successfully",
+                        "data": [
+                        ]
+                      }
+                      """
               )
           }
       )
   )
-  @ApiResponse(
-      responseCode = "401", description = "Unauthorized - invalid or missing authentication",
-      content = @Content(
-          mediaType = MediaType.APPLICATION_JSON_VALUE,
-          schema = @Schema(implementation = EnduranceTrioResponse.class),
-          examples = {
-              @ExampleObject(
-                  name = "Auth Error",
-                  summary = "Example of authentication failure",
-                  value = """
-                        {
-                          "code": 401,
-                          "status": "Unauthorized",
-                          "details": "Authentication failed"
-                        }
-                        """
-              )
-          }
-      )
-  )
-  @ApiResponse(
-      responseCode = "500", description = "Internal Server Error",
-      content = @Content(
-          mediaType = MediaType.APPLICATION_JSON_VALUE,
-          schema = @Schema(implementation = EnduranceTrioResponse.class),
-          examples = {
-              @ExampleObject(
-                  name = "Internal Server Error",
-                  summary = "Example of an internal server failure",
-                  value = """
-                        {
-                          "code": 500,
-                          "status": "Internal Server Error",
-                          "details": "An internal server error occurred"
-                        }
-                        """
-              )
-          }
-      )
-  )
+  @OpenApiStandardErrors
   ResponseEntity<@NonNull EnduranceTrioResponse<List<DeviceTelemetryDTO>>> getMostRecentRecordForEachDevice();
 
   /**
@@ -188,19 +150,19 @@ public interface DeviceTelemetryAPI {
                   name = "Success Response",
                   summary = "Telemetry data saved successfully",
                   value = """
-                          {
-                            "code": 201,
-                            "status": "Created",
-                            "details": "Request handled successfully",
-                            "data": {
-                              "device": "SDABC",
-                              "time": "2026-09-19T06:00:00Z",
-                              "lat": 39.510058,
-                              "lon": -9.136079,
-                              "active": true
-                            }
-                          }
-                          """
+                      {
+                        "status": 201,
+                        "message": "Created",
+                        "details": "Request handled successfully",
+                        "data": {
+                          "device": "SDABC",
+                          "time": "2026-09-19T06:00:00Z",
+                          "lat": 39.510058,
+                          "lon": -9.136079,
+                          "active": true
+                        }
+                      }
+                      """
               )
           }
       ),
@@ -215,66 +177,7 @@ public interface DeviceTelemetryAPI {
           )
       }
   )
-  @ApiResponse(
-      responseCode = "400", description = "Bad request - invalid telemetry data",
-      content = @Content(
-          mediaType = MediaType.APPLICATION_JSON_VALUE,
-          schema = @Schema(implementation = EnduranceTrioResponse.class),
-          examples = {
-              @ExampleObject(
-                  name = "Validation Error",
-                  summary = "Example of data validation failure",
-                  value = """
-                        {
-                          "code": 400,
-                          "status": "Bad Request",
-                          "details": "The request was made with invalid or incomplete data"
-                        }
-                        """
-              )
-          }
-      )
-  )
-  @ApiResponse(
-      responseCode = "401", description = "Unauthorized - invalid or missing authentication",
-      content = @Content(
-          mediaType = MediaType.APPLICATION_JSON_VALUE,
-          schema = @Schema(implementation = EnduranceTrioResponse.class),
-          examples = {
-              @ExampleObject(
-                  name = "Auth Error",
-                  summary = "Example of authentication failure",
-                  value = """
-                        {
-                          "code": 401,
-                          "status": "Unauthorized",
-                          "details": "Authentication failed"
-                        }
-                        """
-              )
-          }
-      )
-  )
-  @ApiResponse(
-      responseCode = "404", description = "Not found - authenticated user not found",
-      content = @Content(
-          mediaType = MediaType.APPLICATION_JSON_VALUE,
-          schema = @Schema(implementation = EnduranceTrioResponse.class),
-          examples = {
-              @ExampleObject(
-                  name = "Not found Error",
-                  summary = "Example of a resource not found failure",
-                  value = """
-                        {
-                          "code": 404,
-                          "status": "Not Found",
-                          "details": "The requested resource was not found"
-                        }
-                        """
-              )
-          }
-      )
-  )
+  @OpenApiStandardErrors
   @RequestBody(
       description = "Telemetry data to be saved", required = true,
       content = @Content(
@@ -285,14 +188,14 @@ public interface DeviceTelemetryAPI {
                   name = "Telemetry Data Example",
                   summary = "A typical telemetry data payload",
                   value = """
-                        {
-                          "device": "SDABC",
-                          "time": "2026-09-19T06:00:00Z",
-                          "lat": 39.510058,
-                          "lon": -9.136079,
-                          "active": true
-                        }
-                        """
+                      {
+                        "device": "SDABC",
+                        "time": "2026-09-19T06:00:00Z",
+                        "lat": 39.510058,
+                        "lon": -9.136079,
+                        "active": true
+                      }
+                      """
               )
           }
       )

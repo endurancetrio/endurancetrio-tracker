@@ -21,6 +21,7 @@
 package com.endurancetrio.business.tracker.service;
 
 import com.endurancetrio.business.tracker.dto.RouteDTO;
+import com.endurancetrio.business.tracker.dto.RouteMetricsDTO;
 import java.util.List;
 
 public interface RouteService {
@@ -47,4 +48,6 @@ public interface RouteService {
    * @return the {@link RouteDTO} corresponding to the provided id
    */
   RouteDTO findById(Long id);
+
+  RouteMetricsDTO getRouteMetrics(Long routeId);
 }

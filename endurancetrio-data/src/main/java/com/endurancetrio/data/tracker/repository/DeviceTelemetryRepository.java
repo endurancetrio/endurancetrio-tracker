@@ -43,6 +43,45 @@ public interface DeviceTelemetryRepository extends
   Set<String> findExistingDevicesFrom(@Param("devices") Set<String> devices);
 
   /**
+   * Finds the most recent active telemetry record for each specified device.
+   * <p>
+   * This method uses PostgreSQL's {@code DISTINCT ON} feature to efficiently retrieve exactly one
+   * record per device - specifically, the record with the latest {@code created_at} timestamp for
+   * each device where {@code active = true}.
+   * <p>
+   * Implementation Details: The query uses {@code ORDER BY device, created_at DESC} to ensure
+   * deterministic results. PostgreSQL requires that {@code DISTINCT ON} columns (in this case,
+   * {@code device}) appear as the leftmost columns in the {@code ORDER BY} clause. This groups all
+   * records by device and sorts each group by {@code created_at} in descending order, guaranteeing
+   * that the first record selected for each device is the most recent one.</p>
+   * <p>
+   * Example: Given devices [A, B] with the following records:
+   * <pre>
+   * Device | created_at       | active | value
+   * -------|------------------|--------|-------
+   * A      | 2024-01-05 10:00 | true   | 100
+   * A      | 2024-01-04 09:00 | true   | 150
+   * B      | 2024-01-05 10:00 | true   | 200  ← Same timestamp as A
+   * B      | 2024-01-03 08:00 | true   | 250
+   * </pre>
+   * Returns: [A(2024-01-05 10:00), B(2024-01-05 10:00)]</p>
+   *
+   * @param devices the list of device identifiers to query (must not be null)
+   * @return a non-null list containing the most recent active telemetry record for each device in
+   * the input list, ordered by device name ascending. If a device has no active records or is not
+   * in the database, it will not appear in the results. Returns an empty list if no active records
+   * exist for any of the specified devices.
+   * @throws IllegalArgumentException if {@code devices} is null
+   */
+  @Query(
+      value = """
+          SELECT DISTINCT ON (device) * FROM {h-schema}device_telemetry
+                  WHERE active = true AND device IN :devices ORDER BY device, created_at DESC
+          """, nativeQuery = true
+  )
+  List<DeviceTelemetry> findMostRecentByDevices(@NonNull @Param("devices") List<String> devices);
+
+  /**
    * Finds the most recent telemetry data record for each device present in the database.
    * <p>
    * Uses a correlated subquery to identify records with the maximum timestamp per device. The main
@@ -53,7 +92,7 @@ public interface DeviceTelemetryRepository extends
    * PostgreSQL native query alternative:
    *   {@code
    *     @Query(value = """
-   *       SELECT DISTINCT ON (device) * FROM telemetry_data WHERE active = true
+   *       SELECT DISTINCT ON (device) * FROM {h-schema}device_telemetry WHERE active = true
    *       ORDER BY device, time DESC", nativeQuery = true
    *     )
    *   }
